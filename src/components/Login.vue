@@ -1,33 +1,57 @@
 <template>
     <div>
       <h2>Logowanie</h2>
+
       <form @submit.prevent="handleLogin">
         <div>
-          <label for="email">Email</label>
-          <input id="email" v-model="email" type="email" required />
+          <label for="username">Login</label>
+          <input id="username" v-model="username" type="text" required />
         </div>
+        
         <div>
           <label for="password">Hasło</label>
           <input id="password" v-model="password" type="password" required />
         </div>
+        
         <button type="submit">Zaloguj się</button>
       </form>
     </div>
 </template>
   
 <script>
+  import axios from '@/axiosConfig';
+
   export default {
     name: 'Login',
     data() {
       return {
-        email: '',
+        username: '',
         password: '',
       };
     },
     methods: {
-      handleLogin() {
-        console.log('Logowanie:', this.email, this.password);
-        // Wywołanie API dla logowania
+      async handleLogin() {
+        try {
+          console.log('Logowanie:', this.username, this.password)
+
+          const response = await axios.post('/auth/login', {
+            username: this.username,
+            password: this.password,
+          })
+
+          console.log(response.data)
+          const { accessToken } = response.data
+
+          localStorage.setItem('accessToken', accessToken)
+
+          console.log('Logowanie powiodło się, token:', accessToken)
+
+          this.$router.push('/')
+
+        } catch (error) {
+          console.error('Błąd logowania:', error)
+          alert('Nie udało się zalogować. Spróbuj ponownie')
+        }
       },
     },
   };
