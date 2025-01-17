@@ -17,6 +17,12 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
     },
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  dodane
+    //{ path: '/api', name: 'Home', component: Home },
+    { path: '/api/resources/destination', name: 'AddResource', component: () => import('../views/AddResource.vue') },
+    { path: '/api/resources//updateStatus/:id', name: 'EditResource', component: () => import('../views/EditResource.vue') },
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ],
 })
 
