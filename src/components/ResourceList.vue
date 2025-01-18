@@ -1,0 +1,196 @@
+<template>
+  <div>
+    <h2>Lista zasobów</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>Data rejestracji</th>
+        <th>Typ</th>
+        <th>Opis</th>
+        <th>Status</th>
+        <th>Ilość</th>
+        <th>Przeznaczenie</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="resource in resources" :key="resource.id">
+        <td>{{ resource.date }}</td>
+        <td>{{ resource.type }}</td>
+        <td>{{ resource.description }}</td>
+        <td>{{ resource.status }}</td>
+        <td>{{ resource.amount }}</td>
+        <td>{{ resource.destinationId }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <!-- Przycisk do zarządzania zasobami -->
+    <button class="manage-resources-button" @click="toggleResourceForm">
+      Zarządzanie zasobami
+    </button>
+
+    <!-- Dynamiczne renderowanie ResourceForm -->
+    <ResourceForm v-if="showResourceForm" @close="toggleResourceForm" />
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+import ResourceForm from './ResourceForm.vue';
+
+export default {
+  name: 'ResourceList',
+  components: { ResourceForm },
+  data() {
+    return {
+      resources: [], // Tablica zasobów
+      showResourceForm: false,
+    };
+  },
+  methods: {
+    toggleResourceForm() {
+      this.showResourceForm = !this.showResourceForm;
+    },
+    fetchResources() {
+      axios
+        .get('resource/getByholder/1')
+        .then((response) => {
+          // Przypisz dane do tablicy resources
+          this.resources = response.data;
+          console.log(this.resources);
+        })
+        .catch((error) => {
+          console.error('Błąd podczas pobierania zasobów:', error);
+        });
+    },
+    editResource(id) {
+      // Przekierowanie do edycji zasobu
+      this.$router.push({ name: 'EditResource', params: { id } });
+    },
+  },
+  mounted() {
+    // Pobierz dane po załadowaniu komponentu
+    this.fetchResources();
+  },
+};
+</script>
+
+<style scoped>
+/* Tabela zasobów */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #f5bcc1; /* Jasne tło dla tabeli */
+  color: #3f0a29; /* Ciemniejszy tekst */
+  font-size: 14px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+table th {
+  background-color: #94426a; /* Kolor nagłówków */
+  color: #fff;
+  text-align: left;
+  padding: 10px;
+  border-bottom: 2px solid #620e2c; /* Dodanie wyróżnienia */
+}
+
+table td {
+  padding: 10px;
+  border: 1px solid #db90be; /* Delikatne obramowanie */
+}
+
+table tr:nth-child(even) {
+  background-color: #db90be; /* Delikatny kolor dla co drugiego wiersza */
+}
+
+table tr:hover {
+  background-color: #94426a; /* Wyróżnienie wiersza po najechaniu */
+  color: #fff;
+}
+
+/* Formularze */
+form {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f5bcc1;
+  border: 2px solid #db90be;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+  display: block;
+  font-weight: bold;
+  color: #620e2c;
+  margin-bottom: 5px;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #db90be;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #3f0a29;
+}
+
+form button {
+  background-color: #94426a;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #620e2c;
+}
+
+/* Przyciski */
+button {
+  margin: 10px 5px;
+  padding: 10px 15px;
+  background-color: #94426a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+button:hover {
+  background-color: #620e2c;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  background-color: #620e2c;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Nagłówki */
+h2 {
+  color: #620e2c;
+  border-bottom: 2px solid #db90be;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+h3 {
+  color: #3f0a29;
+  font-size: 18px;
+  margin-top: 20px;
+}
+</style>
