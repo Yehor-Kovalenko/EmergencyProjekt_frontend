@@ -68,6 +68,16 @@ const router = createRouter({
       name: 'messages',
       component: Messages,
       meta: { requiresAuth: false }
+    },
+    {
+      path: "/resource/getByholder/:id",
+      name: "userResources",
+      component: () => import("../views/UserResourcesView.vue"),
+    },
+    {
+      path: "/resource/getBydestination/:id",
+      name: "destinationResources",
+      component: () => import("../views/ResourcesToCatastropheView.vue"),
     }
   ],
 });

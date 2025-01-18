@@ -37,8 +37,8 @@
         <input type="number" v-model.number="form.amount" required min="1" />
       </div>
       <div>
-        <label>Holder ID:</label>
-        <input type="number" v-model.number="form.holderId" required />
+        <label>Właściciel:</label>
+        <input type="text" :value="username" required disabled />
       </div>
       <button type="submit">Dodaj</button>
       <button type="button" @click="cancelForm">Anuluj</button>
@@ -62,7 +62,7 @@
         <input type="number" v-model.number="form.amount" required min="1" />
       </div>
       <div>
-        <label>Holder ID:</label>
+        <label>Wybierz organizację, której chcesz przekazać zasób:</label>
         <!--- WYBÓR ORGANIZACJI LUB WŁADZ Z LISTY -->
           <select v-model.number="form.holderId" required>
             <optgroup label="Officials">
@@ -91,7 +91,7 @@
           <th>Status</th>
           <th>Ilość</th>
           <th>Przeznaczenie</th>
-          <th>Akcje</th>
+          <th v-if="isRoleValid">Akcje</th>
         </tr>
       </thead>
       <tbody>
@@ -101,9 +101,15 @@
           <td>{{ resource.description }}</td>
           <td>{{ resource.status }}</td>
           <td>{{ resource.amount }}</td>
-          <td>{{ resource.destinationId }}</td>
-          <td>
-            <button @click="openStatusMenu(resource.id)">Zmień status</button>
+          <!--<td>{{ resource.destinationId }}</td>-->
+          <span v-if="resource.destinationId">
+            {{ getCatastropheById(resource.destinationId)?.type }} - 
+            {{ getCatastropheById(resource.destinationId)?.location || 'Nieznane położenie' }}
+        </span>
+        <span v-else>Brak przypisanego przeznaczenia</span>
+
+          <td v-if="isRoleValid">
+            <button  @click="openStatusMenu(resource.id)">Zmień status</button>
             <button v-if="resource.destinationId === null" @click="openDestinationForm(resource.id)">Dodaj przeznaczenie</button>
           </td>
         </tr>
@@ -138,7 +144,7 @@
           {{ status }}
         </option>
       </select>
-      <button 
+      <button
         @click="changeStatus" 
         :disabled="isStatusDisabled(selectedStatus)"
         @mouseover="isStatusDisabled(selectedStatus) ? tooltip = 'Nie możesz zmienić statusu tego zasobu' : tooltip = ''"
@@ -192,12 +198,20 @@
         geolocation: '',
         officials: [],
         ngos: [],
+        username: localStorage.getItem('username'),
       };
+    },
+    computed: {
+      // Sprawdzamy, czy rola użytkownika jest zgodna z jednym z wymaganych
+      isRoleValid() {
+        const userRole = localStorage.getItem('userRole'); // Pobieramy 'userRole' z localStorage
+        return userRole === 'NGO' || userRole === 'Official'; // Przycisk widoczny tylko, gdy rola to 'NGO' lub 'Official'
+      }
     },
     methods: {
       fetchResources() {
         axios
-          .get('resource/getByholder/8')
+          .get('resource/getByholder/1')
           .then((response) => {
             this.resources = response.data;
           })
@@ -282,6 +296,9 @@
         default:
           return false;
       }
+    },
+    getCatastropheById(destinationId) {
+      return this.catastrophes.find(catastrophe => catastrophe.id === destinationId);
     },
       // Zmieniamy status zasobu
     changeStatus() {
@@ -395,6 +412,10 @@
       this.fetchResources(); // Załadowanie zasobów po załadowaniu komponentu
       this.loadCatastrophes(); // Załadowanie katastrof po załadowaniu komponentu
       this.loadOfficialsAndNgos(); // Załadowanie NGO i władz po załadowaniu komponentu
+      //roboczo
+      localStorage.setItem('userId', 1);
+      localStorage.setItem('userRole', 'Giver');
+      localStorage.setItem('username', 'test');
     },
   };
 </script>
