@@ -1,8 +1,7 @@
 <template>
     <div class="about"> 
-        <button @click="accept">Accept Action</button>
-        <button @click="reject">Reject Action</button>
-    <
+        <button id="accept" @click="accept">Accept Action</button>
+        <button id="reject"@click="reject">Reject Action</button>
     </div>
   </template>
 
@@ -30,9 +29,25 @@ methods:{
   @media (min-width: 1024px) {
     .about {
       min-height: 100vh;
-      display: flex;
       align-items: center;
     }
   }
+  .about{
+    padding-top: 40%;
+  }
+    #accept{
+        background-color: green;
+        color: white;
+        height: 20%;
+        width: 30%;
+        float: left;
+    }
+    #reject{
+        background-color: red;
+        color: white;
+        height: 20%;
+        width: 30%;
+        float: right;
+    }
   </style>
   

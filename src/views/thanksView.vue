@@ -1,5 +1,5 @@
 <template>
-    Thank you for Your availability info
+    <p>Thank you for Your availability info</p>
 </template>
 
 <script>
@@ -12,6 +12,9 @@
       display: flex;
       align-items: center;
     }
+  }
+  p{
+    font-size: 250%;
   }
   </style>
   
