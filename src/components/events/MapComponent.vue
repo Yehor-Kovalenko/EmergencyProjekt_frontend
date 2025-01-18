@@ -44,6 +44,9 @@ export default {
               <a href="/help-request/create/${catastrophe.id}" target="_blank">
                 <button>Zgłoś Potrzebę Pomoc</button>
               </a>
+              <a href="/catastrophes/${catastrophe.id}" target="_blank">
+                <button>Podgląd katastrofy</button>
+              </a>
             `);
           markers.value.push(marker);
         });
