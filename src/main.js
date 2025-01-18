@@ -12,6 +12,7 @@ axios.defaults.baseURL = 'http://localhost:8080/api';
 
 const app = createApp(App)
 
-app.use(router)
+app.config.globalProperties.$http = axios
 
+app.use(router)
 app.mount('#app')
