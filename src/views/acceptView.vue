@@ -7,16 +7,19 @@
   </template>
 
 <script>
+import router from '@/router';
 import axios from 'axios';
 export default {
 methods:{
     accept(){
         console.log('accept');
         axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.vid,'/actions/',this.$route.params.aid,'/accept'));
+        router.push('/thanks');
     },
     reject(){
         console.log('reject');
         axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.vid,'/actions/',this.$route.params.aid,'/reject'));
+        router.push('/thanks');
 
     },
 }
