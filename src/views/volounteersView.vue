@@ -22,7 +22,7 @@
                 not available
               </template></td>
               <td>
-              <template v-if="volunteer.readyForMark">
+              <template v-if="!volunteer.available">
                 <RouterLink :to="'/mark/' + volunteer.id">Mark Volunteer</RouterLink>
               </template>
               <template v-else>
@@ -46,7 +46,7 @@ export default {
     },
   mounted() {
     console.log(this.$route.params.id);
-    axios.get('http://localhost:8080/volunteers').then((response) => this.volunteers = response.data)
+    axios.get('http://localhost:8080/ngo/'.concat(this.$route.params.id,'/volunteers')).then((response) => this.volunteers = response.data)
   },
 }
 </script>

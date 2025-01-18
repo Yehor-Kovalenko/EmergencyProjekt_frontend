@@ -1,5 +1,8 @@
 <template>
     <div class="about">
+        <form>
+            
+        </form>
     </div>
   </template>
 

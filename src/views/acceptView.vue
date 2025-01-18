@@ -1,21 +1,25 @@
 <template>
-    <div class="about">
-
+    <div class="about"> 
+        <button @click="accept">Accept Action</button>
+        <button @click="reject">Reject Action</button>
+    <
     </div>
   </template>
 
 <script>
 import axios from 'axios';
-
 export default {
-  data() {
-      return {
-        catastrophe_data: [ ]
-      }
+methods:{
+    accept(){
+        console.log('accept');
+        axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.vid,'/actions/',this.$route.params.aid,'/accept'));
     },
-  mounted() {
-    axios.get('http://localhost:8080/volunteers/'.concat('2','/actions')).then((response) => this.catastrophe_data = response.data)
-  },
+    reject(){
+        console.log('reject');
+        axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.vid,'/actions/',this.$route.params.aid,'/reject'));
+
+    },
+}
 }
 </script>
   
