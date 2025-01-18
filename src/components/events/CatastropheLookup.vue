@@ -2,6 +2,7 @@
   <div class="catastrophe-view">
     <div v-if="catastrophe">
       <h3>Szczegóły Katastrofy:</h3>
+      <p><strong>ID:</strong> {{ catastrophe.id }}</p>
       <p><strong>Typ:</strong> {{ catastrophe.type }}</p>
       <p><strong>Szerokość geograficzna:</strong> {{ catastrophe.latitude }}</p>
       <p><strong>Długość geograficzna:</strong> {{ catastrophe.longitude }}</p>
@@ -12,6 +13,14 @@
     <div v-if="error" class="error-message">
       <p>Nie znaleziono katastrofy o podanym ID.</p>
     </div>
+
+    <a href="/map" target="_blank">
+        <button>Wróć</button>
+    </a>
+
+    <a id="invitationLink" href="#" target="_blank">
+        <button>Zaproszenie</button>
+    </a>
   </div>
 </template>
 
@@ -42,6 +51,10 @@ export default {
     onMounted(() => {
       const catastropheId = route.params.catastropheId;
       if (catastropheId) {
+        const userId = localStorage.getItem('userId');
+        const newUrl = `/invite/${userId}/event/${catastropheId}`;
+        document.getElementById('invitationLink').href = newUrl;
+
         fetchCatastrophe(catastropheId);
       }
     });
