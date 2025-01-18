@@ -1,36 +1,46 @@
 <template>
   <div class="help-request-edit">
-    <h2>Edycja Zgłoszenia Pomocy</h2>
+    <h2>{{ translations[language].pageTitle }}</h2>
     <form @submit.prevent="updateHelpRequest">
       <div>
-        <label for="firstName">Imię:</label>
+        <label for="firstName">{{ translations[language].firstName }}:</label>
         <input type="text" id="firstName" v-model="form.firstName" required />
       </div>
       <div>
-        <label for="lastName">Nazwisko:</label>
+        <label for="lastName">{{ translations[language].lastName }}:</label>
         <input type="text" id="lastName" v-model="form.lastName" required />
       </div>
       <div>
-        <label for="email">Email:</label>
+        <label for="email">{{ translations[language].email }}:</label>
         <input type="email" id="email" v-model="form.email" required />
-        <span v-if="emailError" class="error">Nieprawidłowy format email</span>
+        <span v-if="emailError" class="error">{{ translations[language].invalidEmail }}</span>
       </div>
+
+      <!-- Nowe pole emailLanguage -->
       <div>
-        <label for="description">Opis:</label>
+        <label for="emailLanguage">{{ translations[language].emailLanguageLabel }}:</label>
+        <select id="emailLanguage" v-model="form.emailLanguage" required>
+          <option value="pl">Polski</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="description">{{ translations[language].description }}:</label>
         <textarea id="description" v-model="form.description" required></textarea>
       </div>
-      <button type="submit">Zaktualizuj</button>
+      <button type="submit">{{ translations[language].updateButton }}</button>
       <router-link :to="{ name: 'HelpRequestLookup' }">
-        <button type="button">Wróć</button>
+        <button type="button">{{ translations[language].backButton }}</button>
       </router-link>
     </form>
 
     <div v-if="successMessage" class="success-message">
-      <p>Zgłoszenie zostało zaktualizowane pomyślnie.</p>
+      <p>{{ translations[language].success }}</p>
     </div>
 
     <div v-if="errorMessage" class="error-message">
-      <p>Błąd podczas aktualizacji zgłoszenia. Spróbuj ponownie.</p>
+      <p>{{ translations[language].error }}</p>
     </div>
   </div>
 </template>
@@ -50,12 +60,44 @@ export default {
       firstName: '',
       lastName: '',
       email: '',
+      emailLanguage: 'pl',
       description: ''
     });
 
     const emailError = ref(false);
     const successMessage = ref(false);
     const errorMessage = ref(false);
+
+    const language = ref(localStorage.getItem('language') || 'pl');
+
+    const translations = {
+      pl: {
+        pageTitle: 'Edycja Zgłoszenia Pomocy',
+        firstName: 'Imię',
+        lastName: 'Nazwisko',
+        email: 'Email',
+        invalidEmail: 'Nieprawidłowy format email',
+        emailLanguageLabel: 'Preferowany język email',
+        description: 'Opis',
+        updateButton: 'Zaktualizuj',
+        backButton: 'Wróć',
+        success: 'Zgłoszenie zostało zaktualizowane pomyślnie.',
+        error: 'Błąd podczas aktualizacji zgłoszenia. Spróbuj ponownie.'
+      },
+      en: {
+        pageTitle: 'Edit Help Request',
+        firstName: 'First Name',
+        lastName: 'Last Name',
+        email: 'Email',
+        invalidEmail: 'Invalid email format',
+        emailLanguageLabel: 'Preferred email language',
+        description: 'Description',
+        updateButton: 'Update',
+        backButton: 'Back',
+        success: 'Your help request has been successfully updated.',
+        error: 'Error updating the request. Please try again.'
+      }
+    };
 
     const fetchHelpRequest = async () => {
       try {
@@ -64,6 +106,7 @@ export default {
         form.value.lastName = response.data.lastName;
         form.value.email = response.data.email;
         form.value.description = response.data.description;
+        form.value.emailLanguage = response.data.emailLanguage || 'pl';
       } catch (error) {
         console.error('Błąd podczas pobierania zgłoszenia:', error);
         errorMessage.value = true;
@@ -103,7 +146,9 @@ export default {
       emailError,
       successMessage,
       errorMessage,
-      updateHelpRequest
+      updateHelpRequest,
+      language,
+      translations
     };
   },
 };

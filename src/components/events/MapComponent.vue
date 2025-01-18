@@ -15,12 +15,30 @@ export default {
     const catastrophes = ref([]);
     const newMarker = ref(null);
 
+    const language = ref(localStorage.getItem('language') || 'pl');
+
+    const translations = {
+      pl: {
+        reported: 'Zgłoszono',
+        helpRequestBtn: 'Zgłoś Potrzebę Pomocy',
+        catastrophePreviewBtn: 'Podgląd katastrofy',
+        submitCatFormTitle: 'Typ Katastrofy:',
+        submitCatFormButton: 'Zgłoś'
+      },
+      en: {
+        reported: 'Reported',
+        helpRequestBtn: 'Request Help',
+        catastrophePreviewBtn: 'View Catastrophe',
+        submitCatFormTitle: 'Type of Catastrophe:',
+        submitCatFormButton: 'Submit'
+      }
+    };
+
     const initializeMap = () => {
       map.value = L.map("map").setView([52.2297, 21.0122], 13); // Warsaw coordinates
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        attribution: '&copy; OpenStreetMap contributors',
       }).addTo(map.value);
 
       map.value.on("click", onMapClick);
@@ -32,20 +50,19 @@ export default {
         const data = await response.json();
         catastrophes.value = data;
 
-        // Dodaj markery dla już istniejących katastrof
+        // Add markers for existing catastrophes
         data.forEach((catastrophe) => {
           const marker = L.marker([catastrophe.latitude, catastrophe.longitude])
             .addTo(map.value)
             .bindPopup(`
               <h3>${catastrophe.type}</h3>
-              <p><strong>Reported:</strong> ${new Date(
-                catastrophe.reportedDate
-              ).toLocaleString()}</p>
+              <p><strong>${translations[language.value].reported}:</strong> 
+                ${new Date(catastrophe.reportedDate).toLocaleString()}</p>
               <a href="/help-request/create/${catastrophe.id}" target="_blank">
-                <button>Zgłoś Potrzebę Pomoc</button>
+                <button>${translations[language.value].helpRequestBtn}</button>
               </a>
               <a href="/catastrophes/${catastrophe.id}" target="_blank">
-                <button>Podgląd katastrofy</button>
+                <button>${translations[language.value].catastrophePreviewBtn}</button>
               </a>
             `);
           markers.value.push(marker);
@@ -58,26 +75,26 @@ export default {
     const onMapClick = (e) => {
       const { lat, lng } = e.latlng;
 
-      // Usuń istniejący tymczasowy marker, jeśli jest
+      // Remove existing temporary marker, if any
       if (newMarker.value) {
         map.value.removeLayer(newMarker.value);
       }
 
-      // Dodaj nowy marker w miejscu kliknięcia
+      // Add new marker at the click location
       newMarker.value = L.marker([lat, lng], { draggable: true })
         .addTo(map.value)
         .bindPopup(
           `
           <form id="catastropheForm">
-            <label for="type">Typ Katastrofy:</label><br />
+            <label for="type">${translations[language.value].submitCatFormTitle}</label><br />
             <textarea id="type" name="type" required></textarea><br />
-            <button type="submit">Zgłoś</button>
+            <button type="submit">${translations[language.value].submitCatFormButton}</button>
           </form>
         `
         )
         .openPopup();
 
-      // Po zamknięciu okienka (kliknięciu w X) usuń nowy marker
+      // Remove the marker if the popup is closed (by clicking the X)
       newMarker.value.on("popupclose", () => {
         if (newMarker.value) {
           map.value.removeLayer(newMarker.value);
@@ -85,7 +102,7 @@ export default {
         }
       });
 
-      // Obsługa wysłania formularza
+      // Handle form submission inside the popup
       document.getElementById("catastropheForm").onsubmit = (event) => {
         event.preventDefault();
         const type = event.target.type.value;
@@ -104,20 +121,22 @@ export default {
         });
         const newCatastrophe = await response.json();
 
-        // Dodaj marker dla nowo zgłoszonej katastrofy
+        // Add marker for newly reported catastrophe
         L.marker([newCatastrophe.latitude, newCatastrophe.longitude])
           .addTo(map.value)
           .bindPopup(`
             <h3>${newCatastrophe.type}</h3>
-            <p><strong>Zgłoszono:</strong> ${new Date(
-              newCatastrophe.reportedDate
-            ).toLocaleString()}</p>
+            <p><strong>${translations[language.value].reported}:</strong> 
+              ${new Date(newCatastrophe.reportedDate).toLocaleString()}</p>
             <a href="/help-request/create/${newCatastrophe.id}" target="_blank">
-              <button>Zgłoś Potrzebę Pomoc</button>
+              <button>${translations[language.value].helpRequestBtn}</button>
+            </a>
+            <a href="/catastrophes/${newCatastrophe.id}" target="_blank">
+              <button>${translations[language.value].catastrophePreviewBtn}</button>
             </a>
           `);
 
-        // Usuń tymczasowy marker i wyczyść zmienną
+        // Remove the temporary marker
         map.value.removeLayer(newMarker.value);
         newMarker.value = null;
       } catch (error) {
@@ -132,6 +151,8 @@ export default {
 
     return {
       map,
+      language,
+      translations
     };
   },
 };

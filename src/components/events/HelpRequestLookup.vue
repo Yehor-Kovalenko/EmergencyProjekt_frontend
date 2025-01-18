@@ -1,30 +1,35 @@
 <template>
-  <div class="help-request/lookup">
-    <h2>Znajdź swoje zgłoszenie zapotrzebowania</h2>
+  <div class="help-request-lookup">
+    <h2>{{ translations[language].pageTitle }}</h2>
     <form @submit.prevent="lookupHelpRequest">
       <div>
-        <label for="uniqueCode">Unikalny Kod:</label>
+        <label for="uniqueCode">{{ translations[language].uniqueCodeLabel }}:</label>
         <input type="text" id="uniqueCode" v-model="uniqueCodeInput" required />
       </div>
-      <button type="submit">Szukaj</button>
+      <button type="submit">{{ translations[language].searchButton }}</button>
     </form>
 
     <div v-if="helpRequest">
-      <h3>Szczegóły zgłoszenia:</h3>
-      <p><strong>Imię:</strong> {{ helpRequest.firstName }}</p>
-      <p><strong>Nazwisko:</strong> {{ helpRequest.lastName }}</p>
-      <p><strong>Email:</strong> {{ helpRequest.email }}</p>
-      <p><strong>Opis:</strong> {{ helpRequest.description }}</p>
-      <p><strong>Status:</strong> {{ helpRequest.status }}</p>
-      <p><strong>Unikalny Kod:</strong> {{ helpRequest.uniqueCode }}</p>
-      <p><strong>Data Zgłoszenia:</strong> {{ new Date(helpRequest.reportedDate).toLocaleString() }}</p>
+      <h3>{{ translations[language].detailsTitle }}</h3>
+      <p><strong>{{ translations[language].firstName }}:</strong> {{ helpRequest.firstName }}</p>
+      <p><strong>{{ translations[language].lastName }}:</strong> {{ helpRequest.lastName }}</p>
+      <p><strong>{{ translations[language].email }}:</strong> {{ helpRequest.email }}</p>
+      <p><strong>{{ translations[language].description }}:</strong> {{ helpRequest.description }}</p>
+      <p><strong>{{ translations[language].status }}:</strong> {{ helpRequest.status }}</p>
+      <p><strong>{{ translations[language].emailLanguageLabel }}:</strong> {{ helpRequest.emailLanguage }}</p>
+      <p><strong>{{ translations[language].uniqueCodeLabel }}:</strong> {{ helpRequest.uniqueCode }}</p>
+      <p>
+        <strong>{{ translations[language].reportedDate }}:</strong>
+        {{ new Date(helpRequest.reportedDate).toLocaleString() }}
+      </p>
+
       <router-link :to="{ name: 'EditHelpRequest', params: { uniqueCode: helpRequest.uniqueCode } }">
-        <button>Zedytuj Zgłoszenie</button>
+        <button>{{ translations[language].editButton }}</button>
       </router-link>
     </div>
 
     <div v-if="error" class="error-message">
-      <p>Zgłoszenie o podanym kodzie nie zostało znalezione.</p>
+      <p>{{ translations[language].notFound }}</p>
     </div>
   </div>
 </template>
@@ -39,6 +44,41 @@ export default {
     const uniqueCodeInput = ref('');
     const helpRequest = ref(null);
     const error = ref(false);
+
+    const language = ref(localStorage.getItem('language') || 'pl');
+
+    const translations = {
+      pl: {
+        pageTitle: 'Znajdź swoje zgłoszenie zapotrzebowania',
+        uniqueCodeLabel: 'Unikalny Kod',
+        searchButton: 'Szukaj',
+        detailsTitle: 'Szczegóły zgłoszenia:',
+        firstName: 'Imię',
+        lastName: 'Nazwisko',
+        email: 'Email',
+        emailLanguageLabel: 'Preferowany język email',
+        description: 'Opis',
+        status: 'Status',
+        reportedDate: 'Data Zgłoszenia',
+        editButton: 'Zedytuj Zgłoszenie',
+        notFound: 'Zgłoszenie o podanym kodzie nie zostało znalezione.'
+      },
+      en: {
+        pageTitle: 'Find Your Help Request',
+        uniqueCodeLabel: 'Unique Code',
+        searchButton: 'Search',
+        detailsTitle: 'Help Request Details:',
+        firstName: 'First Name',
+        lastName: 'Last Name',
+        email: 'Email',
+        emailLanguageLabel: 'Email Language',
+        description: 'Description',
+        status: 'Status',
+        reportedDate: 'Reported Date',
+        editButton: 'Edit Request',
+        notFound: 'No help request found for the provided code.'
+      }
+    };
 
     const lookupHelpRequest = async () => {
       try {
@@ -56,7 +96,9 @@ export default {
       uniqueCodeInput,
       helpRequest,
       error,
-      lookupHelpRequest
+      lookupHelpRequest,
+      language,
+      translations
     };
   },
 };

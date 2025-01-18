@@ -1,25 +1,28 @@
 <template>
   <div class="catastrophe-view">
     <div v-if="catastrophe">
-      <h3>Szczegóły Katastrofy:</h3>
-      <p><strong>ID:</strong> {{ catastrophe.id }}</p>
-      <p><strong>Typ:</strong> {{ catastrophe.type }}</p>
-      <p><strong>Szerokość geograficzna:</strong> {{ catastrophe.latitude }}</p>
-      <p><strong>Długość geograficzna:</strong> {{ catastrophe.longitude }}</p>
-      <p><strong>Aktywna:</strong> {{ catastrophe.isActive === 1 ? 'Tak' : 'Nie' }}</p>
-      <p><strong>Data:</strong> {{ new Date(catastrophe.reportedDate).toLocaleString() }}</p>
+      <h3>{{ translations[language].heading }}</h3>
+      <p><strong>{{ translations[language].id }}:</strong> {{ catastrophe.id }}</p>
+      <p><strong>{{ translations[language].type }}:</strong> {{ catastrophe.type }}</p>
+      <p><strong>{{ translations[language].lat }}:</strong> {{ catastrophe.latitude }}</p>
+      <p><strong>{{ translations[language].lng }}:</strong> {{ catastrophe.longitude }}</p>
+      <p>
+        <strong>{{ translations[language].active }}:</strong>
+        {{ catastrophe.isActive === 1 ? translations[language].yes : translations[language].no }}
+      </p>
+      <p><strong>{{ translations[language].date }}:</strong> {{ new Date(catastrophe.reportedDate).toLocaleString() }}</p>
     </div>
 
     <div v-if="error" class="error-message">
-      <p>Nie znaleziono katastrofy o podanym ID.</p>
+      <p>{{ translations[language].errorNotFound }}</p>
     </div>
 
     <a href="/map" target="_blank">
-        <button>Wróć</button>
+      <button>{{ translations[language].backButton }}</button>
     </a>
 
     <a id="invitationLink" href="#" target="_blank">
-        <button>Zaproszenie</button>
+      <button>{{ translations[language].invitationButton }}</button>
     </a>
   </div>
 </template>
@@ -35,6 +38,39 @@ export default {
     const route = useRoute();
     const catastrophe = ref(null);
     const error = ref(false);
+
+    const language = ref(localStorage.getItem('language') || 'pl');
+
+    const translations = {
+      pl: {
+        heading: 'Szczegóły Katastrofy:',
+        id: 'ID',
+        type: 'Typ',
+        lat: 'Szerokość geograficzna',
+        lng: 'Długość geograficzna',
+        active: 'Aktywna',
+        yes: 'Tak',
+        no: 'Nie',
+        date: 'Data',
+        errorNotFound: 'Nie znaleziono katastrofy o podanym ID.',
+        backButton: 'Wróć',
+        invitationButton: 'Zaproszenie',
+      },
+      en: {
+        heading: 'Catastrophe Details:',
+        id: 'ID',
+        type: 'Type',
+        lat: 'Latitude',
+        lng: 'Longitude',
+        active: 'Active',
+        yes: 'Yes',
+        no: 'No',
+        date: 'Date',
+        errorNotFound: 'No catastrophe found with the provided ID.',
+        backButton: 'Back',
+        invitationButton: 'Invitation',
+      }
+    };
 
     const fetchCatastrophe = async (catastropheId) => {
       try {
@@ -62,6 +98,8 @@ export default {
     return {
       catastrophe,
       error,
+      language,
+      translations
     };
   },
 };
