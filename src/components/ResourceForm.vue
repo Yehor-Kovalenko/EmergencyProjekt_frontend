@@ -16,28 +16,25 @@
       </div>
       <div>
         <label>Opis:</label>
-        <input type="text" v-model="form.description" />
-      </div>
-      <div>
-        <label>Przeznaczenie:</label>
-        <input type="number" v-model.number="form.destinationId" required />
-        <!--- WYBÓR KATASTROFY Z LISTY
-        <select v-model.number="form.destinationId" @change="fetchGeolocation">
-          <option
-            v-for="catastrophe in activeCatastrophes"
-            :key="catastrophe.id"
-            :value="catastrophe.id"
-          >
-            {{ catastrophe.type }}
-          </option>
-        </select> -->
-      </div>
-      <div v-if="geolocation">
-        <p><strong>Położenie:</strong> {{ geolocation }}</p>
-      </div>
+          <input type="text" v-model="form.description" />
+        </div>
+          <!---<input type="number" v-model.number="form.destinationId" required /> -->
+          <!--- WYBÓR KATASTROFY Z LISTY -->
+          <div>
+            <label>Przeznaczenie:</label>
+            <select v-model.number="form.destinationId" @change="loadCatastrophes">
+              <option
+                v-for="catastrophe in catastrophes"
+                :key="catastrophe.id"
+                :value="catastrophe.id"
+              >
+              {{ catastrophe.type }} - {{ catastrophe.location || 'Pobieranie położenia...' }}
+              </option>
+            </select>
+          </div>
       <div>
         <label>Ilość:</label>
-        <input type="number" v-model.number="form.amount" required />
+        <input type="number" v-model.number="form.amount" required min="1" />
       </div>
       <div>
         <label>Holder ID:</label>
@@ -62,24 +59,23 @@
       </div>
       <div>
         <label>Ilość:</label>
-        <input type="number" v-model.number="form.amount" required />
+        <input type="number" v-model.number="form.amount" required min="1" />
       </div>
       <div>
         <label>Holder ID:</label>
-        <!--- WYBÓR ORGANIZACJI LUB WŁADZ Z LISTY
-        <select v-model.number="form.holderId">
-          <optgroup label="Officials">
-            <option v-for="official in officials" :key="official.id" :value="official.id">
-              {{ official.official_name }}
-            </option>
-          </optgroup>
-          <optgroup label="NGOs">
-            <option v-for="ngo in ngos" :key="ngo.id" :value="ngo.id">
-              {{ ngo.ngo_name }}
-            </option>
-          </optgroup>
-        </select> -->
-        <input type="number" v-model.number="form.holderId" required />
+        <!--- WYBÓR ORGANIZACJI LUB WŁADZ Z LISTY -->
+          <select v-model.number="form.holderId" required>
+            <optgroup label="Officials">
+              <option v-for="official in officials" :key="official.id" :value="official.id">
+                {{ official.name }}
+              </option>
+            </optgroup>
+            <optgroup label="NGOs">
+              <option v-for="ngo in ngos" :key="ngo.id" :value="ngo.id">
+                {{ ngo.name }}
+              </option>
+            </optgroup>
+          </select>
       </div>
       <button type="submit">Przekaż</button>
       <button type="button" @click="cancelForm">Anuluj</button>
@@ -171,7 +167,6 @@
 
   <script>
   import axios from 'axios';
-
   export default {
     name: 'ResourceForm',
     data() {
@@ -194,7 +189,6 @@
         selectedResourceId: null,
         selectedStatus: '',
         catastrophes: [],
-        activeCatastrophes: [],
         geolocation: '',
         officials: [],
         ngos: [],
@@ -209,21 +203,6 @@
           })
           .catch((error) => {
             console.error('Błąd podczas pobierania zasobów:', error);
-          });
-      },
-      // Dodajemy metodę do pobrania katastrof
-      fetchCatastrophes() {
-        axios
-          .get('http://localhost:8080/api/catastrophes')
-          .then((response) => {
-            this.catastrophes = response.data;
-            this.activeCatastrophes = this.catastrophes.filter(
-              (catastrophe) => catastrophe.is_active
-            );
-            console.log('Katastrofy:', this.activeCatastrophes);
-          })
-          .catch((error) => {
-            console.error('Błąd podczas pobierania katastrof:', error);
           });
       },
       // Metoda do dodania zasobu do katastrofy
@@ -259,7 +238,6 @@
       openForm() {
         this.showForm = true;
         this.showDonateForm = false;
-        this.fetchCatastrophes(); // Wywołanie fetchCatastrophes po otwarciu formularza
         this.resetForm();
       },
       openDonateForm() {
@@ -321,15 +299,52 @@
           console.error('Błąd podczas zmiany statusu:', error);
         });
     },
-      fetchGeolocation() {
-        const selectedCatastrophe = this.activeCatastrophes.find(
-          (c) => c.id === this.form.destinationId
-        );
-        if (selectedCatastrophe) {
-          const { latitude, longitude } = selectedCatastrophe;
-          this.geolocation = `Latitude: ${latitude}, Longitude: ${longitude}`;
+    // Funkcja dokonująca geolokacji na podstawie współrzędnych
+    reverseGeocode(latitude, longitude) {
+      const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
+
+      return axios
+        .get(apiUrl)
+        .then((response) => {
+          return response.data.display_name || 'Nieznane położenie';
+        })
+        .catch((error) => {
+          console.error('Błąd podczas pobierania geolokacji:', error);
+          return 'Nie udało się określić położenia';
+        });
+    },
+
+    // Funkcja wczytująca katastrofy i uzupełniająca geolokację
+    async loadCatastrophes() {
+      // Przykladowe pobieranie katastrof, dostosuj do swojej logiki
+      try {
+        const response = await axios.get('/catastrophes'); // Endpoint zwracający katastrofy
+        const catastrophes = response.data;
+        console.log('Katastrofy z load:', catastrophes);
+
+        // Dodaj nazwę lokalizacji do każdej katastrofy
+        for (let catastrophe of catastrophes) {
+          const address = await this.reverseGeocode(catastrophe.latitude, catastrophe.longitude);
+          console.log(address);
+          catastrophe.location = address; // Dodaj lokalizację do katastrofy
+          console.log(catastrophe.location);
         }
-      },
+
+        this.catastrophes = catastrophes;
+      } catch (error) {
+        console.error('Błąd podczas ładowania katastrof:', error);
+      }
+    },
+      // Metoda aktualizująca geolokację po wybraniu katastrofy
+    fetchGeolocation() {
+      const selectedCatastrophe = this.catastrophes.find(
+        (c) => c.id === this.form.destinationId
+      );
+      if (selectedCatastrophe) {
+        const { latitude, longitude } = selectedCatastrophe;
+        this.reverseGeocode(latitude, longitude);
+      }
+    },
       // Otwiera formularz zmiany destinationId
       openDestinationForm(resourceId) {
         this.selectedResourceId = resourceId;
@@ -361,10 +376,25 @@
             });
         }
       },
+      loadOfficialsAndNgos() {
+    axios
+      .get(`http://localhost:8080/ngo`)  // Endpoint dla NGO i władz
+      .then((response) => {
+        const data = response.data;
+        //this.officials = data.officials || []; // Zakładając, że odpowiedź zawiera 'officials'
+        this.ngos = data|| []; // Zakładając, że odpowiedź zawiera 'ngos'
+        console.log('NGO:', response);
+      })
+      .catch((error) => {
+        console.error('Błąd podczas pobierania NGO i władz:', error);
+      });
+      
+  },
     },
     mounted() {
       this.fetchResources(); // Załadowanie zasobów po załadowaniu komponentu
-      this.fetchCatastrophes(); // Załadowanie katastrof po załadowaniu komponentu
+      this.loadCatastrophes(); // Załadowanie katastrof po załadowaniu komponentu
+      this.loadOfficialsAndNgos(); // Załadowanie NGO i władz po załadowaniu komponentu
     },
   };
 </script>
