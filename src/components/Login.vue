@@ -42,10 +42,12 @@
           console.log(response.data)
           const accessToken = response.data.accessToken
           const localUsername = response.data.userData.username
+          const localUserId = response.data.userData.userId
           const localRole = response.data.userData.role
 
           localStorage.setItem('accessToken', accessToken)
           localStorage.setItem('username', localUsername)
+          localStorage.setItem('userId', localUserId)
           localStorage.setItem('role', localRole)
 
           console.log('Logowanie powiodło się, token:', accessToken)
