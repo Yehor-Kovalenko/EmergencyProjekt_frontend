@@ -3,6 +3,18 @@ import { jwtDecode } from 'jwt-decode'
 import HomeView from '../views/HomeView.vue'
 import AuthView from '../views/AuthView.vue'
 import Messages from '../components/Messages.vue'
+import ReportView from "@/views/ReportView.vue";
+import ReportTypeView from "@/views/ReportTypeView.vue";
+import ReportDateView from "@/views/ReportDateView.vue";
+import ReportGiverView from "@/views/ReportGiverView.vue";
+import ReportResourcesView from "@/views/ReportResourcesView.vue";
+import ReportVolunteersView from "@/views/ReportVolunteersView.vue";
+import ReportCatastropheView from "@/views/ReportCatastropheView.vue";
+import CatastropheLookup from '@/components/events/CatastropheLookup.vue'
+import EditHelpRequest from '@/components/events/EditHelpRequest.vue'
+import HelpRequestForm from '@/components/events/HelpRequestForm.vue'
+import HelpRequestLookup from '@/components/events/HelpRequestLookup.vue'
+import MapComponent from '@/components/events/MapComponent.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -86,6 +98,73 @@ const router = createRouter({
       path: "/resource/getBydestination/:id",
       name: "destinationResources",
       component: () => import("../views/ResourcesToCatastropheView.vue"),
+    },
+    {
+      path: '/report',
+      name: 'report',
+      component: ReportView,
+      meta: { requiresAuth: false }
+      // autoryzachje - potem zmienic na true
+
+    },
+    {
+      path: '/report-type',
+      name: 'report-type',
+      component: ReportTypeView,
+    },
+    {
+      path: '/report-date',
+      name: 'report-date',
+      component: ReportDateView,
+    },
+    {
+      path: '/report-giver',
+      name: 'report-giver',
+      component: ReportGiverView,
+      meta: { requiresAuth: false }
+      // autoryzachje - potem zmienic na true
+    },
+    {
+      path: '/report-resources-view',
+      name: 'resources-view',
+      component: ReportResourcesView,
+    },
+    {
+      path: '/report-volunteers-view',
+      name: 'volunteers-view',
+      component: ReportVolunteersView,
+    },
+    {
+      path: '/report-catastrophe-view',
+      name: 'catastrophe-view',
+      component: ReportCatastropheView,
+    },
+    {
+      path: '/catastrophes/:catastropheId',
+      name: 'CatastropheLookup',
+      component: CatastropheLookup,
+    },
+    {
+      path: '/help-request/edit/:uniqueCode',
+      name: 'EditHelpRequest',
+      component: EditHelpRequest,
+      props: true,
+    },
+    {
+      path: '/help-request/create/:catastropheId',
+      name: 'HelpRequestForm',
+      component: HelpRequestForm,
+      props: true,
+    },
+    {
+      path: '/help-request/lookup',
+      name: 'HelpRequestLookup',
+      component: HelpRequestLookup,
+    },
+    {
+      path: '/map',
+      name: 'MapComponent',
+      component: MapComponent,
     }
   ],
 });
