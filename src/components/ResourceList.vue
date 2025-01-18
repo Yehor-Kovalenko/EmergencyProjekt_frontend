@@ -19,7 +19,10 @@
         <td>{{ resource.description }}</td>
         <td>{{ resource.status }}</td>
         <td>{{ resource.amount }}</td>
-        <td>{{ resource.destinationId }}</td>
+        <span v-if="resource.destinationId">
+            {{ getCatastropheById(resource.destinationId)?.type }} - 
+            {{ getCatastropheById(resource.destinationId)?.location || 'Nieznane położenie' }}
+        </span>
       </tr>
       </tbody>
     </table>
@@ -44,6 +47,7 @@ export default {
     return {
       resources: [], // Tablica zasobów
       showResourceForm: false,
+      catastrophes: [], // Tablica katastrof
     };
   },
   methods: {
@@ -66,10 +70,45 @@ export default {
       // Przekierowanie do edycji zasobu
       this.$router.push({ name: 'EditResource', params: { id } });
     },
+    getCatastropheById(destinationId) {
+      return this.catastrophes.find(catastrophe => catastrophe.id === destinationId);
+    },
+    async loadCatastrophes() {
+      try {
+        const response = await axios.get('/catastrophes');
+        const catastrophes = response.data;
+
+        // Dodajemy lokalizację do każdej katastrofy
+        for (let catastrophe of catastrophes) {
+          const address = await this.reverseGeocode(catastrophe.latitude, catastrophe.longitude);
+          catastrophe.location = address; // Dodaj lokalizację do katastrofy
+        }
+
+        this.catastrophes = catastrophes;
+      } catch (error) {
+        console.error('Błąd podczas ładowania katastrof:', error);
+      }
+    },
+        // Funkcja dokonująca geolokacji na podstawie współrzędnych
+        reverseGeocode(latitude, longitude) {
+      const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
+
+      return axios
+        .get(apiUrl)
+        .then((response) => {
+          return response.data.display_name || 'Nieznane położenie';
+        })
+        .catch((error) => {
+          console.error('Błąd podczas pobierania geolokacji:', error);
+          return 'Nie udało się określić położenia';
+        });
+    },
+
   },
   mounted() {
     // Pobierz dane po załadowaniu komponentu
     this.fetchResources();
+    this.loadCatastrophes();
   },
 };
 </script>

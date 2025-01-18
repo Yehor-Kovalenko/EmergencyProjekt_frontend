@@ -76,6 +76,16 @@ const router = createRouter({
         requiresAuth: true,
         role: ['GIVER', 'VOLUNTEER', 'OFFICIAL', 'NGO']
       }
+    },
+    {
+      path: "/resource/getByholder/:id",
+      name: "userResources",
+      component: () => import("../views/UserResourcesView.vue"),
+    },
+    {
+      path: "/resource/getBydestination/:id",
+      name: "destinationResources",
+      component: () => import("../views/ResourcesToCatastropheView.vue"),
     }
   ],
 });
