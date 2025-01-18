@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { jwtDecode } from 'jwt-decode'
 import HomeView from '../views/HomeView.vue'
 import AuthView from '../views/AuthView.vue'
 import Messages from '../components/Messages.vue'
@@ -6,6 +7,17 @@ import Messages from '../components/Messages.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    // ----- example for proper auth ----- 
+    // {
+    //   path: '/path',
+    //   name: 'view',
+    //   component: View,
+    //   meta: {
+    //     requiresAuth: true/false, // requirement of authentication
+           // if requiresAuth is true:
+    //     role: ['GIVER', 'VOLUNTEER', 'OFFICIAL', 'NGO'] // list of roles that have access to this /path
+    //   }
+    // }
     {
       path: "/",
       name: "home",
@@ -15,71 +27,86 @@ const router = createRouter({
     {
       path: "/about",
       name: "about",
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import("../views/AboutView.vue"),
+      meta: { requiresAuth: true }
     },
     {
       path: "/volounteers/:id",
       name: "volounteers",
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import("../views/volounteersView.vue"),
+      meta: { requiresAuth: true }
     },
     {
       path: "/mark/:id",
       name: "mark",
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import("../views/markView.vue"),
+      meta: { requiresAuth: true }
     },
     {
       path: "/volunteers/:vid/actions/:aid",
       name: "volunteer_action_invite",
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import("../views/acceptView.vue"),
+      meta: { requiresAuth: true }
     },
     {
       path: "/thanks",
       name: "thank volunteer",
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import("../views/thanksView.vue"),
+      meta: { requiresAuth: true }
     },
     {
       path: "/invite/:ngoId/event/:eventId",
       name: "invite",
       component: () => import("../views/inviteView.vue"),
+      meta: { requiresAuth: true }
     },
     {
       path: '/auth',
       name: 'auth',
       component: AuthView,
-      meta: { requiresAuth: false }
+      meta: { 
+        requiresAuth: false 
+      }
     },
     {
       path: '/messages',
       name: 'messages',
       component: Messages,
-      meta: { requiresAuth: false }
+      meta: { 
+        requiresAuth: true,
+        role: ['GIVER', 'VOLUNTEER', 'OFFICIAL', 'NGO']
+      }
+    },
+    {
+      path: "/resource/getByholder/:id",
+      name: "userResources",
+      component: () => import("../views/UserResourcesView.vue"),
+    },
+    {
+      path: "/resource/getBydestination/:id",
+      name: "destinationResources",
+      component: () => import("../views/ResourcesToCatastropheView.vue"),
     }
   ],
 });
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('accessToken')
+  const accessToken = localStorage.getItem('accessToken')
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
-  if (requiresAuth && !isAuthenticated) {
+  if (requiresAuth && !accessToken) {
     next({ name: 'auth'})
-  } else {
+  }
+  
+  const decoded = jwtDecode(accessToken)
+
+  if (!to.meta.role) {
     next()
+  } else if (to.meta.role.includes(decoded.role)) {
+    next()
+  } else {
+    alert('Nie masz uprawnień do tej funkcjonalności')
+    return
   }
 })
 
