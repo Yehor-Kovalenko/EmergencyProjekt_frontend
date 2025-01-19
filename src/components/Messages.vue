@@ -118,7 +118,8 @@ export default {
       newMessage: {
         senderId: localStorage.getItem('userId'),
         title: '',
-        body: ''
+        body: '',
+        language: localStorage.getItem('language') || 'pl'
       },
       selectedMessage: null,
       language: localStorage.getItem('language') || 'pl',
