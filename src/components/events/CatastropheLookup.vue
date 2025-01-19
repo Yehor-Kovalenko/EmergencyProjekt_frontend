@@ -21,6 +21,10 @@
       <button>{{ translations[language].backButton }}</button>
     </a>
 
+    <a id="closeCatastropheLink" href="#" target="_blank">
+      <button>{{ translations[language].closeCatastropheButton }}</button>
+    </a>
+
     <a id="invitationLink" href="#" target="_blank">
       <button>{{ translations[language].invitationButton }}</button>
     </a>
@@ -55,6 +59,7 @@ export default {
         errorNotFound: 'Nie znaleziono katastrofy o podanym ID.',
         backButton: 'Wróć',
         invitationButton: 'Zaproszenie',
+        closeCatastropheButton: 'Zamknij katastrofę'
       },
       en: {
         heading: 'Catastrophe Details:',
@@ -69,6 +74,7 @@ export default {
         errorNotFound: 'No catastrophe found with the provided ID.',
         backButton: 'Back',
         invitationButton: 'Invitation',
+        closeCatastropheButton: 'Close catastrophe'
       }
     };
 
@@ -88,8 +94,11 @@ export default {
       const catastropheId = route.params.catastropheId;
       if (catastropheId) {
         const userId = localStorage.getItem('userId');
-        const newUrl = `/invite/${userId}/event/${catastropheId}`;
+        let newUrl = `/invite/${userId}/event/${catastropheId}`;
         document.getElementById('invitationLink').href = newUrl;
+
+        newUrl = `/catastrophes/close/${catastropheId}`;
+        document.getElementById('closeCatastropheLink').href = newUrl;
 
         fetchCatastrophe(catastropheId);
       }

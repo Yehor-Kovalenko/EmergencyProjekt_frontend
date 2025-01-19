@@ -11,6 +11,7 @@ import ReportResourcesView from "@/views/ReportResourcesView.vue";
 import ReportVolunteersView from "@/views/ReportVolunteersView.vue";
 import ReportCatastropheView from "@/views/ReportCatastropheView.vue";
 import CatastropheLookup from '@/components/events/CatastropheLookup.vue'
+import CloseCatastrophe from '@/components/events/CloseCatastrophe.vue'
 import EditHelpRequest from '@/components/events/EditHelpRequest.vue'
 import HelpRequestForm from '@/components/events/HelpRequestForm.vue'
 import HelpRequestLookup from '@/components/events/HelpRequestLookup.vue'
@@ -145,6 +146,11 @@ const router = createRouter({
       component: CatastropheLookup,
     },
     {
+      path: '/catastrophes/close/:catastropheId',
+      name: 'CloseCatastrophe',
+      component: CloseCatastrophe,
+    },
+    {
       path: '/help-request/edit/:uniqueCode',
       name: 'EditHelpRequest',
       component: EditHelpRequest,
@@ -169,24 +175,6 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
-  const accessToken = localStorage.getItem('accessToken')
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
-  if (requiresAuth && !accessToken) {
-    next({ name: 'auth'})
-  }
-  
-  const decoded = jwtDecode(accessToken)
-
-  if (!to.meta.role) {
-    next()
-  } else if (to.meta.role.includes(decoded.role)) {
-    next()
-  } else {
-    alert('Nie masz uprawnień do tej funkcjonalności')
-    return
-  }
-})
 
 export default router;
