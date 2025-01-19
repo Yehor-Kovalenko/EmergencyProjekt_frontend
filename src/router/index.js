@@ -6,10 +6,7 @@ import Messages from '../components/Messages.vue'
 import ReportView from "@/views/ReportView.vue";
 import ReportTypeView from "@/views/ReportTypeView.vue";
 import ReportDateView from "@/views/ReportDateView.vue";
-import ReportGiverView from "@/views/ReportGiverView.vue";
-import ReportResourcesView from "@/views/ReportResourcesView.vue";
-import ReportVolunteersView from "@/views/ReportVolunteersView.vue";
-import ReportCatastropheView from "@/views/ReportCatastropheView.vue";
+import ReportPage from '@/components/ReportPage.vue';
 import CatastropheLookup from '@/components/events/CatastropheLookup.vue'
 import CloseCatastrophe from '@/components/events/CloseCatastrophe.vue'
 import EditHelpRequest from '@/components/events/EditHelpRequest.vue'
@@ -116,11 +113,12 @@ const router = createRouter({
         requiresAuth: false,
       }
     },
+    // RAPORTOWANIE
     {
       path: '/report',
       name: 'report',
       component: ReportView,
-      meta: {
+      meta: { 
         requiresAuth: true,
         role: ['OFFICIAL', 'NGO']
       }
@@ -138,7 +136,7 @@ const router = createRouter({
       path: '/report-date',
       name: 'report-date',
       component: ReportDateView,
-      meta: {
+      meta: { 
         requiresAuth: true,
         role: ['OFFICIAL', 'NGO']
       }
@@ -146,17 +144,17 @@ const router = createRouter({
     {
       path: '/report-giver',
       name: 'report-giver',
-      component: ReportGiverView,
-      meta: {
+      component: ReportPage,
+      meta: { 
         requiresAuth: true,
-        role: ['GIVER', 'NGO']
+        role: ['GIVER',]
       }
     },
     {
       path: '/report-resources-view',
       name: 'resources-view',
-      component: ReportResourcesView,
-      meta: {
+      component: ReportPage,
+      meta: { 
         requiresAuth: true,
         role: ['OFFICIAL', 'NGO']
       }
@@ -164,8 +162,8 @@ const router = createRouter({
     {
       path: '/report-volunteers-view',
       name: 'volunteers-view',
-      component: ReportVolunteersView,
-      meta: {
+      component: ReportPage,
+      meta: { 
         requiresAuth: true,
         role: ['OFFICIAL', 'NGO']
       }
@@ -173,8 +171,8 @@ const router = createRouter({
     {
       path: '/report-catastrophe-view',
       name: 'catastrophe-view',
-      component: ReportCatastropheView,
-      meta: {
+      component: ReportPage,
+      meta: { 
         requiresAuth: true,
         role: ['OFFICIAL', 'NGO']
       }
