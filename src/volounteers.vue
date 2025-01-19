@@ -18,13 +18,32 @@ import HelloWorld from "./components/HelloWorld.vue";
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/volounteers/1">volounters List</RouterLink>
+        <RouterLink to="/auth">Login</RouterLink>
+        <RouterLink to="/volounteers/1">volounteer info</RouterLink>
+        <RouterLink to="/mark/1"> mark volounteer</RouterLink>
         <RouterLink to="/volunteers/3/actions/1">test accept</RouterLink>
         <RouterLink
           :to="{ name: 'invite', params: { ngoId: '1', eventId: '1001' } }"
         >
           test invite
         </RouterLink>
+        <RouterLink ro="/messages">Message list</RouterLink>
+        <RouterLink to="/resource/getByholder/1">Get user's resources</RouterLink>
+        <RouterLink to="/resource/getByDestination/1">Get user's resources</RouterLink>
+        <RouterLink to="/report">Reports</RouterLink>
+        <RouterLink to="/report-type">Report type</RouterLink>
+        <RouterLink to="/report-date">Report date</RouterLink>
+        <RouterLink to="/report-giver">Report giver</RouterLink>
+        <RouterLink to="/report-resources-view">Report resources view</RouterLink>
+        <RouterLink to="/report-volunteers-view">Report volunteers view</RouterLink>
+        <RouterLink to="/report-catastrophe-view">Report catastrophe view</RouterLink>
+        <RouterLink to="/catastrophes/1"> Catastrophe lookup</RouterLink>
+        <RouterLink to="/help-request/edit/1"> Edit help request</RouterLink>
+        <RouterLink to="/help-request/create/1"> Create help request</RouterLink>
+        <RouterLink to="/help-request/lookup"> Lookup help request</RouterLink>
+        <RouterLink to="/map">Map</RouterLink>
+
+
       </nav>
     </div>
   </header>
