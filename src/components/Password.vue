@@ -12,6 +12,8 @@
 </template>
   
 <script>
+  import axios from '@/axiosConfig'
+  
   export default {
     name: 'Password',
     data() {
@@ -19,10 +21,21 @@
         email: '',
       };
     },
-    methods: {
-        handleSubmit() {
+    methods: {       
+        async handleSubmit() {
         console.log('Przypomnij hasło:', this.email);
-        // Wywołanie API dla logowania
+        
+        try {
+          const response = await axios.post('/auth/password-reset/request', {
+            email: this.email,
+          })
+
+          console.log('Link do zmiany hasła przesłany')
+
+        } catch (error) {
+          console.error('Błąd:', error)
+          alert('Nie udało się przesłać żadania. Spróbuj ponownie')
+        }
       },
     },
   };

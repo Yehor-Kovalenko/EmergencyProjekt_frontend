@@ -1,8 +1,21 @@
 <template>
-    <p>Thank you for Your availability info</p>
+    <p>{{translations[language].thanks}}</p>
 </template>
 
 <script>
+export default{
+setup(){
+  const translations = {
+      pl: {
+        thanks:"dziękujemy za informację",
+      },
+      en: {
+        thanks:"Thank you for Your availability info",
+      }
+    };
+    return translations;
+  },
+}
 </script>
   
   <style>

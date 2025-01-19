@@ -167,8 +167,7 @@
           const response = await axios.post('/auth/register', userData)
           
           console.log('Registration successful')
-          
-          this.$router.push('/auth')
+          alert('Registration successful')
 
         } catch (error) {
           console.error('Błąd rejestracji:', error)
