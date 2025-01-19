@@ -2,15 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ReportView from "@/views/ReportView.vue";
 import ReportTypeView from "@/views/ReportTypeView.vue";
 import ReportDateView from "@/views/ReportDateView.vue";
-import ReportGiverView from "@/views/ReportGiverView.vue";
-import ReportResourcesView from "@/views/ReportResourcesView.vue";
-import ReportVolunteersView from "@/views/ReportVolunteersView.vue";
-import ReportCatastropheView from "@/views/ReportCatastropheView.vue";
 import HomeView from '../views/HomeView.vue'
 import AuthView from '../views/AuthView.vue'
 import Messages from '../components/Messages.vue'
-import GiverResourcesReport from '@/components/GiverResourcesReport.vue';
-import CatastrophesReport from '@/components/CatastrophesReport.vue';
 import ReportPage from '@/components/ReportPage.vue';
 
 const router = createRouter({
