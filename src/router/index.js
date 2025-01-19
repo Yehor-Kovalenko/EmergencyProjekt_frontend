@@ -15,7 +15,6 @@ import EditHelpRequest from '@/components/events/EditHelpRequest.vue'
 import HelpRequestForm from '@/components/events/HelpRequestForm.vue'
 import HelpRequestLookup from '@/components/events/HelpRequestLookup.vue'
 import MapComponent from '@/components/events/MapComponent.vue'
-import Login from '@/components/Login.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
