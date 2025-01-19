@@ -26,35 +26,26 @@
 </template>
 
 <script>
+import { reportService } from '@/services/reportService';
+
+// GET DATA FROM BACKEND
 export default {
   name: "ReportCatastrophesView",
   data() {
     return {
       reportData: {
-        timestamp: "2025-01-18T14:09:17.935380433",
-        dateFrom: "2022-01-02",
-        dateTo: "2024-04-02",
-        data: [
-          {
-            id: 1,
-            type: "FLOOD",
-            longitude: 6232,
-            latitude: 9872,
-            reportedDate: "2025-01-18T14:04:24.631036",
-            active: false
-          },
-          {
-            id: 2,
-            type: "BAD_THING",
-            longitude: 6232,
-            latitude: 9872,
-            reportedDate: "2025-01-18T14:04:28.698986",
-            active: false
-          }
-        ],
-        reportType: "ARCHIVE_CATASTROPHES"
+        data: []
       }
     };
+  },
+  async created() {
+    // REPLACE WITH DATA FROM PREVIOUS PAGE
+    const reportType = 'ARCHIVE_CATASTROPHES';
+    const dateFrom = '2020-01-01';
+    const dateTo = '2026-01-01';
+
+    const url = '/report/getGovernment?reportType=' + reportType + '&dateFrom=' + dateFrom + '&dateTo=' + dateTo;
+    this.reportData = await reportService.fetchReport(url);
   }
 };
 </script>
