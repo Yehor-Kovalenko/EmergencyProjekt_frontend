@@ -27,7 +27,7 @@ import HelloWorld from "./components/HelloWorld.vue";
         >
           test invite
         </RouterLink>
-        <RouterLink ro="/messages">Message list</RouterLink>
+        <RouterLink to="/messages">Message list</RouterLink>
         <RouterLink to="/resource/getByholder/1">Get user's resources</RouterLink>
         <RouterLink to="/resource/getByDestination/1">Get user's resources</RouterLink>
         <RouterLink to="/report">Reports</RouterLink>
