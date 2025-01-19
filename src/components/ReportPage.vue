@@ -18,7 +18,7 @@
   import ReportHeader from '@/components/ReportHeader.vue';
   
   // These are your specialized “view” components. 
-  // Rename/organize them as you like (e.g., "CatastrophesReport" etc.)
+  import {ref} from 'vue';
   import GiverResourcesReport from '@/components/GiverResourcesReport.vue';
   import NgoResourcesReport from '@/components/NgoResourcesReport.vue';
   import CatastrophesReport from '@/components/CatastrophesReport.vue';
@@ -79,14 +79,20 @@
       this.dateFrom = query.dateFrom || '1900-01-01';
       this.dateTo = query.dateTo || '2100-01-01';
       this.giverId = query.giverId || null;
+
+      if (this.$route.path === '/report-giver') {
+        this.reportType = 'GIVER_RESOURCES';
+      }
   
       // Construct the endpoint URL(s)
       // You might want to unify this logic into a separate function or even
       // do a small “reportType -> url” mapping for clarity
       let url;
       if (this.reportType.includes('GIVER_RESOURCES')) {
-        // Example: /report/getGiver?giverId=...
-        url = `/report/getGiver?giverId=${this.giverId || '3'}`;
+        const fallbackGiverId = '3';
+        const userId = ref(localStorage.getItem('userId') || fallbackGiverId).value;
+        url = `/report/getGiver?giverId=${userId}`;
+        console.log(url);
       } else {
         // Example: /report/getGovernment?reportType=...&dateFrom=...&dateTo=...
         url = `/report/getGovernment?reportType=${this.reportType}&dateFrom=${this.dateFrom}&dateTo=${this.dateTo}`;

@@ -40,7 +40,7 @@
       giverId: 'Giver ID:',
       reportTypeMap: {
         ACTIVE_VOLUNTEERS: 'Active Volunteers',
-        ARCHIVE_VOLUNTEERS: 'Archived Volunteers',
+        ARCHIVE_VOLUNTEERS: 'Inactive Volunteers',
         ACTIVE_NGO_RESOURCES: 'Active NGO Resources',
         ARCHIVE_NGO_RESOURCES: 'Archived NGO Resources',
         ACTIVE_CATASTROPHES: 'Active Catastrophes',
@@ -56,7 +56,7 @@
       giverId: 'ID Darczyńcy:',
       reportTypeMap: {
         ACTIVE_VOLUNTEERS: 'Wolontariusze (aktywni)',
-        ARCHIVE_VOLUNTEERS: 'Wolontariusze (archiwalni)',
+        ARCHIVE_VOLUNTEERS: 'Wolontariusze (nieaktywni)',
         ACTIVE_NGO_RESOURCES: 'Zasoby NGO (aktywne)',
         ARCHIVE_NGO_RESOURCES: 'Zasoby NGO (archiwalne)',
         ACTIVE_CATASTROPHES: 'Katastrofy (aktywne)',
