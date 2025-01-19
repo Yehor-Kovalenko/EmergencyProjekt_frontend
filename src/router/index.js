@@ -10,6 +10,11 @@ import ReportGiverView from "@/views/ReportGiverView.vue";
 import ReportResourcesView from "@/views/ReportResourcesView.vue";
 import ReportVolunteersView from "@/views/ReportVolunteersView.vue";
 import ReportCatastropheView from "@/views/ReportCatastropheView.vue";
+import CatastropheLookup from '@/components/events/CatastropheLookup.vue'
+import EditHelpRequest from '@/components/events/EditHelpRequest.vue'
+import HelpRequestForm from '@/components/events/HelpRequestForm.vue'
+import HelpRequestLookup from '@/components/events/HelpRequestLookup.vue'
+import MapComponent from '@/components/events/MapComponent.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -139,6 +144,33 @@ const router = createRouter({
       name: 'catastrophe-view',
       component: ReportCatastropheView,
     },
+    {
+      path: '/catastrophes/:catastropheId',
+      name: 'CatastropheLookup',
+      component: CatastropheLookup,
+    },
+    {
+      path: '/help-request/edit/:uniqueCode',
+      name: 'EditHelpRequest',
+      component: EditHelpRequest,
+      props: true,
+    },
+    {
+      path: '/help-request/create/:catastropheId',
+      name: 'HelpRequestForm',
+      component: HelpRequestForm,
+      props: true,
+    },
+    {
+      path: '/help-request/lookup',
+      name: 'HelpRequestLookup',
+      component: HelpRequestLookup,
+    },
+    {
+      path: '/map',
+      name: 'MapComponent',
+      component: MapComponent,
+    }
   ],
 });
 
