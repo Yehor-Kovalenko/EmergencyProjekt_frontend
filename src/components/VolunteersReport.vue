@@ -1,6 +1,6 @@
 <template>
     <div class="volunteers-report">
-      <h1>Volunteers</h1>
+      <h1>{{ t.heading }}</h1>
   
       <div
         v-for="volunteerAndActions in reportData.data"
@@ -8,16 +8,30 @@
         class="volunteer-item"
       >
         <div class="volunteer-summary" @click="toggleExpand(volunteerAndActions.volunteer.id)">
-          <strong class="volunteer-name">Name: {{ volunteerAndActions.volunteer.firstName + " " + volunteerAndActions.volunteer.lastName }}</strong>
-          <span class="volunteer-active">Email: {{ volunteerAndActions.volunteer.email }}</span>
-          <span class="volunteer-rating">NGO ID: {{ volunteerAndActions.volunteer.organizationId }}</span>
-          <span class="volunteer-active">Available: {{ volunteerAndActions.volunteer.available ? 'Yes' : 'No' }}</span>
-          <span class="volunteer-active">Ready for Mark: {{ volunteerAndActions.volunteer.readyForMark ? 'Yes' : 'No' }}</span>
+          <strong class="volunteer-name">
+            {{ t.nameLabel }}: 
+            {{ volunteerAndActions.volunteer.firstName }} 
+            {{ volunteerAndActions.volunteer.lastName }}
+          </strong>
+          <span class="volunteer-email">
+            {{ t.emailLabel }}: {{ volunteerAndActions.volunteer.email }}
+          </span>
+          <span class="volunteer-ngo">
+            {{ t.ngoIdLabel }}: {{ volunteerAndActions.volunteer.organizationId }}
+          </span>
+          <span class="volunteer-available">
+            {{ t.availableLabel }}: 
+            {{ volunteerAndActions.volunteer.available ? t.yes : t.no }}
+          </span>
+          <span class="volunteer-ready">
+            {{ t.readyForMarkLabel }}: 
+            {{ volunteerAndActions.volunteer.readyForMark ? t.yes : t.no }}
+          </span>
         </div>
   
         <transition name="expand">
           <div v-if="expandedId === volunteerAndActions.volunteer.id" class="volunteer-actions">
-            <h3>Actions</h3>
+            <h3>{{ t.actionsHeading }}</h3>
   
             <table
               v-if="volunteerAndActions.actions && volunteerAndActions.actions.length"
@@ -25,25 +39,22 @@
             >
               <thead>
                 <tr>
-                  <th>Catastrophe ID</th>
-                  <th>Rating from Action</th>
-                  <th>Attendance</th>
+                  <th>{{ t.catastropheId }}</th>
+                  <th>{{ t.ratingFromAction }}</th>
+                  <th>{{ t.attendance }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="action in volunteerAndActions.actions" :key="action.actionId">
                   <td>{{ action.catastropheId }}</td>
                   <td>{{ action.ratingFromAction }}</td>
-                  <td>{{ action.attendance ? 'Yes' : 'No' }}</td>
+                  <td>{{ action.attendance ? t.yes : t.no }}</td>
                 </tr>
               </tbody>
             </table>
   
-            <p
-              v-else
-              class="no-actions"
-            >
-              No actions found for this volunteer.
+            <p v-else class="no-actions">
+              {{ t.noActions }}
             </p>
           </div>
         </transition>
@@ -51,26 +62,63 @@
     </div>
   </template>
   
-  <script>
-  export default {
-    name: 'VolunteersReport',
-    props: {
-      reportData: {
-        type: Object,
-        required: true
-      }
+  <script setup>
+  import { ref, computed } from 'vue';
+  
+  /** 1) Language handling. */
+  const language = ref(localStorage.getItem('language') || 'pl');
+  
+  /** 2) Translations. */
+  const translations = {
+    en: {
+      heading: 'Volunteers',
+      nameLabel: 'Name',
+      emailLabel: 'Email',
+      ngoIdLabel: 'NGO ID',
+      availableLabel: 'Available',
+      readyForMarkLabel: 'Ready for Mark',
+      yes: 'Yes',
+      no: 'No',
+      actionsHeading: 'Actions',
+      catastropheId: 'Catastrophe ID',
+      ratingFromAction: 'Rating from Action',
+      attendance: 'Attendance',
+      noActions: 'No actions found for this volunteer.'
     },
-    data() {
-      return {
-        expandedId: null
-      };
-    },
-    methods: {
-      toggleExpand(volunteerId) {
-        this.expandedId = (this.expandedId === volunteerId) ? null : volunteerId;
-      }
+    pl: {
+      heading: 'Wolontariusze',
+      nameLabel: 'Imię i Nazwisko',
+      emailLabel: 'Email',
+      ngoIdLabel: 'ID Organizacji',
+      availableLabel: 'Dostępny',
+      readyForMarkLabel: 'Gotowy do Oceny',
+      yes: 'Tak',
+      no: 'Nie',
+      actionsHeading: 'Akcje',
+      catastropheId: 'ID Katastrofy',
+      ratingFromAction: 'Ocena z Akcji',
+      attendance: 'Obecność',
+      noActions: 'Brak akcji dla tego wolontariusza.'
     }
   };
+  
+  /** 3) Computed translator. */
+  const t = computed(() => translations[language.value]);
+  
+  /** 4) Props. */
+  const props = defineProps({
+    reportData: {
+      type: Object,
+      required: true
+    }
+  });
+  
+  /** 5) Expand/collapse logic. */
+  const expandedId = ref(null);
+  
+  function toggleExpand(volunteerId) {
+    expandedId.value = (expandedId.value === volunteerId) ? null : volunteerId;
+  }
   </script>
   
   <style scoped>
@@ -111,11 +159,18 @@
   .volunteer-name {
     color: #555;
   }
-  .volunteer-rating {
+  .volunteer-email {
     color: #666;
   }
-  .volunteer-active {
+  .volunteer-ngo {
+    color: #666;
+  }
+  .volunteer-available {
     margin-left: auto;
+    color: #666;
+  }
+  .volunteer-ready {
+    color: #666;
   }
   
   /* Expanded "actions" container */

@@ -1,6 +1,7 @@
 <template>
     <div class="catastrophes-report">
-      <h1>Catastrophes</h1>
+      <!-- Localized heading for the entire list of catastrophes -->
+      <h1>{{ t.catastrophesHeading }}</h1>
   
       <div
         v-for="catastrophe in reportData.data"
@@ -8,36 +9,41 @@
         class="catastrophe-item"
       >
         <div class="catastrophe-summary" @click="toggleExpand(catastrophe.id)">
-          <!-- Basic catastrophe fields displayed -->
           <strong class="catastrophe-type">{{ catastrophe.type }}</strong>
           <span class="coordinates">
             (Longitude: {{ catastrophe.longitude }}, Latitude: {{ catastrophe.latitude }})
           </span>
-          <span class="reported-date">Reported On: {{ catastrophe.reportedDate.split('T')[0] + ", ID: " + catastrophe.id}}</span>
-          <span class="active-status">Active: {{ catastrophe.active ? 'Yes' : 'No' }}</span>
+          <span class="reported-date">
+            <!-- e.g. "Reported On: 2025-01-01, ID: 123" -->
+            {{ t.reportedOn }}: {{ catastrophe.reportedDate.split('T')[0] }},
+            {{ t.id }}: {{ catastrophe.id }}
+          </span>
+          <span class="active-status">
+            {{ t.active }}: {{ catastrophe.active ? t.yes : t.no }}
+          </span>
         </div>
   
-        <!-- Show the help requests if expanded -->
+        <!-- Expand area for help requests -->
         <transition name="expand">
           <div v-if="expandedId === catastrophe.id" class="help-requests-container">
-            <h3>Help Requests</h3>
+            <h3>{{ t.helpRequestsHeading }}</h3>
   
-            <!-- If there's no helpRequests array or it's empty, you can conditionally show a fallback -->
+            <!-- If helpRequests exist, render a table. Otherwise, show a fallback message. -->
             <table
               v-if="catastrophe.helpRequests && catastrophe.helpRequests.length"
               class="help-requests-table"
             >
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Email</th>
-                  <th>Email Language</th>
-                  <th>Description</th>
-                  <th>Status</th>
-                  <th>Unique Code</th>
-                  <th>Reported Date</th>
+                  <th>{{ t.id }}</th>
+                  <th>{{ t.firstName }}</th>
+                  <th>{{ t.lastName }}</th>
+                  <th>{{ t.email }}</th>
+                  <th>{{ t.emailLanguage }}</th>
+                  <th>{{ t.description }}</th>
+                  <th>{{ t.status }}</th>
+                  <th>{{ t.uniqueCode }}</th>
+                  <th>{{ t.reportedDate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -58,11 +64,8 @@
               </tbody>
             </table>
   
-            <p
-              v-else
-              class="no-help-requests"
-            >
-              No help requests for this catastrophe.
+            <p v-else class="no-help-requests">
+              {{ t.noHelpRequests }}
             </p>
           </div>
         </transition>
@@ -70,33 +73,75 @@
     </div>
   </template>
   
-  <script>
-  export default {
-    name: 'CatastrophesReport',
-    props: {
-      reportData: {
-        type: Object,
-        required: true
-      }
+  <script setup>
+  import { ref, computed } from 'vue';
+  
+  /** 1) TRACK USER'S CURRENT LANGUAGE (Polish by default). */
+  const language = ref(localStorage.getItem('language') || 'pl');
+  
+  /**
+   * 2) TRANSLATIONS DICTIONARY:
+   *    Adjust or expand these keys/values to match your needs.
+   */
+  const translations = {
+    pl: {
+      catastrophesHeading: 'Katastrofy',
+      reportedOn: 'Data Zgłoszenia',
+      active: 'Aktywna',
+      yes: 'Tak',
+      no: 'Nie',
+      helpRequestsHeading: 'Prośby o pomoc',
+      noHelpRequests: 'Brak próśb o pomoc dla tej katastrofy.',
+      id: 'ID',
+      firstName: 'Imię',
+      lastName: 'Nazwisko',
+      email: 'Email',
+      emailLanguage: 'Język Emaila',
+      description: 'Opis',
+      status: 'Status',
+      uniqueCode: 'Kod Unikatowy',
+      reportedDate: 'Data Zgłoszenia'
     },
-    data() {
-      return {
-        expandedId: null
-      };
-    },
-    methods: {
-      toggleExpand(catastropheId) {
-        this.expandedId = (this.expandedId === catastropheId) ? null : catastropheId;
-      }
+    en: {
+      catastrophesHeading: 'Catastrophes',
+      reportedOn: 'Reported On',
+      active: 'Active',
+      yes: 'Yes',
+      no: 'No',
+      helpRequestsHeading: 'Help Requests',
+      noHelpRequests: 'No help requests for this catastrophe.',
+      id: 'ID',
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      email: 'Email',
+      emailLanguage: 'Email Language',
+      description: 'Description',
+      status: 'Status',
+      uniqueCode: 'Unique Code',
+      reportedDate: 'Reported Date'
     }
   };
+  
+  /** 3) A computed reference to the correct translation object. */
+  const t = computed(() => translations[language.value]);
+  
+  /** 4) PROPS: We'll receive `reportData` from the parent. */
+  defineProps({
+    reportData: {
+      type: Object,
+      required: true
+    }
+  });
+  
+  /** 5) Expand/Collapse logic: track which catastrophe is expanded. */
+  const expandedId = ref(null);
+  
+  function toggleExpand(catastropheId) {
+    expandedId.value = (expandedId.value === catastropheId) ? null : catastropheId;
+  }
   </script>
   
   <style scoped>
-  /* 
-    Mild, neutral palette with simple, light backgrounds and subtle borders.
-  */
-  
   .catastrophes-report {
     padding: 16px;
     font-family: Arial, sans-serif;
@@ -104,13 +149,12 @@
     background-color: #fdfdfd; /* overall light background */
   }
   
-  /* Header */
   .catastrophes-report > h1 {
     margin-bottom: 20px;
     color: #444; /* slightly darker for headings */
   }
   
-  /* Individual catastrophe container */
+  /* Each catastrophe container */
   .catastrophe-item {
     border: 1px solid #ddd;
     margin: 16px 0;
