@@ -1,15 +1,15 @@
 <template>
     <div>
-      <h2>Logowanie</h2>
+      <h2>{{ translations[language].pageName }}</h2>
 
       <form @submit.prevent="handleLogin">
         <div>
-          <label for="username">Login</label>
+          <label for="username">{{ translations[language].login }}</label>
           <input id="username" v-model="username" type="text" required />
         </div>
         
         <div>
-          <label for="password">Hasło</label>
+          <label for="password">{{ translations[language].password }}</label>
           <input id="password" v-model="password" type="password" required />
         </div>
         
@@ -23,6 +23,20 @@
 
   export default {
     name: 'Login',
+    setup(){
+      const translations = {
+        pl: {
+          pageName: 'Logowanie',
+          login: 'Login',
+          password: 'Hasło'
+        }, 
+        en: {
+          pageName: 'Log In',
+          login: 'Login',
+          password: 'Password'
+        }
+      }
+    },
     data() {
       return {
         username: '',

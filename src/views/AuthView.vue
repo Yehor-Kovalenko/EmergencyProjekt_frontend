@@ -1,12 +1,13 @@
 <template>
     <div class="auth-container">
       <div class="buttons">
-        <button @click="currentView = 'Login'">Logowanie</button>
-        <button @click="currentView = 'Register'">Rejestracja</button>
+        <button @click="currentView = 'Login'">{{ translations[language].loginButton }}</button>
+        <button @click="currentView = 'Register'">{{ translations[language].registerButton }}</button>
       </div>
   
       <component :is="currentView" />
-      <p v-if="currentView === 'Login'" @click="currentView = 'Password'">Nie pamiętam hasła</p>
+      <p v-if="currentView === 'Login'" @click="currentView = 'Password'">
+        {{ translations[language].forgotten }}</p>
     </div>
 </template>
   
@@ -21,6 +22,20 @@
       Login,
       Register,
       Password,
+    },
+    setup(){
+      const translations = {
+        pl: {
+          loginButton: 'Logowanie',
+          registerButton: 'Rejestracja',
+          forgotten: 'Nie pamiętam hasła'
+        }, 
+        en: {
+          loginButton: 'Log in',
+          registerButton: 'Register',
+          forgotten: 'Forgot password?'
+        }
+      }
     },
     data() {
       return {
