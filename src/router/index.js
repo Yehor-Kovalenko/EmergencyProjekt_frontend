@@ -29,7 +29,9 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
-      meta: { requiresAuth: false }
+      meta: { 
+        requiresAuth: false 
+      }
     },
     {
       path: "/about",
@@ -59,7 +61,10 @@ const router = createRouter({
       path: "/thanks",
       name: "thank volunteer",
       component: () => import("../views/thanksView.vue"),
-      meta: { requiresAuth: true }
+      meta: { 
+        requiresAuth: true,
+        role: ['VOLUNTEER']
+      }
     },
     {
       path: "/invite/:ngoId/event/:eventId",
@@ -140,6 +145,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const accessToken = localStorage.getItem('accessToken')
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+
+
 
   if (requiresAuth && !accessToken) {
     next({ name: 'auth'})
