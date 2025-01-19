@@ -175,6 +175,25 @@ const router = createRouter({
   ],
 });
 
+router.beforeEach((to, from, next) => {
+  const accessToken = localStorage.getItem('accessToken')
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
+  if (requiresAuth && !accessToken) {
+    next({ name: 'auth'})
+  }
+  
+  let decoded = null;
+  try {
+    if (accessToken) {
+      decoded = jwtDecode(accessToken)
+    }
+  } catch (error) {
+    console.error('Invalid Token:', error)
+    localStorage.removeItem('accessToken')  // Remove invalid token
+    next({ name: 'auth' })  // Redirect to login
+    return
+  }
+});
 
 export default router;
