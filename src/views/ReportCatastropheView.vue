@@ -40,9 +40,10 @@ export default {
   },
   async created() {
     // REPLACE WITH DATA FROM PREVIOUS PAGE
-    const reportType = 'ARCHIVE_CATASTROPHES';
-    const dateFrom = '2020-01-01';
-    const dateTo = '2026-01-01';
+    const query = this.$route.query;
+    const reportType = query.reportType || 'ARCHIVE_CATASTROPHES';
+    const dateFrom = query.dateFrom || '2020-01-01';
+    const dateTo = query.dateTo || '2026-01-01';
 
     const url = '/report/getGovernment?reportType=' + reportType + '&dateFrom=' + dateFrom + '&dateTo=' + dateTo;
     this.reportData = await reportService.fetchReport(url);

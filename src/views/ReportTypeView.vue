@@ -18,6 +18,13 @@ export default {
     goToReport(reportType) {
       // Navigate to the corresponding report view based on the provided reportType
       this.$router.push({name: reportType});
+    this.$router.push({
+      name: reportType,
+      query: {
+        dateFrom: this.$route.query.dateFrom,
+        dateTo: this.$route.query.dateTo
+      }
+    });
     }
   }
 };
