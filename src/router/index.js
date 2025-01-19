@@ -15,6 +15,7 @@ import EditHelpRequest from '@/components/events/EditHelpRequest.vue'
 import HelpRequestForm from '@/components/events/HelpRequestForm.vue'
 import HelpRequestLookup from '@/components/events/HelpRequestLookup.vue'
 import MapComponent from '@/components/events/MapComponent.vue'
+import Login from '@/components/Login.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,11 +43,6 @@ const router = createRouter({
       meta: {
         requiresAuth: false
       },
-      children: [
-        { path: 'register', component: Register },
-        { path: 'login', component: Login },
-        { path: 'password', component: Password },
-      ],
     },
     {
       path: "/volounteers/:id",
@@ -187,7 +183,8 @@ const router = createRouter({
       name: 'CatastropheLookup',
       component: CatastropheLookup,
       meta: {
-        requiresAuth: false
+        requiresAuth: true,
+        role: ['NGO']
       }
     },
     {
