@@ -101,41 +101,65 @@ const router = createRouter({
       path: '/report',
       name: 'report',
       component: ReportView,
-      meta: { requiresAuth: false }
-      // autoryzachje - potem zmienic na true
+      meta: { 
+        requiresAuth: true,
+        role: ['OFFICIAL', 'NGO']
+      }
 
     },
     {
       path: '/report-type',
       name: 'report-type',
       component: ReportTypeView,
+      meta: { 
+        requiresAuth: true,
+        role: ['OFFICIAL', 'NGO']
+      }
     },
     {
       path: '/report-date',
       name: 'report-date',
       component: ReportDateView,
+      meta: { 
+        requiresAuth: true,
+        role: ['OFFICIAL', 'NGO']
+      }
     },
     {
       path: '/report-giver',
       name: 'report-giver',
       component: ReportPage,
-      meta: { requiresAuth: false }
-      // autoryzachje - potem zmienic na true
+      meta: { 
+        requiresAuth: true,
+        role: ['GIVER']
+      }
     },
     {
       path: '/report-resources-view',
       name: 'resources-view',
       component: ReportPage,
+      meta: { 
+        requiresAuth: true,
+        role: ['OFFICIAL', 'NGO']
+      }
     },
     {
       path: '/report-volunteers-view',
       name: 'volunteers-view',
       component: ReportPage,
+      meta: { 
+        requiresAuth: true,
+        role: ['OFFICIAL', 'NGO']
+      }
     },
     {
       path: '/report-catastrophe-view',
       name: 'catastrophe-view',
       component: ReportPage,
+      meta: { 
+        requiresAuth: true,
+        role: ['OFFICIAL', 'NGO']
+      }
     },
     {
       path: '/catastrophes/:catastropheId',
