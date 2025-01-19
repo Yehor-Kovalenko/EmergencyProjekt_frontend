@@ -16,6 +16,7 @@ import EditHelpRequest from '@/components/events/EditHelpRequest.vue'
 import HelpRequestForm from '@/components/events/HelpRequestForm.vue'
 import HelpRequestLookup from '@/components/events/HelpRequestLookup.vue'
 import MapComponent from '@/components/events/MapComponent.vue'
+import { tSExpressionWithTypeArguments } from '@babel/types'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -191,6 +192,10 @@ const router = createRouter({
       path: '/catastrophes/close/:catastropheId',
       name: 'CloseCatastrophe',
       component: CloseCatastrophe,
+      meta: {
+        requiresAuth: true,
+        role: ['NGO']
+      }
     },
     {
       path: '/help-request/edit/:uniqueCode',
