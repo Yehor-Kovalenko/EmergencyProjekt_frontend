@@ -1,15 +1,15 @@
 <template>
   <div>
-    <h2>Lista zasobów</h2>
+    <h2> {{translations[language].heading}} </h2>
     <table>
       <thead>
       <tr>
-        <th>Data rejestracji</th>
-        <th>Typ</th>
-        <th>Opis</th>
-        <th>Status</th>
-        <th>Ilość</th>
-        <th>Przeznaczenie</th>
+        <th>{{translations[language].date}}</th>
+        <th>{{translations[language].type}}</th>
+        <th>{{translations[language].description}}</th>
+        <th>{{translations[language].description}}</th>
+        <th>{{translations[language].amount}}</th>
+        <th>{{translations[language].destination}}</th>
       </tr>
       </thead>
       <tbody>
@@ -21,14 +21,14 @@
         <td>{{ resource.amount }}</td>
         <span v-if="resource.destinationId">
             {{ getCatastropheById(resource.destinationId)?.type }} - 
-            {{ getCatastropheById(resource.destinationId)?.location || 'Nieznane położenie' }}
+            {{ getCatastropheById(resource.destinationId)?.location || translations[language].unknown_location }}
         </span>
       </tr>
       </tbody>
     </table>
     <!-- Przycisk do zarządzania zasobami -->
     <button class="manage-resources-button" @click="toggleResourceForm">
-      Zarządzanie zasobami
+      {{translations[language].resource_management}}
     </button>
 
     <!-- Dynamiczne renderowanie ResourceForm -->
@@ -43,8 +43,38 @@ import ResourceForm from './ResourceForm.vue';
 export default {
   name: 'ResourceList',
   components: { ResourceForm },
+  setup() {
+    const userid = localStorage.getItem('userId');
+      const translations = {
+        'pl': {
+          heading: 'Lista zasobów',
+          date: 'Data rejestracji',
+          type: 'Typ',
+          description: 'Opis',
+          status: 'Status',
+          amount: 'Ilość',
+          destination: 'Przeznaczenie',
+          unknown_location: 'Nieznane położenie',
+          resource_management: 'Zarządzanie zasobami',          
+        },
+        en: {
+          heading: 'Resource list',
+          date: 'Registration date',
+          type: 'Type',
+          description: 'Description',
+          status: 'Status',
+          amount: 'Amount',
+          destination: 'Destination',
+          unknown_location: 'Unknown location',          
+        },
+      };
+      return { translations };
+    },
   data() {
     return {
+      language : localStorage.getItem('language'),
+      userid: localStorage.getItem('userId'),
+      //language: 'pl',
       resources: [], // Tablica zasobów
       showResourceForm: false,
       catastrophes: [], // Tablica katastrof
@@ -55,8 +85,14 @@ export default {
       this.showResourceForm = !this.showResourceForm;
     },
     fetchResources() {
+      console.log(this.userid);
+      console.log(localStorage.getItem('accessToken'));
       axios
-        .get('resource/getByholder/1')
+        .get(`resource/getByholder/${localStorage.getItem('userId')}`, {
+          headers: {
+            Authorization: `${localStorage.getItem('accessToken')}`, // Zastąp 'authToken' poprawną nazwą
+          },
+        })
         .then((response) => {
           // Przypisz dane do tablicy resources
           this.resources = response.data;
@@ -105,10 +141,24 @@ export default {
     },
 
   },
-  mounted() {
+  updated() {
     // Pobierz dane po załadowaniu komponentu
     this.fetchResources();
     this.loadCatastrophes();
+  },
+  mounted() {
+    /*
+     //roboczo
+     localStorage.setItem('userId', 1);
+    localStorage.setItem('role', 'NGO');
+    */
+    localStorage.setItem('language', 'pl');
+    console.log(localStorage.getItem('role'));
+    // Pobierz dane po załadowaniu komponentu
+    this.fetchResources();
+    this.loadCatastrophes();
+    
+
   },
 };
 </script>

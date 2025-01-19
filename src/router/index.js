@@ -40,7 +40,7 @@ const router = createRouter({
       path: "/about",
       name: "about",
       component: () => import("../views/AboutView.vue"),
-      meta: { requiresAuth: true }
+      //meta: { requiresAuth: true }
     },
     {
       path: "/volounteers/:id",
@@ -91,20 +91,20 @@ const router = createRouter({
     },
     {
       path: "/resource/getByholder/:id",
-      name: "userResources",
+      name: "UserResources",
       component: () => import("../views/UserResourcesView.vue"),
-      /*meta: { 
+      meta: { 
         requiresAuth: true,
         role: ['GIVER','OFFICIAL', 'NGO'] 
-      }*/
+      }
     },
     {
       path: "/resource/getBydestination/:id",
-      name: "destinationResources",
+      name: "ResourcesToCatastrophe",
       component: () => import("../views/ResourcesToCatastropheView.vue"),
-      /*meta: { 
+      meta: { 
         requiresAuth: false, 
-      }*/
+      }
     },
     {
       path: '/report',
@@ -176,18 +176,20 @@ const router = createRouter({
   ],
 });
 
+/*
 router.beforeEach((to, from, next) => {
-  const accessToken = localStorage.getItem('jwtToken')
-  //console.log(localStorage.getItem('accessToken'))
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const accessToken = localStorage.getItem('accessToken')
+  console.log(localStorage.getItem('accessToken'))
+  //const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
+  /*
   if (requiresAuth && !accessToken) {
     next({ name: 'auth'})
   }
-  
+  */
   //console.log(jwtDecode(accessToken))
   //const decoded = jwtDecode(accessToken)
-
+/*
   if (!to.meta.role) {
     next()
   } else if (to.meta.role.includes(decoded.role)) {
@@ -198,4 +200,8 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+  next()
+})
+
+*/
 export default router;

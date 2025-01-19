@@ -1,97 +1,102 @@
 <template>
     <h2 v-if="showForm || showDonateForm">
-      {{ showForm ? 'Dodaj zasób' : 'Przekaż zasób' }}
+      {{ showForm ? translations[language].add_resource :  translations[language].donate_resource }}
     </h2>
     <div class="resource-form-container">
-    <h2>Zarządzanie zasobami</h2>
+    <h2>{{ translations[language].heading }}</h2>
 
     <div>
     <!-- Formularz dodawania zasobu do katastrofy -->
     <form v-if="showForm" @submit.prevent="submitForm">
       <div>
-        <label>Typ:</label>
+        <label>{{ translations[language].type }}</label>
         <select v-model="form.type">
           <option v-for="type in resourceTypes" :key="type" :value="type">{{ type }}</option>
         </select>
       </div>
       <div>
-        <label>Opis:</label>
+        <label>{{ translations[language].description }}:</label>
           <input type="text" v-model="form.description" />
         </div>
           <!---<input type="number" v-model.number="form.destinationId" required /> -->
           <!--- WYBÓR KATASTROFY Z LISTY -->
           <div>
-            <label>Przeznaczenie:</label>
+            <label>{{ translations[language].destination }}</label>
             <select v-model.number="form.destinationId" @change="loadCatastrophes">
               <option
                 v-for="catastrophe in catastrophes"
                 :key="catastrophe.id"
                 :value="catastrophe.id"
               >
-              {{ catastrophe.type }} - {{ catastrophe.location || 'Pobieranie położenia...' }}
+              {{ catastrophe.type }} - {{ catastrophe.location || translations[language].loading }}
               </option>
             </select>
           </div>
       <div>
-        <label>Ilość:</label>
+        <label>{{ translations[language].amount }}</label>
         <input type="number" v-model.number="form.amount" required min="1" />
       </div>
       <div>
-        <label>Właściciel:</label>
+        <label>{{ translations[language].holder }}</label>
         <input type="text" :value="username" required disabled />
       </div>
-      <button type="submit">Dodaj</button>
-      <button type="button" @click="cancelForm">Anuluj</button>
+      <button type="submit">{{ translations[language].add }}</button>
+      <button type="button" @click="cancelForm">{{ translations[language].cancel }}</button>
     </form>
   </div>
 
     <!-- Formularz przekazania zasobu -->
     <form v-if="showDonateForm" @submit.prevent="submitDonateForm">
       <div>
-        <label>Typ:</label>
+        <label>{{ translations[language].type }}</label>
         <select v-model="form.type">
           <option v-for="type in resourceTypes" :key="type" :value="type">{{ type }}</option>
         </select>
       </div>
       <div>
-        <label>Opis:</label>
+        <label>{{ translations[language].description }}</label>
         <input type="text" v-model="form.description" />
       </div>
       <div>
-        <label>Ilość:</label>
+        <label>{{ translations[language].amount }}</label>
         <input type="number" v-model.number="form.amount" required min="1" />
       </div>
       <div>
-        <label>Wybierz organizację, której chcesz przekazać zasób:</label>
+        <label>{{ translations[language].choose_org }}</label>
+        <div v-if="userRole==='NGO'">
+          <input type="text" :value="username" required disabled />
+        </div>
+        <div v-else>
         <!--- WYBÓR ORGANIZACJI LUB WŁADZ Z LISTY -->
           <select v-model.number="form.holderId" required>
-            <optgroup label="Officials">
+            <optgroup :label= "translations[language].official">
               <option v-for="official in officials" :key="official.id" :value="official.id">
                 {{ official.name }}
               </option>
             </optgroup>
-            <optgroup label="NGOs">
+            <optgroup :label="translations[language].ngo">
               <option v-for="ngo in ngos" :key="ngo.id" :value="ngo.id">
                 {{ ngo.name }}
               </option>
             </optgroup>
           </select>
+        </div>
       </div>
-      <button type="submit">Przekaż</button>
-      <button type="button" @click="cancelForm">Anuluj</button>
+      <button type="submit">{{ translations[language].donate }}</button>
+      <button type="button" @click="cancelForm">{{ translations[language].cancel }}</button>
     </form>
 
     <!-- Tabela zasobów -->
     <table v-if="!showForm && !showDonateForm">
       <thead>
         <tr>
-          <th>Data rejestracji</th>
-          <th>Typ</th>
-          <th>Opis</th>
-          <th>Status</th>
-          <th>Ilość</th>
-          <th>Przeznaczenie</th>
-          <th v-if="isRoleValid">Akcje</th>
+          <th>{{ translations[language].date }}</th>
+          <th>{{ translations[language].type }}</th>
+          <th>{{ translations[language].description }}</th>
+          <th>{{ translations[language].status }}</th>
+          <th>{{ translations[language].amount }}</th>
+          <th>{{ translations[language].destination }}</th>
+          <th v-if="isNgoOrOfficial">{{ translations[language].actions }}</th>
         </tr>
       </thead>
       <tbody>
@@ -104,14 +109,15 @@
           <!--<td>{{ resource.destinationId }}</td>-->
           <span v-if="resource.destinationId">
             {{ getCatastropheById(resource.destinationId)?.type }} - 
-            {{ getCatastropheById(resource.destinationId)?.location || 'Nieznane położenie' }}
+            {{ getCatastropheById(resource.destinationId)?.location || translations[language].unknown_destination  }}
         </span>
-        <span v-else>Brak przypisanego przeznaczenia</span>
+        <span v-else>{{ translations[language].no_destination }}</span>
 
-          <td v-if="isRoleValid">
-            <button  @click="openStatusMenu(resource.id)">Zmień status</button>
-            <button v-if="resource.destinationId === null" @click="openDestinationForm(resource.id)">Dodaj przeznaczenie</button>
-          </td>
+        <td v-if="isRoleValid">
+          <button @click="openStatusMenu(resource.id)">{{ translations[language].change_status }}</button>
+          <button v-if="resource.destinationId === null" @click="openDestinationForm(resource.id)">{{ translations[language].add_destination }}</button>
+        </td>
+
         </tr>
       </tbody>
     </table>
@@ -120,25 +126,32 @@
     <div v-if="!showForm && !showDonateForm">
       <button
         @click="openForm"
-        @mouseover="tooltip = 'Przekaż zasób na rzecz wybranej katastrofy'"
+        @mouseover="tooltip =  translations[language].add_tooltip "
         @mouseleave="tooltip = ''"
       >
-        Dodaj zasób
+      {{ translations[language].add_resource }}
       </button>
-      <button
+      <button v-if="userRole === 'NGO' || userRole === 'OFFICIAL'"
         @click="openDonateForm"
-        @mouseover="tooltip = 'Przekaż zasób wybranej organizacji pomocowej bądź władzom'"
+        @mouseover="tooltip =  translations[language].add_without_destination_tooltip "
         @mouseleave="tooltip = ''"
       >
-        Przekaż zasób
+      {{ translations[language].add_without_destination }}
+      </button>
+      <button v-if="userRole !== 'NGO'"
+        @click="openDonateForm"
+        @mouseover="tooltip =  translations[language].donate_tooltip "
+        @mouseleave="tooltip = ''"
+      >
+      {{ translations[language].donate_resource }}
       </button>
       <div v-if="tooltip" class="tooltip">{{ tooltip }}</div>
-      <button @click="$emit('close')">Zamknij</button>
+      <button @click="$emit('close')">{{ translations[language].close }}</button>
     </div>
 
     <!-- Menu zmiany statusu -->
     <div v-if="showStatusMenu">
-      <h3>Zmień status zasobu</h3>
+      <h3>{{ translations[language].change_status }}</h3>
       <select v-model="selectedStatus">
         <option v-for="status in resourceStatuses" :key="status" :value="status" :disabled="isStatusDisabled(status)">
           {{ status }}
@@ -147,11 +160,11 @@
       <button
         @click="changeStatus" 
         :disabled="isStatusDisabled(selectedStatus)"
-        @mouseover="isStatusDisabled(selectedStatus) ? tooltip = 'Nie możesz zmienić statusu tego zasobu' : tooltip = ''"
+        @mouseover="isStatusDisabled(selectedStatus) ? tooltip = translations[language].status_disabled_tooltip : tooltip = ''"
         @mouseleave="tooltip = ''">
-        Zapisz status
+        {{ translations[language].save_status }}
       </button>
-      <button @click="closeStatusMenu">Anuluj</button>
+      <button @click="closeStatusMenu">{{ translations[language].cancel }}</button>
     </div>
 
 <!-- Tooltip -->
@@ -160,11 +173,11 @@
 
     <!-- Menu zmiany destinationId -->
     <div v-if="showDestinationMenu">
-      <h3>Wprowadź nowe przeznaczenie zasobu</h3>
-      <label>Nowe destinationId:</label>
+      <h3>{{ translations[language].new_destination_heading }}</h3>
+      <label>{{ translations[language].new_destination }}</label>
       <input type="number" v-model.number="newDestinationId" required />
-      <button @click="updateDestinationId">Zapisz zmiany</button>
-      <button @click="closeDestinationMenu">Anuluj</button>
+      <button @click="updateDestinationId">{{ translations[language].save_changes }}</button>
+      <button @click="closeDestinationMenu">{{ translations[language].cancel }}</button>
     </div>
 
   </div>
@@ -175,8 +188,87 @@
   import axios from 'axios';
   export default {
     name: 'ResourceForm',
+    setup() {
+      //language = localStorage.getItem('language');
+      const translations = {
+        pl: {
+          heading: 'Zarządzanie zasobami',
+          add_resource: 'Dodaj zasób',
+          donate_resource: 'Przekaż zasób',
+          type: 'Typ',
+          description: 'Opis',
+          destination: 'Przeznaczenie',
+          amount: 'Ilość',
+          holder: 'Właściciel',
+          add: 'Dodaj',
+          cancel: 'Anuluj',
+          donate: 'Przekaż',
+          choose_org: 'Wybierz organizację której chcesz przekazać zasób: ',
+          official: 'Władze',
+          ngo: 'NGO',
+          actions: 'Akcje',
+          status: 'Status',
+          change_status: 'Zmień status zasobu',
+          save_status: 'Zapisz status',
+          add_destination: 'Dodaj przeznaczenie',
+          new_destination_heading: 'Wprowadź nowe przeznaczenie zasobu',
+          new_destination: 'Nowe przeznanie',
+          save_changes: 'Zapisz zmiany',
+          no_destination: 'Brak przypisanego przeznaczenia',
+          date: 'Data rejestracji',
+          change_status: 'Zmień status',
+          save_status: 'Zapisz status',
+          add_tooltip: 'Przekaż zasób na rzecz wybranej katastrofy',
+          donate_tooltip: 'Przekaż zasób wybranej organizacji pomocowej bądź władzom',
+          close: 'Zamknij',
+          loading: 'Pobieranie położenia...',
+          status_disabled_tooltip: 'Nie możesz wybrać tego statusu dla tego zasobu',
+          unknown_destination: 'Nieznane położenie',
+          add_without_destination_tooltip: 'Zarejestruj zasób bez przypisywania przeznaczenia',
+          add_without_destination: 'Dodaj zasób bez przypisania przeznaczenia',
+        },
+        en: {
+          heading: 'Resource Management',
+          add_resource: 'Add resource',
+          donate_resource: 'Donate resource',
+          type: 'Type',
+          description: 'Description',
+          destination: 'Destination',
+          amount: 'Amount',
+          holder: 'Holder',
+          add: 'Add',
+          cancel: 'Cancel',
+          donate: 'Donate',
+          choose_org: 'Choose organization to donate a resource: ',
+          official: 'Officials',
+          ngo: 'NGOs',
+          actions: 'Actions',
+          status: 'Status',
+          change_status: 'Change resource status',
+          save_status: 'Save status',
+          add_destination: 'Add destination',
+          new_destination_heading: 'Enter new resource destination',
+          new_destination: 'New destination',
+          save_changes: 'Save changes',
+          no_destination: 'No destination assigned',
+          date: 'Registration date',
+          change_status: 'Change status',
+          save_status: 'Save status',
+          add_tooltip: 'Donate resource to selected catastrophe',
+          donate_tooltip: 'Donate resource to selected NGO or officials',
+          close: 'Close',
+          loading: 'Fetching location...',
+          status_disabled_tooltip: 'You cannot choose this status for this resource',
+          unknown_destination: 'Unknown location',
+          donate_for_ngo_tooltip: 'Register resource without assigning destination',
+          add_without_destination: 'Add resource without assigning destination',
+        },
+      };
+      return { translations };
+      },
     data() {
       return {
+        language: localStorage.getItem('language'),
         resources: [],
         resourceTypes: ['CLOTHES','PUBLICRESOURCE' , 'MEDICALSUPPLIES', 'FOOD', 'TOOLKITS', 'COMMUNICATIONDEVICES', 'TRANSPORT', 'ANOTHER'],
         resourceStatuses: ['REGISTERED', 'ASSIGNED', 'ENROUTE', 'DELIVERED'],
@@ -188,6 +280,7 @@
           holderId: null,
         },
         tooltip: '',
+        //showResourceForm: true,
         showForm: false,
         showDonateForm: false,
         showStatusMenu: false,
@@ -199,11 +292,13 @@
         officials: [],
         ngos: [],
         username: localStorage.getItem('username'),
+        userid: localStorage.getItem('userId'),
+        userRole: localStorage.getItem('role'),
       };
     },
     computed: {
       // Sprawdzamy, czy rola użytkownika jest zgodna z jednym z wymaganych
-      isRoleValid() {
+      isNgoOrOfficial() {
         const userRole = localStorage.getItem('userRole'); // Pobieramy 'userRole' z localStorage
         return userRole === 'NGO' || userRole === 'Official'; // Przycisk widoczny tylko, gdy rola to 'NGO' lub 'Official'
       }
@@ -211,7 +306,7 @@
     methods: {
       fetchResources() {
         axios
-          .get('resource/getByholder/1')
+          .get('resource/getByholder/{$userid}')
           .then((response) => {
             this.resources = response.data;
           })
@@ -409,13 +504,17 @@
   },
     },
     mounted() {
-      this.fetchResources(); // Załadowanie zasobów po załadowaniu komponentu
-      this.loadCatastrophes(); // Załadowanie katastrof po załadowaniu komponentu
-      this.loadOfficialsAndNgos(); // Załadowanie NGO i władz po załadowaniu komponentu
+      /*
       //roboczo
       localStorage.setItem('userId', 1);
       localStorage.setItem('userRole', 'Giver');
       localStorage.setItem('username', 'test');
+      */
+      localStorage.setItem('language', 'pl');
+      this.fetchResources(); // Załadowanie zasobów po załadowaniu komponentu
+      this.loadCatastrophes(); // Załadowanie katastrof po załadowaniu komponentu
+      this.loadOfficialsAndNgos(); // Załadowanie NGO i władz po załadowaniu komponentu
+      
     },
   };
 </script>
