@@ -16,7 +16,6 @@
         <span v-if="emailError" class="error">{{ translations[language].invalidEmail }}</span>
       </div>
       
-      <!-- Nowe pole: Preferowany język email (pl/en) -->
       <div>
         <label for="emailLanguage">{{ translations[language].emailLanguageLabel }}:</label>
         <select id="emailLanguage" v-model="form.emailLanguage" required>
@@ -110,7 +109,6 @@ export default {
       }
 
       try {
-        // Zwróć uwagę, że wysyłamy również emailLanguage:
         const response = await axios.post(
           `http://localhost:8080/api/help-requests/catastrophe/${catastropheId}`,
           form.value
