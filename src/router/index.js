@@ -182,8 +182,7 @@ const router = createRouter({
       name: 'CatastropheLookup',
       component: CatastropheLookup,
       meta: {
-        requiresAuth: true/false,
-        role: ['GIVER', 'VOLUNTEER', 'OFFICIAL', 'NGO']
+        requiresAuth: false
       }
     },
     {
@@ -192,8 +191,7 @@ const router = createRouter({
       component: EditHelpRequest,
       props: true,
       meta: {
-        requiresAuth: true/false,
-        role: ['GIVER', 'VOLUNTEER', 'OFFICIAL', 'NGO']
+        requiresAuth: false
       }
     },
     {
@@ -202,8 +200,7 @@ const router = createRouter({
       component: HelpRequestForm,
       props: true,
       meta: {
-        requiresAuth: true/false,
-        role: ['GIVER', 'VOLUNTEER', 'OFFICIAL', 'NGO']
+        requiresAuth: false
       }
     },
     {
@@ -211,8 +208,7 @@ const router = createRouter({
       name: 'HelpRequestLookup',
       component: HelpRequestLookup,
       meta: {
-        requiresAuth: true/false,
-        role: ['GIVER', 'VOLUNTEER', 'OFFICIAL', 'NGO']
+        requiresAuth: false
       }
     },
     {
@@ -229,8 +225,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const accessToken = localStorage.getItem('accessToken')
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-
-
 
   if (requiresAuth && !accessToken) {
     next({ name: 'auth'})
