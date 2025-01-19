@@ -9,7 +9,7 @@ export const reportService = {
         if (error.response?.status === 404) {
           this.reportData.data = [];
         } else {
-          console.error('Failed to fetch Catastrophe data:', error);
+          console.error('Failed to fetch report data:', error);
           throw error;
         }
       }

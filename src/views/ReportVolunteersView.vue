@@ -16,13 +16,13 @@
       </thead>
       <tbody>
       <tr v-for="volunteer in reportData.data" :key="volunteer.volunteer.id">
-        <td>{{ volunteer.volunteer.username }}</td>
-        <td>{{ volunteer.volunteer.email }}</td>
-        <td>{{ volunteer.volunteer.phone }}</td>
-        <td>{{ volunteer.volunteer.role }}</td>
-        <td>{{ volunteer.volunteer.available ? 'Yes' : 'No' }}</td>
-        <td>{{ volunteer.volunteer.readyForMark ? 'Yes' : 'No' }}</td>
-        <td>{{ volunteer.volunteer.birthDate }}</td>
+        <td>{{ volunteer.username }}</td>
+        <td>{{ volunteer.email }}</td>
+        <td>{{ volunteer.phone }}</td>
+        <td>{{ volunteer.role }}</td>
+        <td>{{ volunteer.available ? 'Yes' : 'No' }}</td>
+        <td>{{ volunteer.readyForMark ? 'Yes' : 'No' }}</td>
+        <td>{{ volunteer.birthDate }}</td>
       </tr>
       </tbody>
     </table>
@@ -30,48 +30,31 @@
 </template>
 
 <script>
+// GET DATA FROM BACKEND
+
+import { reportService } from '@/services/reportService';
 export default {
   name: "ReportVolunteersView",
   data() {
     return {
       reportData: {
-        timestamp: "2025-01-18T14:08:42.882740691",
-        dateFrom: "2022-01-02",
-        dateTo: "2024-04-02",
-        data: [
-          {
-            volunteer: {
-              id: 1,
-              username: "Volunteer1",
-              email: "vol@gmail.com",
-              phone: "string",
-              role: "VOLUNTEER",
-              available: false,
-              readyForMark: false,
-              birthDate: "2025-01-18T13:02:57.187+00:00"
-            },
-            actions: []
-          },
-          {
-            volunteer: {
-              id: 2,
-              username: "Volunteer2",
-              email: "vol2@gmail.com",
-              phone: "string",
-              role: "VOLUNTEER",
-              available: false,
-              readyForMark: false,
-              birthDate: "2025-01-18T13:02:57.187+00:00"
-            },
-            actions: []
-          }
-        ],
-        reportType: "ARCHIVE_VOLUNTEERS"
+        data: []
       }
     };
+  },
+  async created() {
+    // REPLACE WITH DATA FROM PREVIOUS PAGE
+    const query = this.$route.query;
+    const reportType = query.reportType || 'ACTIVE_VOLUNTEERS';
+    const dateFrom = query.dateFrom || '2020-01-01';
+    const dateTo = query.dateTo || '2026-01-01';
+
+    const url = '/report/getGovernment?reportType=' + reportType + '&dateFrom=' + dateFrom + '&dateTo=' + dateTo;
+    this.reportData = await reportService.fetchReport(url);
   }
 };
 </script>
+
 
 <style scoped>
 .report-volunteers-view {

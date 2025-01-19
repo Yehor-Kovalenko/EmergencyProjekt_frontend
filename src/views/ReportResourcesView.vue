@@ -28,72 +28,31 @@
 </template>
 
 <script>
+// GET DATA FROM BACKEND
+
+import { reportService } from '@/services/reportService';
 export default {
   name: "ReportResourcesView",
   data() {
     return {
       reportData: {
-        timestamp: "2025-01-18T14:07:25.647311848",
-        dateFrom: "2022-01-02",
-        dateTo: "2024-04-02",
-        data: [
-          {
-            id: 1,
-            destinationId: null,
-            holderId: 1,
-            resourceType: "CLOTHES",
-            resourceStatus: "REGISTERED",
-            description: "clothes for children",
-            amount: 2,
-            date_of_registration: "2025-01-18"
-          },
-          {
-            id: 2,
-            destinationId: null,
-            holderId: 2,
-            resourceType: "CLOTHES",
-            resourceStatus: "REGISTERED",
-            description: "clothes for children",
-            amount: 2,
-            date_of_registration: "2025-01-18"
-          },
-          {
-            id: 3,
-            destinationId: null,
-            holderId: 2,
-            resourceType: "FOOD",
-            resourceStatus: "REGISTERED",
-            description: "food for starving children",
-            amount: 2,
-            date_of_registration: "2025-01-18"
-          },
-          {
-            id: 4,
-            destinationId: 1,
-            holderId: 1,
-            resourceType: "MEDICALSUPPLIES",
-            resourceStatus: "REGISTERED",
-            description: "medicine with DESTINATION",
-            amount: 1,
-            date_of_registration: "2025-01-18"
-          },
-          {
-            id: 5,
-            destinationId: 1,
-            holderId: 1,
-            resourceType: "MEDICALSUPPLIES",
-            resourceStatus: "REGISTERED",
-            description: "medicine with DESTINATION",
-            amount: 1,
-            date_of_registration: "2025-01-18"
-          }
-        ],
-        reportType: "ACTIVE_NGO_RESOURCES"
+        data: []
       }
     };
+  },
+  async created() {
+    // REPLACE WITH DATA FROM PREVIOUS PAGE
+    const query = this.$route.query;
+    const reportType = query.reportType || 'ACTIVE_NGO_RESOURCES';
+    const dateFrom = query.dateFrom || '2020-01-01';
+    const dateTo = query.dateTo || '2026-01-01';
+
+    const url = '/report/getGovernment?reportType=' + reportType + '&dateFrom=' + dateFrom + '&dateTo=' + dateTo;
+    this.reportData = await reportService.fetchReport(url);
   }
 };
 </script>
+
 
 <style scoped>
 .report-resources-view {

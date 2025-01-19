@@ -27,51 +27,26 @@
   </div>
 </template>
 
-<!--Here we have bunch of random example data, that is supposed to be replaced with actual data from api later on-->
 <script>
+// GET DATA FROM BACKEND
+import { reportService } from '@/services/reportService';
+
 export default {
   name: "GiverReport",
   data() {
     return {
       reportData: {
-        timestamp: "2025-01-18T14:06:11.689152185",
-        dateFrom: null,
-        dateTo: null,
-        data: [
-          {
-            id: 1,
-            destinationId: null,
-            holderId: 1,
-            resourceType: "CLOTHES",
-            resourceStatus: "REGISTERED",
-            description: "clothes for children",
-            amount: 2,
-            date_of_registration: "2025-01-18"
-          },
-          {
-            id: 4,
-            destinationId: 1,
-            holderId: 1,
-            resourceType: "MEDICALSUPPLIES",
-            resourceStatus: "REGISTERED",
-            description: "medicine with DESTINATION",
-            amount: 1,
-            date_of_registration: "2025-01-18"
-          },
-          {
-            id: 5,
-            destinationId: 1,
-            holderId: 1,
-            resourceType: "MEDICALSUPPLIES",
-            resourceStatus: "REGISTERED",
-            description: "medicine with DESTINATION",
-            amount: 1,
-            date_of_registration: "2025-01-18"
-          }
-        ],
-        reportType: "GIVER_RESOURCES"
+        data: []
       }
     };
+  },
+  async created() {
+    // REPLACE WITH DATA FROM PREVIOUS PAGE
+    const query = this.$route.query;
+    const giverId = query.giverId || '1';
+
+    const url = '/report/getGiver?giverId=' + giverId;
+    this.reportData = await reportService.fetchReport(url);
   }
 };
 </script>

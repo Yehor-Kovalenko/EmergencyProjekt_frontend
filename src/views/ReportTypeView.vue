@@ -15,12 +15,29 @@ export default {
     goBack() {
       this.$router.push({ name: 'report' }); // Go back to the previous or main report page
     },
-    goToReport(reportType) {
-      // Navigate to the corresponding report view based on the provided reportType
-      this.$router.push({name: reportType});
+    goToReport(viewType) {
+    // Navigate to the corresponding report view based on the provided viewType
+    let reportType = "";
+
+    if (!this.$route.query.dateFrom || !this.$route.query.dateTo) {
+      reportType += 'ACTIVE_';
+    } else {
+      reportType += 'ARCHIVE_';
+    }
+
+    if (viewType === 'resources-view') {
+      reportType += 'NGO_RESOURCES';
+    } else if (viewType === 'volunteers-view') {
+      reportType += 'VOLUNTEERS';
+    } else if (viewType === 'catastrophe-view') {
+      reportType += 'CATASTROPHES';
+    }
+
+    console.log('Navigating to report type:', reportType);
     this.$router.push({
-      name: reportType,
+      name: viewType,
       query: {
+        reportType: reportType,
         dateFrom: this.$route.query.dateFrom,
         dateTo: this.$route.query.dateTo
       }

@@ -45,11 +45,9 @@ export default {
     continueReport() {
       if (this.dateFrom && this.dateTo) {
         console.log(`Data początkowa: ${this.dateFrom}, Data końcowa: ${this.dateTo}`);
-        this.$router.push({name: 'report-type'}); // Przekierowanie do widoku wyboru rodzaju raportu
-      this.$router.push({
-        name: 'report-type',
-        query: { dateFrom: this.dateFrom, dateTo: this.dateTo }
-      });
+        this.$router.push({name: 'report-type',
+          query: {dateFrom: this.dateFrom, dateTo: this.dateTo}
+        }); // Przekierowanie do widoku wyboru rodzaju raportu
       }
     }
   }

@@ -45,6 +45,8 @@ export default {
     const dateFrom = query.dateFrom || '2020-01-01';
     const dateTo = query.dateTo || '2026-01-01';
 
+    console.log('Fetching data for report type: ' + reportType + ' from ' + dateFrom + ' to ' + dateTo);
+
     const url = '/report/getGovernment?reportType=' + reportType + '&dateFrom=' + dateFrom + '&dateTo=' + dateTo;
     this.reportData = await reportService.fetchReport(url);
   }
