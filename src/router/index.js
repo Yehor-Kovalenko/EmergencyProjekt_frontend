@@ -235,7 +235,18 @@ router.beforeEach((to, from, next) => {
     next({ name: 'auth'})
   }
   
-  const decoded = jwtDecode(accessToken)
+  let decoded = null;
+  try {
+    if (accessToken) {
+      decoded = jwtDecode(accessToken)
+    }
+  } catch (error) {
+    console.error('Invalid Token:', error)
+    localStorage.removeItem('accessToken')  // Remove invalid token
+    next({ name: 'auth' })  // Redirect to login
+    return
+  }
+
 
   if (!to.meta.role) {
     next()
