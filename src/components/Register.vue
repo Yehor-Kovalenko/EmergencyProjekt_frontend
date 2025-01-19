@@ -169,8 +169,6 @@
           console.log('Registration successful')
           alert('Registration successful')
 
-          this.$router.push('/auth/login')
-
         } catch (error) {
           console.error('Błąd rejestracji:', error)
           alert('Nie udało się zarejestrować użytkownika')

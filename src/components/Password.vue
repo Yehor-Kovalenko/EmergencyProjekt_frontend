@@ -32,8 +32,6 @@
 
           console.log('Link do zmiany hasła przesłany')
 
-          this.$router.push('/auth')
-
         } catch (error) {
           console.error('Błąd:', error)
           alert('Nie udało się przesłać żadania. Spróbuj ponownie')
