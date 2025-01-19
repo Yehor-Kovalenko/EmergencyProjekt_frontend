@@ -1,0 +1,18 @@
+import './assets/main.css'
+
+import { createApp } from 'vue'
+import App from './volounteers.vue'
+import router from './router'
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// dodane
+import axios from 'axios';
+
+axios.defaults.baseURL = 'http://localhost:8080/api';
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const app = createApp(App)
+
+app.config.globalProperties.$http = axios
+
+app.use(router)
+app.mount('#app')
