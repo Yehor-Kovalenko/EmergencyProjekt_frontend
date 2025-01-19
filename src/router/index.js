@@ -41,7 +41,12 @@ const router = createRouter({
       component: AuthView,
       meta: {
         requiresAuth: false
-      }
+      },
+      children: [
+        { path: 'register', component: Register },
+        { path: 'login', component: Login },
+        { path: 'password', component: Password },
+      ],
     },
     {
       path: "/volounteers/:id",
