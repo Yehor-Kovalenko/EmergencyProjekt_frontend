@@ -15,6 +15,17 @@ import router from '@/router';
 import axios from 'axios';
 
 export default {
+  setup(){
+  const translations = {
+      pl: {
+        accept_mark:"zaakceptuj ocenę",
+      },
+      en: {
+        accept_mark:"accept mark",
+      }
+    };
+    return translations;
+  },
   data() {
       return {
         volunteer_data: [ ]
