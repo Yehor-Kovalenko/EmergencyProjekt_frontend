@@ -11,6 +11,7 @@ import ReportResourcesView from "@/views/ReportResourcesView.vue";
 import ReportVolunteersView from "@/views/ReportVolunteersView.vue";
 import ReportCatastropheView from "@/views/ReportCatastropheView.vue";
 import CatastropheLookup from '@/components/events/CatastropheLookup.vue'
+import CloseCatastrophe from '@/components/events/CloseCatastrophe.vue'
 import EditHelpRequest from '@/components/events/EditHelpRequest.vue'
 import HelpRequestForm from '@/components/events/HelpRequestForm.vue'
 import HelpRequestLookup from '@/components/events/HelpRequestLookup.vue'
@@ -187,6 +188,11 @@ const router = createRouter({
       }
     },
     {
+      path: '/catastrophes/close/:catastropheId',
+      name: 'CloseCatastrophe',
+      component: CloseCatastrophe,
+    },
+    {
       path: '/help-request/edit/:uniqueCode',
       name: 'EditHelpRequest',
       component: EditHelpRequest,
@@ -242,16 +248,6 @@ router.beforeEach((to, from, next) => {
     next({ name: 'auth' })  // Redirect to login
     return
   }
-
-
-  if (!to.meta.role) {
-    next()
-  } else if (to.meta.role.includes(decoded.role)) {
-    next()
-  } else {
-    alert('Nie masz uprawnień do tej funkcjonalności')
-    return
-  }
-})
+});
 
 export default router;

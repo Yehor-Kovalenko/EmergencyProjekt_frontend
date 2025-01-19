@@ -1,7 +1,7 @@
 <template>
     <div class="about"> 
-        <button id="accept" @click="accept">Accept Action</button>
-        <button id="reject"@click="reject">Reject Action</button>
+        <button id="accept" @click="accept">{{translations[language].accept}}</button>
+        <button id="reject"@click="reject">{{translations[language].accept}}</button>
     </div>
   </template>
 
@@ -9,6 +9,19 @@
 import router from '@/router';
 import axios from 'axios';
 export default {
+  setup(){
+  const translations = {
+      pl: {
+        accept:"zaakceptuj",
+        reject:"odrzuć",
+      },
+      en: {
+        accept:"accept",
+        reject:"reject",
+      }
+    };
+    return translations;
+  },
 methods:{
     accept(){
         console.log('accept');
