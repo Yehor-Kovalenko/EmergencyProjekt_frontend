@@ -11,9 +11,9 @@ export const messageService = {
     }
   },
 
-  async getMessages(receiverId) {
+  async getMessages(id) {
     try {
-      const response = await axios.post('/inbox/check', { receiverId })
+      const response = await axios.post('/inbox/check', { id })
       return response.data
     } catch (error) {
       if (error.response?.status === 404) {
@@ -30,6 +30,19 @@ export const messageService = {
       return response.data
     } catch (error) {
       console.error('Failed to search users:', error)
+      throw error
+    }
+  },
+
+  async getMessagesForSender(id) {
+    try {
+      const response = await axios.post('/inbox/checksender', { id })
+      return response.data
+    } catch (error) {
+      if (error.response?.status === 404) {
+        return []
+      }
+      console.error('Failed to fetch messages for sender:', error)
       throw error
     }
   }
