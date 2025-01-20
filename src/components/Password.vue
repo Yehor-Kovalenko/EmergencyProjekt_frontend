@@ -13,10 +13,12 @@
   
 <script>
   import axios from '@/axiosConfig'
-  
+  import { ref } from 'vue';
+
   export default {
     name: 'Password',
     setup(){
+      const language = ref(localStorage.getItem('language') || 'pl');
       const translations = {
         pl: {
           pageName: 'Przypomnij hasło',
@@ -27,6 +29,14 @@
           button: 'Reset password'
         }
       }
+
+      const currentView = ref('Password');
+
+      return {
+        language,
+        translations,
+        currentView,
+      };
     },
     data() {
       return {

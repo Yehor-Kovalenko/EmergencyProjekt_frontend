@@ -17,6 +17,7 @@
   import Login from '@/components/Login.vue';
   import Register from '@/components/Register.vue';
   import Password from '@/components/Password.vue';
+  import { ref } from 'vue';
 
   export default {
     name: 'AuthView',
@@ -25,10 +26,13 @@
       Register,
       Password,
     },
-    setup() {
-      const language = ref(localStorage.getItem("language") || "pl");
-      const currentView = ref('Login');
-
+    data() {
+      return {
+        currentView: 'Login',
+      };
+    },
+    setup(){
+      const language = ref(localStorage.getItem('language') || 'pl');
       const translations = {
         pl: {
           loginButton: 'Logowanie',
@@ -40,11 +44,19 @@
           registerButton: 'Register',
           forgotten: 'Forgot password?'
         }
-      };
+      }
+    
+      const currentView = ref('Login');
 
-      return { language, translations, currentView };
+      return {
+        language,
+        translations,
+        currentView,
+      };
     }
   };
+
+
 </script>
   
 <style scoped>
