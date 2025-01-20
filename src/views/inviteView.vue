@@ -1,9 +1,11 @@
 <template>
   <div>
-    <h1>Invite View</h1>
-    <p>NGO ID: {{ ngoId }}</p>
-    <p>Event ID: {{ eventId }}</p>
-    <button @click="invite" class="btn btn-primary">Invite</button>
+    <h1>{{ translations[language].title }}</h1>
+    <p>{{ translations[language].ngoID }}: {{ ngoId }}</p>
+    <p>{{ translations[language].eventID }}: {{ eventId }}</p>
+    <button @click="invite" class="btn btn-primary">
+      {{ translations[language].invitationButton }}
+    </button>
   </div>
 </template>
 
@@ -16,9 +18,12 @@ export default {
   setup() {
     const route = useRoute();
 
-    const ngoId = route.params.ngoId;
+    // Zmienne
+    const language = localStorage.getItem("language") || "pl";
+    const ngoId = localStorage.getItem("ngoId") || 1;
     const eventId = route.params.eventId;
 
+    // Funkcja zaproszenia
     const invite = async () => {
       try {
         const response = await axios.post(
@@ -27,6 +32,7 @@ export default {
           {
             params: {
               eventId: eventId,
+              language: language,
             },
           }
         );
@@ -39,7 +45,23 @@ export default {
       }
     };
 
-    return { ngoId, eventId, invite };
+    // Tłumaczenia
+    const translations = {
+      pl: {
+        title: "Zaproszenie",
+        invitationButton: "Zaproś",
+        ngoID: "Numer organizacji",
+        eventID: "Numer wydarzenia",
+      },
+      en: {
+        title: "Invitation",
+        invitationButton: "Invite",
+        ngoID: "NGO ID",
+        eventID: "Event ID",
+      },
+    };
+
+    return { language, ngoId, eventId, invite, translations };
   },
 };
 </script>
