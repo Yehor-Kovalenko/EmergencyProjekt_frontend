@@ -197,7 +197,7 @@
 
 
 <script>
-import axios from 'axios';
+import axios from '../axiosConfig';
 export default {
   name: 'ResourceForm',
   setup() {
@@ -319,8 +319,14 @@ export default {
   },
   methods: {
     fetchResources() {
+      console.log(localStorage.getItem('userId'));
+      console.log('rola', localStorage.getItem('role'));
       axios
-        .get(`resource/getByholder/${this.userid}`)
+        .get(`resource/getByholder/${localStorage.getItem('userId')}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        })
         .then((response) => {
           this.resources = response.data;
         })
@@ -334,7 +340,7 @@ export default {
       const params = new URLSearchParams(this.form);
       console.log(params.toString());
       axios
-        .post(`http://localhost:8080/api/resource/destination?${params.toString()}`, {
+        .post(`resource/destination?${params.toString()}`, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`
           },})
@@ -447,7 +453,7 @@ export default {
     const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
 
     return axios
-      .get(apiUrl)
+      .get(apiUrl, { withCredentials: false })
       .then((response) => {
         return response.data.display_name || 'Nieznane położenie';
       })
