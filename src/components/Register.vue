@@ -1,9 +1,9 @@
 <template>
     <div>
-      <h2>Rejestracja</h2>
+      <h2>{{ translations[language].pageName }}</h2>
       
       <div>
-        <h3>Wybierz rolę</h3>
+        <h3>{{ translations[language].roleLabel }}</h3>
         <button @click="role = 'Volunteer'">Volunteer</button>
         <button @click="role = 'Giver'">Giver</button>
         <button @click="role = 'NGO'">NGO</button>
@@ -12,24 +12,24 @@
 
       <form @submit.prevent="handleRegister">
         <div>
-          <label for="username">Login</label>
+          <label for="username">{{ translations[language].username }}</label>
           <input id="username" v-model="username" type="text" required />
         </div>
         <div>
-          <label for="email">Email</label>
+          <label for="email">{{ translations[language].email }}</label>
           <input id="email" v-model="email" type="email" required />
         </div>
         <div>
-          <label for="phone">Numer telefonu</label>
+          <label for="phone">{{ translations[language].phone }}</label>
           <input id="phone" v-model="phone" type="tel" 
             pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" required />
         </div>
         <div>
-          <label for="password">Hasło</label>
+          <label for="password">{{ translations[language].password }}</label>
           <input id="password" v-model="password" type="password" required />
         </div>
         <div>
-          <label for="confirmPassword">Potwierdź hasło</label>
+          <label for="confirmPassword">{{ translations[language].confirmPassword }}</label>
           <input
             id="confirmPassword"
             v-model="confirmPassword"
@@ -40,41 +40,41 @@
 
         <div v-if="role === 'Volunteer' || role === 'Giver'">
         <div>
-          <label for="firstName">Imię</label>
+          <label for="firstName">{{ translations[language].firstName }}</label>
           <input id="firstName" v-model="firstName" type="text" required />
         </div>
         <div>
-          <label for="lastName">Nazwisko</label>
+          <label for="lastName">{{ translations[language].lastName }}</label>
           <input id="lastName" v-model="lastName" type="text" required />
         </div>
         <div>
-          <label for="birthDate">Data urodzenia</label>
+          <label for="birthDate">{{ translations[language].birthDate }}</label>
           <input id="birthDate" v-model="birthDate" type="date" required />
         </div>
         <div v-if="role === 'Volunteer'">
-          <label for="organizationId">ID organizacji</label>
+          <label for="organizationId">{{ translations[language].organizationId }}</label>
           <input id="organizationId" v-model="organizationId" type="text" required />
         </div>
         </div>
 
         <div v-if="role === 'NGO'">
           <div>
-            <label for="ngoName">Nazwa NGO</label>
+            <label for="ngoName">{{ translations[language].ngoName }}</label>
             <input id="ngoName" v-model="ngoName" type="text" required />
           </div>
          <div>
-            <label for="krs">Numer KRS</label>
+            <label for="krs">{{ translations[language].krs }}</label>
             <input id="krs" v-model="krs" type="text" required />
           </div>
         </div>
 
         <div v-if="role === 'Official'">
           <div>
-            <label for="officialName">Nazwa urzędu</label>
+            <label for="officialName">{{ translations[language].officialName }}</label>
             <input id="officialName" v-model="officialName" type="text" required />
           </div>
           <div>
-            <label for="regon">Numer REGON</label>
+            <label for="regon">{{ translations[language].regon }}</label>
             <input id="regon" v-model="regon" type="text" required />
           </div>
         </div>
@@ -89,6 +89,46 @@
 
   export default {
     name: 'Register',
+    setup(){
+      const translations = {
+        pl: {
+          pageName: 'Rejestracja',
+          roleLabel: 'Wybierz rolę',
+          username: 'Login',
+          email: 'Adres email',
+          phone: 'Numer telefonu',
+          password: 'Hasło',
+          confirmPassword: 'Powtórz hasło',
+          name: 'Imię',
+          surname: 'Nazwisko',
+          birthDate: 'Data urodzin',
+          organizationId: 'ID organizacji',
+          ngoName: 'Nazwa NGO',
+          krs: 'Numer KRS',
+          officialName: 'Nazwa urzędu',
+          regon: 'Numer REGON',
+          button: 'Zarejestruj się'
+        }, 
+        en: {
+          pageName: 'Registration',
+          roleLabel: 'Choose role',
+          username: 'Login',
+          email: 'Email address',
+          phone: 'Phone number',
+          password: 'Password',
+          confirmPassword: 'Repeat password',
+          name: 'First name',
+          surname: 'Last name',
+          birthDate: 'Birth date',
+          organizationId: 'Organization ID',
+          ngoName: 'NGO name',
+          krs: 'KRS number',
+          officialName: 'Office name',
+          regon: 'REGON number',
+          button: 'Register'
+        }
+      }
+    },
     data() {
       return {
         username: '',
@@ -110,7 +150,6 @@
     },
     methods: {
       async handleRegister() {
-        console.log('dupa')
 
         if (this.password !== this.confirmPassword) {
           alert('Hasła się nie zgadzają!')

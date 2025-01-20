@@ -1,12 +1,12 @@
 <template>
     <div>
-      <h2>Przypomnij hasło</h2>
+      <h2>{{ translations[language].pageName }}</h2>
       <form @submit.prevent="handleSubmit">
         <div>
           <label for="email">Email</label>
           <input id="email" v-model="email" type="email" required />
         </div>
-        <button type="submit">Przypomnij hasło</button>
+        <button type="submit">{{ translations[language].button }}</button>
       </form>
     </div>
 </template>
@@ -16,6 +16,18 @@
   
   export default {
     name: 'Password',
+    setup(){
+      const translations = {
+        pl: {
+          pageName: 'Przypomnij hasło',
+          button: 'Zmień hasło'
+        },
+        en: {
+          pageName: 'Forgotten password',
+          button: 'Reset password'
+        }
+      }
+    },
     data() {
       return {
         email: '',
