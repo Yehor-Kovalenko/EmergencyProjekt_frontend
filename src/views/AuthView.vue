@@ -7,11 +7,13 @@
   
       <component :is="currentView" />
       <p v-if="currentView === 'Login'" @click="currentView = 'Password'">
-        {{ translations[language].forgotten }}</p>
+        {{ translations[language].forgotten }}
+      </p>
     </div>
 </template>
   
 <script>
+  import { ref } from "vue"; // Import ref for reactivity
   import Login from '@/components/Login.vue';
   import Register from '@/components/Register.vue';
   import Password from '@/components/Password.vue';
@@ -23,7 +25,10 @@
       Register,
       Password,
     },
-    setup(){
+    setup() {
+      const language = ref(localStorage.getItem("language") || "pl");
+      const currentView = ref('Login');
+
       const translations = {
         pl: {
           loginButton: 'Logowanie',
@@ -35,13 +40,10 @@
           registerButton: 'Register',
           forgotten: 'Forgot password?'
         }
-      }
-    },
-    data() {
-      return {
-        currentView: 'Login',
       };
-    },
+
+      return { language, translations, currentView };
+    }
   };
 </script>
   
@@ -72,12 +74,11 @@
   button:hover {
     background-color: #f0f0f0;
   }
+  
   p {
     color:black;
     cursor: pointer;
     margin: 0; 
     text-decoration: underline;
   }
-
 </style>
-  

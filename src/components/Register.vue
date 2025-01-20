@@ -85,137 +85,153 @@
 </template>
   
 <script>
-  import axios from '@/axiosConfig'
+import { ref } from "vue";
+import axios from '@/axiosConfig';
 
-  export default {
-    name: 'Register',
-    setup(){
-      const translations = {
-        pl: {
-          pageName: 'Rejestracja',
-          roleLabel: 'Wybierz rolę',
-          username: 'Login',
-          email: 'Adres email',
-          phone: 'Numer telefonu',
-          password: 'Hasło',
-          confirmPassword: 'Powtórz hasło',
-          name: 'Imię',
-          surname: 'Nazwisko',
-          birthDate: 'Data urodzin',
-          organizationId: 'ID organizacji',
-          ngoName: 'Nazwa NGO',
-          krs: 'Numer KRS',
-          officialName: 'Nazwa urzędu',
-          regon: 'Numer REGON',
-          button: 'Zarejestruj się'
-        }, 
-        en: {
-          pageName: 'Registration',
-          roleLabel: 'Choose role',
-          username: 'Login',
-          email: 'Email address',
-          phone: 'Phone number',
-          password: 'Password',
-          confirmPassword: 'Repeat password',
-          name: 'First name',
-          surname: 'Last name',
-          birthDate: 'Birth date',
-          organizationId: 'Organization ID',
-          ngoName: 'NGO name',
-          krs: 'KRS number',
-          officialName: 'Office name',
-          regon: 'REGON number',
-          button: 'Register'
-        }
-      }
-    },
-    data() {
-      return {
-        username: '',
-        email: '',
-        phone: '',
-        password: '',
-        confirmPassword: '',
-        role: 'Volunteer',
-        
-        firstName: '',
-        lastName: '',
-        birthDate: '',
-        organizationId: '',
-        ngoName: '',
-        krs: '',
-        officialName: '',
-        regon: '',
-      };
-    },
-    methods: {
-      async handleRegister() {
+export default {
+  name: 'Register',
+  setup() {
+    const language = ref(localStorage.getItem("language") || "pl");
+    const role = ref("Volunteer");
 
-        if (this.password !== this.confirmPassword) {
-          alert('Hasła się nie zgadzają!')
-          return
-        }
-        
-        try {
-          console.log('Rejestracja:', this.email, this.password)
-          
-          let userData = {
-            username: this.username,
-            email: this.email,
-            phone: this.phone,
-            password: this.password,
-            role: this.role,
-          }
-          
-          switch (this.role) {
-            case 'Volunteer':
-              userData = {
-                ...userData,
-                firstName: this.firstName,
-                lastName: this.lastName,
-                birthDate: this.birthDate,
-                organizationId: this.organizationId,
-              }
-              break
-            case 'Giver':
-              userData = {
-                ...userData,
-                firstName: this.firstName,
-                lastName: this.lastName,
-                birthDate: this.birthDate
-              }
-              break
-            case 'NGO':
-              userData = {
-                ...userData,
-                ngoName: this.ngoName,
-                krs: this.krs
-              }
-              break
-            case 'Official':
-              userData = {
-                ...userData,
-                officialName: this.officialName,
-                regon: this.regon
-              }
-              break
-            default:
-              log.error('Nieprawidłowa rola:', this.role)
-          }
-
-          const response = await axios.post('/auth/register', userData)
-          
-          console.log('Registration successful')
-          alert('Registration successful')
-          this.$router.push('/')
-
-        } catch (error) {
-          console.error('Błąd rejestracji:', error)
-          alert('Nie udało się zarejestrować użytkownika')
-        }
+    const translations = {
+      pl: {
+        pageName: 'Rejestracja',
+        roleLabel: 'Wybierz rolę',
+        username: 'Login',
+        email: 'Adres email',
+        phone: 'Numer telefonu',
+        password: 'Hasło',
+        confirmPassword: 'Powtórz hasło',
+        firstName: 'Imię',
+        lastName: 'Nazwisko',
+        birthDate: 'Data urodzin',
+        organizationId: 'ID organizacji',
+        ngoName: 'Nazwa NGO',
+        krs: 'Numer KRS',
+        officialName: 'Nazwa urzędu',
+        regon: 'Numer REGON',
+        button: 'Zarejestruj się'
       },
-    },
-  };
+      en: {
+        pageName: 'Registration',
+        roleLabel: 'Choose role',
+        username: 'Login',
+        email: 'Email address',
+        phone: 'Phone number',
+        password: 'Password',
+        confirmPassword: 'Repeat password',
+        firstName: 'First name',
+        lastName: 'Last name',
+        birthDate: 'Birth date',
+        organizationId: 'Organization ID',
+        ngoName: 'NGO name',
+        krs: 'KRS number',
+        officialName: 'Office name',
+        regon: 'REGON number',
+        button: 'Register'
+      }
+    };
+
+    const username = ref('');
+    const email = ref('');
+    const phone = ref('');
+    const password = ref('');
+    const confirmPassword = ref('');
+    const firstName = ref('');
+    const lastName = ref('');
+    const birthDate = ref('');
+    const organizationId = ref('');
+    const ngoName = ref('');
+    const krs = ref('');
+    const officialName = ref('');
+    const regon = ref('');
+
+    async function handleRegister() {
+      if (password.value !== confirmPassword.value) {
+        alert("Hasła się nie zgadzają!");
+        return;
+      }
+
+      try {
+        console.log("Rejestracja:", email.value, password.value);
+
+        let userData = {
+          username: username.value,
+          email: email.value,
+          phone: phone.value,
+          password: password.value,
+          role: role.value,
+        };
+
+        switch (role.value) {
+          case "Volunteer":
+            userData = {
+              ...userData,
+              firstName: firstName.value,
+              lastName: lastName.value,
+              birthDate: birthDate.value,
+              organizationId: organizationId.value,
+            };
+            break;
+          case "Giver":
+            userData = {
+              ...userData,
+              firstName: firstName.value,
+              lastName: lastName.value,
+              birthDate: birthDate.value,
+            };
+            break;
+          case "NGO":
+            userData = {
+              ...userData,
+              ngoName: ngoName.value,
+              krs: krs.value,
+            };
+            break;
+          case "Official":
+            userData = {
+              ...userData,
+              officialName: officialName.value,
+              regon: regon.value,
+            };
+            break;
+          default:
+            console.error("Nieprawidłowa rola:", role.value);
+        }
+
+        const response = await axios.post("/auth/register", userData);
+        console.log("Registration successful");
+        alert("Registration successful");
+        window.location.href = "/";
+
+      } catch (error) {
+        console.error("Błąd rejestracji:", error);
+        alert("Nie udało się zarejestrować użytkownika");
+      }
+    }
+
+    return {
+      language,
+      translations,
+      role,
+      username,
+      email,
+      phone,
+      password,
+      confirmPassword,
+      firstName,
+      lastName,
+      birthDate,
+      organizationId,
+      ngoName,
+      krs,
+      officialName,
+      regon,
+      handleRegister,
+    };
+  },
+};
 </script>
   
 <style scoped>
