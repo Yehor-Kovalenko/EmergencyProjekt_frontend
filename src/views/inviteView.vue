@@ -28,11 +28,11 @@ export default {
       try {
         const response = await axios.post(
           `http://localhost:8080/ngo/${ngoId}/invite`,
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-          },
           null,
           {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
             params: {
               eventId: eventId,
               language: language,
