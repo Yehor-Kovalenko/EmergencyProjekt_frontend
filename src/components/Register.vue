@@ -85,229 +85,103 @@
 </template>
   
 <script>
-<<<<<<< HEAD
-import { ref } from "vue";
-import axios from '@/axiosConfig';
+import axios from "@/axiosConfig";
 
 export default {
-  name: 'Register',
-  setup() {
-    const language = ref(localStorage.getItem("language") || "pl");
-    const role = ref("Volunteer");
-=======
-  import axios from '@/axiosConfig'
-  import { ref } from 'vue';
+  name: "Register",
+  data() {
+    return {
+      language: localStorage.getItem("language") || "pl",
+      role: "Volunteer",
 
-  export default {
-    name: 'Register',
-    setup(){
-      const language = ref(localStorage.getItem('language') || 'pl');
-      const translations = {
+      username: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+
+      firstName: "",
+      lastName: "",
+      birthDate: "",
+      organizationId: "",
+      ngoName: "",
+      krs: "",
+      officialName: "",
+      regon: "",
+
+      translations: {
         pl: {
-          pageName: 'Rejestracja',
-          roleLabel: 'Wybierz rolę',
-          username: 'Login',
-          email: 'Adres email',
-          phone: 'Numer telefonu',
-          password: 'Hasło',
-          confirmPassword: 'Powtórz hasło',
-          firstName: 'Imię',
-          lastName: 'Nazwisko',
-          birthDate: 'Data urodzin',
-          organizationId: 'ID organizacji',
-          ngoName: 'Nazwa NGO',
-          krs: 'Numer KRS',
-          officialName: 'Nazwa urzędu',
-          regon: 'Numer REGON',
-          button: 'Zarejestruj się'
-        }, 
+          pageName: "Rejestracja",
+          roleLabel: "Wybierz rolę",
+          username: "Login",
+          email: "Adres email",
+          phone: "Numer telefonu",
+          password: "Hasło",
+          confirmPassword: "Powtórz hasło",
+          firstName: "Imię",
+          lastName: "Nazwisko",
+          birthDate: "Data urodzin",
+          organizationId: "ID organizacji",
+          ngoName: "Nazwa NGO",
+          krs: "Numer KRS",
+          officialName: "Nazwa urzędu",
+          regon: "Numer REGON",
+          button: "Zarejestruj się",
+        },
         en: {
-          pageName: 'Registration',
-          roleLabel: 'Choose role',
-          username: 'Login',
-          email: 'Email address',
-          phone: 'Phone number',
-          password: 'Password',
-          confirmPassword: 'Repeat password',
-          firstName: 'First name',
-          lastName: 'Last name',
-          birthDate: 'Birth date',
-          organizationId: 'Organization ID',
-          ngoName: 'NGO name',
-          krs: 'KRS number',
-          officialName: 'Office name',
-          regon: 'REGON number',
-          button: 'Register'
-        }
-      }
-
-      const currentView = ref('Register');
-
-      return {
-        language,
-        translations,
-        currentView,
-      }
-    },
-    data() {
-      return {
-        username: '',
-        email: '',
-        phone: '',
-        password: '',
-        confirmPassword: '',
-        role: 'Volunteer',
-        
-        firstName: '',
-        lastName: '',
-        birthDate: '',
-        organizationId: '',
-        ngoName: '',
-        krs: '',
-        officialName: '',
-        regon: '',
-      };
-    },
-    methods: {
-      async handleRegister() {
->>>>>>> f20003a4f92a90dc2249a81c2d7108304d0ad0c7
-
-    const translations = {
-      pl: {
-        pageName: 'Rejestracja',
-        roleLabel: 'Wybierz rolę',
-        username: 'Login',
-        email: 'Adres email',
-        phone: 'Numer telefonu',
-        password: 'Hasło',
-        confirmPassword: 'Powtórz hasło',
-        firstName: 'Imię',
-        lastName: 'Nazwisko',
-        birthDate: 'Data urodzin',
-        organizationId: 'ID organizacji',
-        ngoName: 'Nazwa NGO',
-        krs: 'Numer KRS',
-        officialName: 'Nazwa urzędu',
-        regon: 'Numer REGON',
-        button: 'Zarejestruj się'
+          pageName: "Registration",
+          roleLabel: "Choose role",
+          username: "Login",
+          email: "Email address",
+          phone: "Phone number",
+          password: "Password",
+          confirmPassword: "Repeat password",
+          firstName: "First name",
+          lastName: "Last name",
+          birthDate: "Birth date",
+          organizationId: "Organization ID",
+          ngoName: "NGO name",
+          krs: "KRS number",
+          officialName: "Office name",
+          regon: "REGON number",
+          button: "Register",
+        },
       },
-      en: {
-        pageName: 'Registration',
-        roleLabel: 'Choose role',
-        username: 'Login',
-        email: 'Email address',
-        phone: 'Phone number',
-        password: 'Password',
-        confirmPassword: 'Repeat password',
-        firstName: 'First name',
-        lastName: 'Last name',
-        birthDate: 'Birth date',
-        organizationId: 'Organization ID',
-        ngoName: 'NGO name',
-        krs: 'KRS number',
-        officialName: 'Office name',
-        regon: 'REGON number',
-        button: 'Register'
-      }
     };
-
-    const username = ref('');
-    const email = ref('');
-    const phone = ref('');
-    const password = ref('');
-    const confirmPassword = ref('');
-    const firstName = ref('');
-    const lastName = ref('');
-    const birthDate = ref('');
-    const organizationId = ref('');
-    const ngoName = ref('');
-    const krs = ref('');
-    const officialName = ref('');
-    const regon = ref('');
-
-    async function handleRegister() {
-      if (password.value !== confirmPassword.value) {
+  },
+  methods: {
+    async handleRegister() {
+      if (this.password !== this.confirmPassword) {
         alert("Hasła się nie zgadzają!");
         return;
       }
 
       try {
-        console.log("Rejestracja:", email.value, password.value);
-
         let userData = {
-          username: username.value,
-          email: email.value,
-          phone: phone.value,
-          password: password.value,
-          role: role.value,
+          username: this.username,
+          email: this.email,
+          phone: this.phone,
+          password: this.password,
+          role: this.role,
         };
 
-        switch (role.value) {
-          case "Volunteer":
-            userData = {
-              ...userData,
-              firstName: firstName.value,
-              lastName: lastName.value,
-              birthDate: birthDate.value,
-              organizationId: organizationId.value,
-            };
-            break;
-          case "Giver":
-            userData = {
-              ...userData,
-              firstName: firstName.value,
-              lastName: lastName.value,
-              birthDate: birthDate.value,
-            };
-            break;
-          case "NGO":
-            userData = {
-              ...userData,
-              ngoName: ngoName.value,
-              krs: krs.value,
-            };
-            break;
-          case "Official":
-            userData = {
-              ...userData,
-              officialName: officialName.value,
-              regon: regon.value,
-            };
-            break;
-          default:
-            console.error("Nieprawidłowa rola:", role.value);
+        if (this.role === "Volunteer" || this.role === "Giver") {
+          userData.firstName = this.firstName;
+          userData.lastName = this.lastName;
+          userData.birthDate = this.birthDate;
         }
+        if (this.role === "Volunteer") userData.organizationId = this.organizationId;
+        if (this.role === "NGO") Object.assign(userData, { ngoName: this.ngoName, krs: this.krs });
+        if (this.role === "Official") Object.assign(userData, { officialName: this.officialName, regon: this.regon });
 
-        const response = await axios.post("/auth/register", userData);
-        console.log("Registration successful");
+        await axios.post("/auth/register", userData);
         alert("Registration successful");
         window.location.href = "/";
-
       } catch (error) {
         console.error("Błąd rejestracji:", error);
         alert("Nie udało się zarejestrować użytkownika");
       }
-    }
-
-    return {
-      language,
-      translations,
-      role,
-      username,
-      email,
-      phone,
-      password,
-      confirmPassword,
-      firstName,
-      lastName,
-      birthDate,
-      organizationId,
-      ngoName,
-      krs,
-      officialName,
-      regon,
-      handleRegister,
-    };
+    },
   },
 };
 </script>

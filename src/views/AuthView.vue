@@ -13,7 +13,6 @@
 </template>
   
 <script>
-  import { ref } from "vue"; // Import ref for reactivity
   import Login from '@/components/Login.vue';
   import Register from '@/components/Register.vue';
   import Password from '@/components/Password.vue';
