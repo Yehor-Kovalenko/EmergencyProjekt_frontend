@@ -85,12 +85,15 @@ export default {
       this.showResourceForm = !this.showResourceForm;
     },
     fetchResources() {
-      console.log(this.userid);
+      const token = localStorage.getItem("accessToken"); // Get token from storage
+      console.log("User ID:", localStorage.getItem("userId"));
+      console.log("Access Token:", token); // Debugging
       axios
-        .get(`resource/getByholder/${localStorage.getItem('userId')}`, {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-          },})
+  .get(`resource/getByholder/${localStorage.getItem('userId')}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+    }
+  })
         .then((response) => {
           // Przypisz dane do tablicy resources
           this.resources = response.data;
