@@ -1,14 +1,16 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { RouterLink, RouterView } from "vue-router";
 //import HelloWorld from "./components/HelloWorld.vue";
 // Store the current user role in a ref to control access to links
+const username = ref(null);
 const userRole = ref(null);
 const language = ref(localStorage.getItem("language") || "pl");
 const userId = ref(null);
 
 onMounted(() => {
   // Get the user role from localStorage (assuming 'role' is stored there)
+  username.value = localStorage.getItem('username')
   userRole.value = localStorage.getItem('role');
   userId.value = localStorage.getItem('userId');
 });
@@ -27,7 +29,10 @@ const translations = {
     reports: 'Raporty',
     request: 'Zobacz zgłoszsenie',
     resources: 'Zobacz dary',
-    ngo: 'Wolontariusze'
+    ngo: 'Wolontariusze',
+    username: 'Użytkownik',
+    role: 'Rola',
+    logout: 'Wyloguj się'
 },
   en: {
     home: 'Home',
@@ -37,15 +42,32 @@ const translations = {
     reports: "Reports",
     request: 'Lookup request',
     resources: 'View my resources',
-    ngo: "Volounteers"
+    ngo: "Volounteers",
+    username: 'User',
+    role: 'Role',
+    logout: 'Log out'
   }
 }
 
+const isLoggedIn = computed(() => !!localStorage.getItem('accessToken'));
+
+function logout() {
+  localStorage.clear();
+  window.location.href = '/auth';
+}
 
 </script>
 
 <template>
   <header>
+    <div class="loginStatus">
+      <span v-if="isLoggedIn">
+        {{ translations[language].username }}: 
+        <strong>{{ username }}</strong> | {{ translations[language].role }}: <strong>{{ userRole }}  </strong>
+        <button @click="logout">{{ translations[language].logout }}</button>
+      </span>
+    </div>
+
     <div class="language-switcher">
       <button @click="setLanguage('en')">EN</button>
       <button @click="setLanguage('pl')">PL</button>
@@ -90,6 +112,10 @@ const translations = {
 header {
   line-height: 1.5;
   max-height: 100vh;
+}
+
+.loginStatus {
+  float: right;
 }
 
 .logo {
