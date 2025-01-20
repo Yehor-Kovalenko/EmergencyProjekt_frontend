@@ -334,7 +334,10 @@ export default {
       const params = new URLSearchParams(this.form);
       console.log(params.toString());
       axios
-        .post(`http://localhost:8080/api/resource/destination?${params.toString()}`)
+        .post(`http://localhost:8080/api/resource/destination?${params.toString()}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          },})
         .then(() => {
           this.showForm = false;
           this.fetchResources(); // Odświeżenie zasobów po zapisaniu
