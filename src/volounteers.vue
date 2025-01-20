@@ -61,7 +61,7 @@ const translations = {
       <!--<HelloWorld msg="You did it!" />-->
 
       <nav>
-      <!-- public -->
+      <!-- public2 -->
         <RouterLink to="/">{{ translations[language].home }}</RouterLink>
         <RouterLink to="/auth">{{ translations[language].login }}</RouterLink>
         <RouterLink to="/map">{{ translations[language].catastrophe }}</RouterLink>
