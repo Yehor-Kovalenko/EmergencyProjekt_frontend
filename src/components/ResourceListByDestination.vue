@@ -26,7 +26,6 @@
           <th>{{translations[language].description}}</th>
           <th>{{translations[language].status}}</th>
           <th>{{translations[language].amount}}</th>
-          <th>{{translations[language].giver}}</th>
         </tr>
       </thead>
       <tbody>
@@ -36,7 +35,6 @@
           <td>{{ resource.description }}</td>
           <td>{{ resource.status }}</td>
           <td>{{ resource.amount }}</td>
-          <td>{{ resource.holderId }}</td>
         </tr>
       </tbody>
     </table>
@@ -99,19 +97,14 @@ export default {
   methods: {
     // Funkcja ładująca zasoby po wybraniu katastrofy
     loadResources() {
+      console.log('iddd', this.destinationId);
       if (!this.destinationId) return;
 
       this.loading = true;
       this.error = null;
 
-      console.log(accessToken);
-
       axios
-        .get(`http://localhost:8080/api/resource/getBydestination/${this.destinationId}`, {
-          headers: {
-            Authorization: `${localStorage.getItem('accessToken')}`, // Zastąp 'authToken' poprawną nazwą
-          },
-        })
+        .get(`http://localhost:8080/api/resource/getBydestination/${this.destinationId}`)
         .then((response) => {
           this.resources = response.data;
         })
@@ -149,12 +142,7 @@ export default {
           },
         }); // Endpoint zwracający katastrofy
         */
-        const response = await axios.get(`http://localhost:8080/api/catastrophes`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            //"Content-Type": "application/json",
-          },
-        });
+        const response = await axios.get(`/catastrophes`);
         const catastrophes = response.data;
         console.log('Katastrofy z load:', catastrophes);
 
@@ -174,12 +162,13 @@ export default {
   mounted() {
     this.loadCatastrophes(); // Załaduj katastrofy po załadowaniu komponentu
     localStorage.setItem('language', 'pl');
+    localStorage.setItem('role', 'OFFICIAL');
     /*
     localStorage.setItem('accessToken', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYWEiLCJpYXQiOjE3MzczMTAxNDUsImV4cCI6MTczNzMxMDQ0NX0.ib_kwXRgxFvOKSAfSh4PO4utBy66RrPXEByhKPP1rxk');
     */
   },
   updated() {
-    this.loadCatastrophes(); // Załaduj zasoby po wybraniu katastrofy
+    //this.loadCatastrophes(); // Załaduj zasoby po wybraniu katastrofy
   },
 };
 </script>

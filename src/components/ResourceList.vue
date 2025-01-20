@@ -7,7 +7,6 @@
         <th>{{translations[language].date}}</th>
         <th>{{translations[language].type}}</th>
         <th>{{translations[language].description}}</th>
-        <th>{{translations[language].description}}</th>
         <th>{{translations[language].amount}}</th>
         <th>{{translations[language].destination}}</th>
       </tr>
@@ -17,12 +16,13 @@
         <td>{{ resource.date }}</td>
         <td>{{ resource.type }}</td>
         <td>{{ resource.description }}</td>
-        <td>{{ resource.status }}</td>
         <td>{{ resource.amount }}</td>
+        <td>
         <span v-if="resource.destinationId">
             {{ getCatastropheById(resource.destinationId)?.type }} - 
             {{ getCatastropheById(resource.destinationId)?.location || translations[language].unknown_location }}
         </span>
+      </td>
       </tr>
       </tbody>
     </table>
@@ -86,13 +86,8 @@ export default {
     },
     fetchResources() {
       console.log(this.userid);
-      console.log(localStorage.getItem('accessToken'));
       axios
-        .get(`resource/getByholder/${localStorage.getItem('userId')}`, {
-          headers: {
-            Authorization: `${localStorage.getItem('accessToken')}`, // Zastąp 'authToken' poprawną nazwą
-          },
-        })
+        .get(`resource/getByholder/${localStorage.getItem('userId')}`)
         .then((response) => {
           // Przypisz dane do tablicy resources
           this.resources = response.data;
@@ -101,10 +96,6 @@ export default {
         .catch((error) => {
           console.error('Błąd podczas pobierania zasobów:', error);
         });
-    },
-    editResource(id) {
-      // Przekierowanie do edycji zasobu
-      this.$router.push({ name: 'EditResource', params: { id } });
     },
     getCatastropheById(destinationId) {
       return this.catastrophes.find(catastrophe => catastrophe.id === destinationId);
@@ -141,17 +132,17 @@ export default {
     },
 
   },
+  /*
   updated() {
     // Pobierz dane po załadowaniu komponentu
     this.fetchResources();
     this.loadCatastrophes();
   },
+  */
   mounted() {
-    /*
      //roboczo
      localStorage.setItem('userId', 1);
-    localStorage.setItem('role', 'NGO');
-    */
+    localStorage.setItem('role', 'OFFICIAL');
     localStorage.setItem('language', 'pl');
     console.log(localStorage.getItem('role'));
     // Pobierz dane po załadowaniu komponentu
