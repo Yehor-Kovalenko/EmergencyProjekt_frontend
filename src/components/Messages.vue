@@ -1,30 +1,62 @@
 <template>
   <div class="messages-container">
-    <div v-if="loading" class="loading">Loading messages...</div>
+    <div class="messages-tabs">
+      <button 
+        :class="['tab-button', { active: activeTab === 'received' }]"
+        @click="activeTab = 'received'"
+      >
+        {{ translations[language].receivedMessages }}
+      </button>
+      <button 
+        :class="['tab-button', { active: activeTab === 'sent' }]"
+        @click="activeTab = 'sent'"
+      >
+        {{ translations[language].sentMessages }}
+      </button>
+    </div>
+
+    <div v-if="loading" class="loading">{{ translations[language].loading }}</div>
     <div v-if="error" class="error">{{ error }}</div>
-    <ul v-else class="messages-list">
-      <li v-for="message in messages" :key="message.id" class="message-item" @click="openMessage(message)">
-        {{ console.log(message) }}
-        <h3>{{ message.title }}</h3>
-        <span class="message-sender">From: {{ message.sender }}</span>
-      </li>
-    </ul>
+    
+    <div v-show="activeTab === 'received'" class="tab-content">
+      <ul v-if="!loading" class="messages-list">
+        <li v-for="message in receivedMessages" :key="message.id" class="message-item" @click="openMessage(message)">
+          <h3>{{ message.title }}</h3>
+          <span class="message-sender">{{ translations[language].from }}: {{ message.sender }}</span>
+          <span class="message-date">{{ translations[language].date }}: {{ new Date(message.date).toLocaleString() }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div v-show="activeTab === 'sent'" class="tab-content">
+      <ul v-if="!loading" class="messages-list">
+        <li v-for="message in sentMessages" :key="message.id" class="message-item" @click="openMessage(message)">
+          <h3>{{ message.title }}</h3>
+          <span class="message-sender">{{ translations[language].to }}: {{ message.receiver }}</span>
+          <span class="message-date">{{ translations[language].date }}: {{ new Date(message.date).toLocaleString() }}</span>
+        </li>
+      </ul>
+    </div>
 
     <div v-if="selectedMessage" class="message-popup">
       <div class="popup-content">
         <h3>{{ selectedMessage.title }}</h3>
         <p>{{ selectedMessage.body }}</p>
-        <button @click="closePopup">Close</button>
+        <div class="message-details">
+          <span v-if="activeTab === 'received'">{{ translations[language].from }}: {{ selectedMessage.sender }}</span>
+          <span v-else>{{ translations[language].to }}: {{ selectedMessage.receiver }}</span>
+          <span>{{ translations[language].date }}: {{ new Date(selectedMessage.date).toLocaleString() }}</span>
+        </div>
+        <button @click="closePopup">{{ translations[language].close }}</button>
       </div>
     </div>
 
     <div class="new-message-form">
-      <!-- User Search Input with Dropdown -->
       <div class="user-search-container">
         <input 
           v-model="searchQuery" 
           @input="searchUsers"
-          placeholder="Search for a user..." 
+          :placeholder="translations[language].searchPlaceholder" 
           type="text"
           class="search-input"
         />
@@ -40,19 +72,25 @@
         </ul>
       </div>
       
-      <!-- Selected User Display -->
       <div v-if="selectedUser" class="selected-user">
-        Selected recipient: {{ getUserDisplayName(selectedUser) }}
+        {{ translations[language].selectedRecipient }}: {{ getUserDisplayName(selectedUser) }}
         <button class="clear-button" @click="clearSelectedUser">×</button>
       </div>
 
-      <input v-model="newMessage.title" placeholder="Title" type="text" />
-      <textarea v-model="newMessage.body" placeholder="Message body"></textarea>
+      <input 
+        v-model="newMessage.title" 
+        :placeholder="translations[language].titlePlaceholder" 
+        type="text" 
+      />
+      <textarea 
+        v-model="newMessage.body" 
+        :placeholder="translations[language].messagePlaceholder"
+      ></textarea>
       <button 
         @click="sendMessage" 
         :disabled="sending || !selectedUser || !newMessage.title || !newMessage.body"
       >
-        Send Message
+        {{ translations[language].sendButton }}
       </button>
       <div v-if="sendError" class="send-error">{{ sendError }}</div>
     </div>
@@ -67,7 +105,9 @@ export default {
   name: 'Messages',
   data() {
     return {
-      messages: [],
+      activeTab: 'received',
+      receivedMessages: [],
+      sentMessages: [],
       loading: false,
       error: null,
       sendError: null,
@@ -76,25 +116,76 @@ export default {
       searchResults: [],
       selectedUser: null,
       newMessage: {
-        senderId: 1,
+        senderId: localStorage.getItem('userId'),
         title: '',
-        body: ''
+        body: '',
+        language: localStorage.getItem('language') || 'pl'
       },
-      selectedMessage: null
+      selectedMessage: null,
+      language: localStorage.getItem('language') || 'pl',
+      translations: {
+        pl: {
+          receivedMessages: 'Otrzymane Wiadomości',
+          sentMessages: 'Wysłane Wiadomości',
+          loading: 'Ładowanie wiadomości...',
+          from: 'Od',
+          to: 'Do',
+          date: 'Data',
+          close: 'Zamknij',
+          searchPlaceholder: 'Wyszukaj użytkownika...',
+          selectedRecipient: 'Wybrany odbiorca',
+          titlePlaceholder: 'Tytuł wiadomości',
+          messagePlaceholder: 'Treść wiadomości',
+          sendButton: 'Wyślij',
+          errorSearching: 'Błąd podczas wyszukiwania',
+          errorSending: 'Błąd podczas wysyłania wiadomości',
+          errorLoading: 'Błąd podczas ładowania wiadomości'
+        },
+        en: {
+          receivedMessages: 'Received Messages',
+          sentMessages: 'Sent Messages',
+          loading: 'Loading messages...',
+          from: 'From',
+          to: 'To',
+          date: 'Date',
+          close: 'Close',
+          searchPlaceholder: 'Search for a user...',
+          selectedRecipient: 'Selected recipient',
+          titlePlaceholder: 'Message title',
+          messagePlaceholder: 'Message body',
+          sendButton: 'Send',
+          errorSearching: 'Error while searching',
+          errorSending: 'Error while sending message',
+          errorLoading: 'Error while loading messages'
+        }
+      }
     }
   },
   methods: {
-    async fetchMessages() {
+    async fetchAllMessages() {
       this.loading = true
       try {
-        const receiverId = this.newMessage.senderId
-        this.messages = await messageService.getMessages(receiverId)
-
+        const [received, sent] = await Promise.all([
+          this.fetchReceivedMessages(),
+          this.fetchSentMessages()
+        ])
+        this.receivedMessages = received
+        this.sentMessages = sent
       } catch (err) {
-        this.error = err.message
+        this.error = this.translations[this.language].errorLoading
       } finally {
         this.loading = false
       }
+    },
+
+    async fetchReceivedMessages() {
+      const receiverId = this.newMessage.senderId
+      return await messageService.getMessages(receiverId)
+    },
+
+    async fetchSentMessages() {
+      const senderId = this.newMessage.senderId
+      return await messageService.getMessagesForSender(senderId)
     },
 
     getUserDisplayName(user) {
@@ -102,7 +193,6 @@ export default {
       return user.username || user.email || 'Unknown User'
     },
 
-    // Debounced search function
     searchUsers: debounce(async function() {
       if (!this.searchQuery.trim()) {
         this.searchResults = []
@@ -119,7 +209,6 @@ export default {
       this.selectedUser = user
       this.searchQuery = ''
       this.searchResults = []
-      console.log('Selected user:', user)
     },
 
     clearSelectedUser() {
@@ -140,7 +229,7 @@ export default {
         this.selectedUser = null
         this.newMessage.title = ''
         this.newMessage.body = ''
-        await this.fetchMessages()
+        await this.fetchAllMessages()
       } catch (err) {
         this.sendError = err.message
       } finally {
@@ -157,7 +246,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchMessages()
+    this.fetchAllMessages()
   }
 }
 </script>
@@ -347,5 +436,54 @@ export default {
   background-color: #444;
   color: #666;
   cursor: not-allowed;
+}
+
+.message-date {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+.messages-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #444;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 16px;
+  position: relative;
+}
+
+.tab-button.active {
+  color: #fff;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #28a745;
+}
+
+.tab-content {
+  margin-top: 20px;
+}
+
+.message-details {
+  margin: 15px 0;
+  color: #888;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
 }
 </style>

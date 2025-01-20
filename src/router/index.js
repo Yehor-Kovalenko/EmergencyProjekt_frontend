@@ -6,11 +6,7 @@ import Messages from '../components/Messages.vue'
 import ReportView from "@/views/ReportView.vue";
 import ReportTypeView from "@/views/ReportTypeView.vue";
 import ReportDateView from "@/views/ReportDateView.vue";
-import ReportGiverView from "@/views/ReportGiverView.vue";
-import ReportResourcesView from "@/views/ReportResourcesView.vue";
-import ReportVolunteersView from "@/views/ReportVolunteersView.vue";
-import ReportCatastropheView from "@/views/ReportCatastropheView.vue";
-import CatastropheLookup from '@/components/events/CatastropheLookup.vue'
+import ReportPage from '@/components/ReportPage.vue';import CatastropheLookup from '@/components/events/CatastropheLookup.vue'
 import EditHelpRequest from '@/components/events/EditHelpRequest.vue'
 import HelpRequestForm from '@/components/events/HelpRequestForm.vue'
 import HelpRequestLookup from '@/components/events/HelpRequestLookup.vue'
@@ -106,45 +102,69 @@ const router = createRouter({
         requiresAuth: false, 
       }
     },
+    // RAPORTOWANIE
     {
       path: '/report',
       name: 'report',
       component: ReportView,
-      meta: { requiresAuth: false }
-      // autoryzachje - potem zmienic na true
-
+      meta: { 
+        requiresAuth: true,
+        role: ['OFFICIAL', 'NGO']
+      }
     },
     {
       path: '/report-type',
       name: 'report-type',
       component: ReportTypeView,
+      meta: {
+        requiresAuth: true,
+        role: ['OFFICIAL', 'NGO']
+      }
     },
     {
       path: '/report-date',
       name: 'report-date',
       component: ReportDateView,
+      meta: { 
+        requiresAuth: true,
+        role: ['OFFICIAL', 'NGO']
+      }
     },
     {
       path: '/report-giver',
       name: 'report-giver',
-      component: ReportGiverView,
-      meta: { requiresAuth: false }
-      // autoryzachje - potem zmienic na true
+      component: ReportPage,
+      meta: { 
+        requiresAuth: true,
+        role: ['GIVER',]
+      }
     },
     {
       path: '/report-resources-view',
       name: 'resources-view',
-      component: ReportResourcesView,
+      component: ReportPage,
+      meta: { 
+        requiresAuth: true,
+        role: ['OFFICIAL', 'NGO']
+      }
     },
     {
       path: '/report-volunteers-view',
       name: 'volunteers-view',
-      component: ReportVolunteersView,
+      component: ReportPage,
+      meta: { 
+        requiresAuth: true,
+        role: ['OFFICIAL', 'NGO']
+      }
     },
     {
       path: '/report-catastrophe-view',
       name: 'catastrophe-view',
-      component: ReportCatastropheView,
+      component: ReportPage,
+      meta: { 
+        requiresAuth: true,
+        role: ['OFFICIAL', 'NGO']
+      }
     },
     {
       path: '/catastrophes/:catastropheId',
@@ -186,10 +206,20 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth && !accessToken) {
     next({ name: 'auth'})
   }
-  */
-  //console.log(jwtDecode(accessToken))
-  //const decoded = jwtDecode(accessToken)
-/*
+  
+  let decoded = null;
+  try {
+    if (accessToken) {
+      decoded = jwtDecode(accessToken)
+    }
+  } catch (error) {
+    console.error('Invalid Token:', error)
+    localStorage.removeItem('accessToken')  // Remove invalid token
+    next({ name: 'auth' })  // Redirect to login
+    return
+  }
+
+
   if (!to.meta.role) {
     next()
   } else if (to.meta.role.includes(decoded.role)) {

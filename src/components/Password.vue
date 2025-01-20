@@ -1,28 +1,53 @@
 <template>
     <div>
-      <h2>Przypomnij hasło</h2>
+      <h2>{{ translations[language].pageName }}</h2>
       <form @submit.prevent="handleSubmit">
         <div>
           <label for="email">Email</label>
           <input id="email" v-model="email" type="email" required />
         </div>
-        <button type="submit">Przypomnij hasło</button>
+        <button type="submit">{{ translations[language].button }}</button>
       </form>
     </div>
 </template>
   
 <script>
+  import axios from '@/axiosConfig'
+  
   export default {
     name: 'Password',
+    setup(){
+      const translations = {
+        pl: {
+          pageName: 'Przypomnij hasło',
+          button: 'Zmień hasło'
+        },
+        en: {
+          pageName: 'Forgotten password',
+          button: 'Reset password'
+        }
+      }
+    },
     data() {
       return {
         email: '',
       };
     },
-    methods: {
-        handleSubmit() {
+    methods: {       
+        async handleSubmit() {
         console.log('Przypomnij hasło:', this.email);
-        // Wywołanie API dla logowania
+        
+        try {
+          const response = await axios.post('/auth/password-reset/request', {
+            email: this.email,
+          })
+
+          console.log('Link do zmiany hasła przesłany')
+
+        } catch (error) {
+          console.error('Błąd:', error)
+          alert('Nie udało się przesłać żadania. Spróbuj ponownie')
+        }
       },
     },
   };
@@ -45,4 +70,3 @@ button {
     margin-left: auto;
 }
 </style>
-  

@@ -1,10 +1,48 @@
 <script setup>
+import { ref, onMounted } from 'vue';
 import { RouterLink, RouterView } from "vue-router";
-import HelloWorld from "./components/HelloWorld.vue";
+//import HelloWorld from "./components/HelloWorld.vue";
+// Store the current user role in a ref to control access to links
+const userRole = ref(null);
+const language = ref(localStorage.getItem("language") || "pl");
+
+onMounted(() => {
+  // Get the user role from localStorage (assuming 'role' is stored there)
+  userRole.value = localStorage.getItem('role');
+});
+
+function setLanguage(lang) {
+  language.value = lang;
+  localStorage.setItem("language", lang);
+  location.reload();
+}
+const translations = {
+  pl: {
+    home: 'Strona główna',
+    login: 'Zaloguj się',
+    catastrophe: 'Katastrofa',
+    message: 'Wiadomości',
+    reports: 'Raporty'
+},
+  en: {
+    home: 'Home',
+    login: 'Login',
+    catastrophe: 'Catastrophe',
+    message: 'Message inbox',
+    reports: "Reports"
+  }
+}
+
+
 </script>
 
 <template>
   <header>
+    <div class="language-switcher">
+      <button @click="setLanguage('en')">EN</button>
+      <button @click="setLanguage('pl')">PL</button>
+    </div>
+    
     <img
       alt="Vue logo"
       class="logo"
@@ -14,17 +52,20 @@ import HelloWorld from "./components/HelloWorld.vue";
     />
 
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+      <!--<HelloWorld msg="You did it!" />-->
 
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/volounteers/1">volounters List</RouterLink>
-        <RouterLink to="/volunteers/3/actions/1">test accept</RouterLink>
-        <RouterLink
-          :to="{ name: 'invite', params: { ngoId: '1', eventId: '1001' } }"
-        >
-          test invite
-        </RouterLink>
+      <!-- public -->
+        <RouterLink to="/">{{ translations[language].home }}</RouterLink>
+        <RouterLink to="/auth">{{ translations[language].login }}</RouterLink>
+        <RouterLink to="/map">{{ translations[language].catastrophe }}</RouterLink>
+
+        <RouterLink to="/messages" v-if="userRole === 'NGO' || userRole === 'OFFICIAL' || userRole === 'VOLUNTEER' || userRole === 'GIVER'">{{ translations[language].message }}</RouterLink>
+        <RouterLink to="/report" v-if="userRole === 'NGO' || userRole === 'OFFICIAL'">{{ translations[language].reports }}</RouterLink>
+        <RouterLink to="/report" v-if="userRole === 'GIVER'">{{ translations[language].reports }}</RouterLink>
+        
+
+
       </nav>
     </div>
   </header>
