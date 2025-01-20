@@ -5,10 +5,12 @@ import { RouterLink, RouterView } from "vue-router";
 // Store the current user role in a ref to control access to links
 const userRole = ref(null);
 const language = ref(localStorage.getItem("language") || "pl");
+const userId = ref(null);
 
 onMounted(() => {
   // Get the user role from localStorage (assuming 'role' is stored there)
   userRole.value = localStorage.getItem('role');
+  userId.value = localStorage.getItem('userId');
 });
 
 function setLanguage(lang) {
@@ -23,7 +25,8 @@ const translations = {
     catastrophe: 'Katastrofa',
     message: 'Wiadomości',
     reports: 'Raporty',
-    request: 'Zobacz zgłoszsenie'
+    request: 'Zobacz zgłoszsenie',
+    resources: 'Zobacz dary'
 },
   en: {
     home: 'Home',
@@ -31,7 +34,8 @@ const translations = {
     catastrophe: 'Catastrophe',
     message: 'Message inbox',
     reports: "Reports",
-    request: 'Lookup request'
+    request: 'Lookup request',
+    resources: 'View my resources'
   }
 }
 
@@ -62,7 +66,10 @@ const translations = {
         <RouterLink to="/auth">{{ translations[language].login }}</RouterLink>
         <RouterLink to="/map">{{ translations[language].catastrophe }}</RouterLink>
         <RouterLink to="/help-request/lookup">{{ translations[language].request }}</RouterLink>
-
+        
+        <RouterLink v-if="userId" :to="`/resource/getByholder/${userId}`">
+          {{ translations[language].resources }}
+        </RouterLink>
         <RouterLink to="/messages" v-if="userRole === 'NGO' || userRole === 'OFFICIAL' || userRole === 'VOLUNTEER' || userRole === 'GIVER'">{{ translations[language].message }}</RouterLink>
         <RouterLink to="/report" v-if="userRole === 'NGO' || userRole === 'OFFICIAL'">{{ translations[language].reports }}</RouterLink>
         <RouterLink to="/report" v-if="userRole === 'GIVER'">{{ translations[language].reports }}</RouterLink>
