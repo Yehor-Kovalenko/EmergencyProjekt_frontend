@@ -4,15 +4,29 @@ import { RouterLink, RouterView } from "vue-router";
 //import HelloWorld from "./components/HelloWorld.vue";
 // Store the current user role in a ref to control access to links
 const userRole = ref(null);
+const language = ref(localStorage.getItem("language") || "en");
 
 onMounted(() => {
   // Get the user role from localStorage (assuming 'role' is stored there)
   userRole.value = localStorage.getItem('role');
 });
+
+function setLanguage(lang) {
+  language.value = lang;
+  localStorage.setItem("language", lang);
+  location.reload();
+}
+
+
 </script>
 
 <template>
   <header>
+    <div class="language-switcher">
+      <button @click="setLanguage('en')">EN</button>
+      <button @click="setLanguage('pl')">PL</button>
+    </div>
+    
     <img
       alt="Vue logo"
       class="logo"
