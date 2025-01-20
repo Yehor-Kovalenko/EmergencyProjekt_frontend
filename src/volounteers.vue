@@ -26,7 +26,8 @@ const translations = {
     message: 'Wiadomości',
     reports: 'Raporty',
     request: 'Zobacz zgłoszsenie',
-    resources: 'Zobacz dary'
+    resources: 'Zobacz dary',
+    ngo: 'Wolontariusze'
 },
   en: {
     home: 'Home',
@@ -35,7 +36,8 @@ const translations = {
     message: 'Message inbox',
     reports: "Reports",
     request: 'Lookup request',
-    resources: 'View my resources'
+    resources: 'View my resources',
+    ngo: "Volounteers"
   }
 }
 
@@ -70,11 +72,12 @@ const translations = {
         <RouterLink v-if="userRole === 'GIVER' || userRole === 'NGO' || userRole === 'OFFICIAL'" :to="`/resource/getByholder/${userId}`">
           {{ translations[language].resources }}
         </RouterLink>
+        <RouterLink v-if="userRole === 'NGO'" :to="`/volounteers/${userId}`">
+          {{ translations[language].ngo }}
+        </RouterLink>
         <RouterLink to="/messages" v-if="userRole === 'NGO' || userRole === 'OFFICIAL' || userRole === 'VOLUNTEER' || userRole === 'GIVER'">{{ translations[language].message }}</RouterLink>
         <RouterLink to="/report" v-if="userRole === 'NGO' || userRole === 'OFFICIAL'">{{ translations[language].reports }}</RouterLink>
         <RouterLink to="/report-giver" v-if="userRole === 'GIVER'">{{ translations[language].reports }}</RouterLink>
-        
-
 
       </nav>
     </div>
