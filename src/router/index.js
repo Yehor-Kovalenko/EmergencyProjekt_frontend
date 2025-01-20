@@ -36,7 +36,7 @@ const router = createRouter({
       path: "/about",
       name: "about",
       component: () => import("../views/AboutView.vue"),
-      meta: { requiresAuth: true }
+      //meta: { requiresAuth: true }
     },
     {
       path: "/volounteers/:id",
@@ -87,13 +87,20 @@ const router = createRouter({
     },
     {
       path: "/resource/getByholder/:id",
-      name: "userResources",
+      name: "UserResources",
       component: () => import("../views/UserResourcesView.vue"),
+      meta: { 
+        requiresAuth: true,
+        role: ['GIVER','OFFICIAL', 'NGO'] 
+      }
     },
     {
       path: "/resource/getBydestination/:id",
-      name: "destinationResources",
+      name: "ResourcesToCatastrophe",
       component: () => import("../views/ResourcesToCatastropheView.vue"),
+      meta: { 
+        requiresAuth: false, 
+      }
     },
     // RAPORTOWANIE
     {
@@ -189,10 +196,13 @@ const router = createRouter({
   ],
 });
 
+/*
 router.beforeEach((to, from, next) => {
   const accessToken = localStorage.getItem('accessToken')
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  console.log(localStorage.getItem('accessToken'))
+  //const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
+  /*
   if (requiresAuth && !accessToken) {
     next({ name: 'auth'})
   }
@@ -220,4 +230,8 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+  next()
+})
+
+*/
 export default router;

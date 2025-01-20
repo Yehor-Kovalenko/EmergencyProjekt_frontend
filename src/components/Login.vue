@@ -21,6 +21,14 @@
 <script>
   import axios from '@/axiosConfig';
   import { ref } from 'vue';
+
+  function setLanguage(lang) {
+  language.value = lang;
+  localStorage.setItem("language", lang);
+  location.reload();
+}
+
+
   export default {
     name: 'Login',
     setup(){

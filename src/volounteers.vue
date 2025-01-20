@@ -22,14 +22,16 @@ const translations = {
     login: 'Zaloguj się',
     catastrophe: 'Katastrofa',
     message: 'Wiadomości',
-    reports: 'Raporty'
+    reports: 'Raporty',
+    request: 'Zobacz zgłoszsenie'
 },
   en: {
     home: 'Home',
     login: 'Login',
     catastrophe: 'Catastrophe',
     message: 'Message inbox',
-    reports: "Reports"
+    reports: "Reports",
+    request: 'Lookup request'
   }
 }
 
@@ -59,6 +61,7 @@ const translations = {
         <RouterLink to="/">{{ translations[language].home }}</RouterLink>
         <RouterLink to="/auth">{{ translations[language].login }}</RouterLink>
         <RouterLink to="/map">{{ translations[language].catastrophe }}</RouterLink>
+        <RouterLink to="/help-request/lookup">{{ translations[language].request }}</RouterLink>
 
         <RouterLink to="/messages" v-if="userRole === 'NGO' || userRole === 'OFFICIAL' || userRole === 'VOLUNTEER' || userRole === 'GIVER'">{{ translations[language].message }}</RouterLink>
         <RouterLink to="/report" v-if="userRole === 'NGO' || userRole === 'OFFICIAL'">{{ translations[language].reports }}</RouterLink>
