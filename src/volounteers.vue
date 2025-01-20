@@ -4,7 +4,7 @@ import { RouterLink, RouterView } from "vue-router";
 //import HelloWorld from "./components/HelloWorld.vue";
 // Store the current user role in a ref to control access to links
 const userRole = ref(null);
-const language = ref(localStorage.getItem("language") || "en");
+const language = ref(localStorage.getItem("language") || "pl");
 
 onMounted(() => {
   // Get the user role from localStorage (assuming 'role' is stored there)
@@ -15,6 +15,22 @@ function setLanguage(lang) {
   language.value = lang;
   localStorage.setItem("language", lang);
   location.reload();
+}
+const translations = {
+  pl: {
+    home: 'Strona główna',
+    login: 'Zaloguj się',
+    catastrophe: 'Katastrofa',
+    message: 'Wiadomości',
+    reports: 'Raporty'
+},
+  en: {
+    home: 'Home',
+    login: 'Login',
+    catastrophe: 'Catastrophe',
+    message: 'Message inbox',
+    reports: "Reports"
+  }
 }
 
 
@@ -40,13 +56,13 @@ function setLanguage(lang) {
 
       <nav>
       <!-- public -->
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/auth">Login</RouterLink>
-        <RouterLink to="/map">Catastrophes</RouterLink>
+        <RouterLink to="/">{{ translations[language].home }}</RouterLink>
+        <RouterLink to="/auth">{{ translations[language].login }}</RouterLink>
+        <RouterLink to="/map">{{ translations[language].catastrophe }}</RouterLink>
 
-        <RouterLink to="/messages" v-if="userRole === 'NGO' || userRole === 'OFFICIAL' || userRole === 'VOLUNTEER' || userRole === 'GIVER'">Message inbox</RouterLink>
-        <RouterLink to="/report" v-if="userRole === 'NGO' || userRole === 'OFFICIAL'">Reports</RouterLink>
-        <RouterLink to="/report" v-if="userRole === 'GIVER'">Reports</RouterLink>
+        <RouterLink to="/messages" v-if="userRole === 'NGO' || userRole === 'OFFICIAL' || userRole === 'VOLUNTEER' || userRole === 'GIVER'">{{ translations[language].message }}</RouterLink>
+        <RouterLink to="/report" v-if="userRole === 'NGO' || userRole === 'OFFICIAL'">{{ translations[language].reports }}</RouterLink>
+        <RouterLink to="/report" v-if="userRole === 'GIVER'">{{ translations[language].reports }}</RouterLink>
         
 
 

@@ -21,6 +21,18 @@ onMounted(() => {
     role.value = storedRole;
   }
 });
+
+const language = ref(localStorage.getItem('language') || 'pl');
+const translations = {
+  pl: {
+    heading: 'Witaj w naszym projekcie!',
+    text: 'Celem tego projektu jest opracowanie systemu informacyjnego wspomagającego koordynację działań pomocowych podczas sytuacji kryzysowych, takich jak klęski żywiołowe czy katastrofy ekologiczne. System umożliwi efektywne zarządzanie zgłoszeniami poszkodowanych, dystrybucję zasobów, komunikację pomiędzy wszystkimi zaangażowanymi stronami oraz monitorowanie i raportowanie działań pomocowych. Naszym celem jest stworzenie platformy, która będzie stanowiła istotne narzędzie dla organizacji humanitarnych, wolontariuszy, darczyńców, osób poszkodowanych oraz przedstawicieli władz, zapewniając sprawne wsparcie i poprawioną współpracę podczas sytuacji kryzysowych. Proszę zalogować się, aby uzyskać dostęp do spersonalizowanych treści i funkcji.'
+},
+  en: {
+    heading: 'Welcome to our project!',
+    text: 'The goal of this project is to develop an information system that facilitates the coordination of aid efforts during crisis situations, such as natural disasters or environmental catastrophes. The system will enable efficient management of victim reports, resource distribution, communication among all involved parties, and monitoring and reporting of relief operations. Our aim is to create a platform that serves as a vital tool for humanitarian organizations, volunteers, donors, affected individuals, and government representatives, ensuring streamlined support and enhanced collaboration during emergencies. Please log in to access your personalized content and features.'
+  }
+}
 </script>
 
 <template>
@@ -28,18 +40,10 @@ onMounted(() => {
     <TheWelcome />
     <!-- Show description if no one is authenticated -->
     <div v-if="!isAuthenticated">
-      <h1>Welcome to our project!</h1>
+      <h1>{{ translations[language].heading }}</h1>
       <p>
-        The goal of this project is to develop an information system that facilitates 
-        the coordination of aid efforts during crisis situations, such as natural disasters 
-        or environmental catastrophes. The system will enable efficient management of victim reports, 
-        resource distribution, communication among all involved parties, and monitoring and reporting of relief operations.
+        {{ translations[language].text }}
       </p>
-      <p>
-        Our aim is to create a platform that serves as a vital tool for humanitarian organizations, volunteers, donors, 
-        affected individuals, and government representatives, ensuring streamlined support and enhanced collaboration during emergencies.
-      </p>
-      <p>Please log in to access your personalized content and features.</p>
     </div>
 
 
