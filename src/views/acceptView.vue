@@ -1,7 +1,7 @@
 <template>
     <div class="about"> 
-        <button id="accept" @click="accept">{{translations[language].accept}}</button>
-        <button id="reject"@click="reject">{{translations[language].accept}}</button>
+        <button id="accept" @click="accept">accept</button>
+        <button id="reject"@click="reject">reject</button>
     </div>
   </template>
 

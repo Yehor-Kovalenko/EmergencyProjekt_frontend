@@ -20,7 +20,7 @@
       <p>
         <strong>{{ translations[language].active }}:</strong>
         {{
-          catastrophe.isActive === 1
+          catastrophe.active == true
             ? translations[language].yes
             : translations[language].no
         }}

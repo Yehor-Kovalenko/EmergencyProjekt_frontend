@@ -7,6 +7,7 @@ import ReportView from "@/views/ReportView.vue";
 import ReportTypeView from "@/views/ReportTypeView.vue";
 import ReportDateView from "@/views/ReportDateView.vue";
 import ReportPage from "@/components/ReportPage.vue";
+import CloseCatastrophe from "@/components/events/CloseCatastrophe.vue";
 import CatastropheLookup from "@/components/events/CatastropheLookup.vue";
 import EditHelpRequest from "@/components/events/EditHelpRequest.vue";
 import HelpRequestForm from "@/components/events/HelpRequestForm.vue";
@@ -171,6 +172,11 @@ const router = createRouter({
       path: "/catastrophes/:catastropheId",
       name: "CatastropheLookup",
       component: CatastropheLookup,
+    },
+    {
+      path:"/catastrophes/close/:catastropheId",
+      name:"CloseCatastrophe",
+      component: CloseCatastrophe,
     },
     {
       path: "/help-request/edit/:uniqueCode",
