@@ -86,10 +86,12 @@
   
 <script>
   import axios from '@/axiosConfig'
+  import { ref } from 'vue';
 
   export default {
     name: 'Register',
     setup(){
+      const language = ref(localStorage.getItem('language') || 'pl');
       const translations = {
         pl: {
           pageName: 'Rejestracja',
@@ -127,6 +129,14 @@
           regon: 'REGON number',
           button: 'Register'
         }
+      }
+
+      const currentView = ref('Register');
+
+      return {
+        language,
+        translations,
+        currentView,
       }
     },
     data() {
