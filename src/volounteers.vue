@@ -67,12 +67,12 @@ const translations = {
         <RouterLink to="/map">{{ translations[language].catastrophe }}</RouterLink>
         <RouterLink to="/help-request/lookup">{{ translations[language].request }}</RouterLink>
         
-        <RouterLink v-if="userId" :to="`/resource/getByholder/${userId}`">
+        <RouterLink v-if="userRole === 'GIVER'" :to="`/resource/getByholder/${userId}`">
           {{ translations[language].resources }}
         </RouterLink>
         <RouterLink to="/messages" v-if="userRole === 'NGO' || userRole === 'OFFICIAL' || userRole === 'VOLUNTEER' || userRole === 'GIVER'">{{ translations[language].message }}</RouterLink>
         <RouterLink to="/report" v-if="userRole === 'NGO' || userRole === 'OFFICIAL'">{{ translations[language].reports }}</RouterLink>
-        <RouterLink to="/report" v-if="userRole === 'GIVER'">{{ translations[language].reports }}</RouterLink>
+        <RouterLink to="/report-giver" v-if="userRole === 'GIVER'">{{ translations[language].reports }}</RouterLink>
         
 
 
