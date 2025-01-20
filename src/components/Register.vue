@@ -207,6 +207,7 @@
           
           console.log('Registration successful')
           alert('Registration successful')
+          this.$router.push('/')
 
         } catch (error) {
           console.error('Błąd rejestracji:', error)
