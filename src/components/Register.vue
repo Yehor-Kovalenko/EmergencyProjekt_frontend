@@ -53,7 +53,12 @@
         </div>
         <div v-if="role === 'Volunteer'">
           <label for="organizationId">{{ translations[language].organizationId }}</label>
-          <input id="organizationId" v-model="organizationId" type="text" required />
+          <!-- <input id="organizationId" v-model="organizationId" type="text" required /> -->
+           <select id="organizationId" v-model="organizationId">
+              <option v-for="item in items" :key="item.id" :value="item.id">
+                {{ item.name }}
+              </option>
+           </select>
         </div>
         </div>
 
@@ -86,9 +91,35 @@
   
 <script>
 import axios from "@/axiosConfig";
+import { ref, onMounted } from "vue";
 
 export default {
   name: "Register",
+  setup(){
+    const items = ref([]);
+    const selectedValue = ref("");
+
+    const fetchItems = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/ngo");
+        
+        console.log(response)
+        
+        items.value = response.data;
+      } catch (error) {
+        console.error("Error fetching items:", error);
+      }
+    };
+
+    onMounted(() => {
+      fetchItems();
+    });
+
+    return {
+      items,
+      selectedValue,
+    };
+  },
   data() {
     return {
       language: localStorage.getItem("language") || "pl",
