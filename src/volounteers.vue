@@ -1,6 +1,14 @@
 <script setup>
+import { ref, onMounted } from 'vue';
 import { RouterLink, RouterView } from "vue-router";
-import HelloWorld from "./components/HelloWorld.vue";
+//import HelloWorld from "./components/HelloWorld.vue";
+// Store the current user role in a ref to control access to links
+const userRole = ref(null);
+
+onMounted(() => {
+  // Get the user role from localStorage (assuming 'role' is stored there)
+  userRole.value = localStorage.getItem('role');
+});
 </script>
 
 <template>
@@ -14,34 +22,18 @@ import HelloWorld from "./components/HelloWorld.vue";
     />
 
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+      <!--<HelloWorld msg="You did it!" />-->
 
       <nav>
+      <!-- public -->
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/auth">Login</RouterLink>
-        <RouterLink to="/volounteers/1">volounteer info</RouterLink>
-        <RouterLink to="/mark/1"> mark volounteer</RouterLink>
-        <RouterLink to="/volunteers/3/actions/1">test accept</RouterLink>
-        <RouterLink
-          :to="{ name: 'invite', params: { ngoId: '1', eventId: '1001' } }"
-        >
-          test invite
-        </RouterLink>
-        <RouterLink to="/messages">Message list</RouterLink>
-        <RouterLink to="/resource/getByholder/1">Get user's resources</RouterLink>
-        <RouterLink to="/resource/getByDestination/1">Get user's resources</RouterLink>
-        <RouterLink to="/report">Reports</RouterLink>
-        <RouterLink to="/report-type">Report type</RouterLink>
-        <RouterLink to="/report-date">Report date</RouterLink>
-        <RouterLink to="/report-giver">Report giver</RouterLink>
-        <RouterLink to="/report-resources-view">Report resources view</RouterLink>
-        <RouterLink to="/report-volunteers-view">Report volunteers view</RouterLink>
-        <RouterLink to="/report-catastrophe-view">Report catastrophe view</RouterLink>
-        <RouterLink to="/catastrophes/1"> Catastrophe lookup</RouterLink>
-        <RouterLink to="/help-request/edit/1"> Edit help request</RouterLink>
-        <RouterLink to="/help-request/create/1"> Create help request</RouterLink>
-        <RouterLink to="/help-request/lookup"> Lookup help request</RouterLink>
-        <RouterLink to="/map">Map</RouterLink>
+        <RouterLink to="/map">Catastrophes</RouterLink>
+
+        <RouterLink to="/messages" v-if="userRole === 'NGO' || userRole === 'OFFICIAL' || userRole === 'VOLUNTEER' || userRole === 'GIVER'">Message inbox</RouterLink>
+        <RouterLink to="/report" v-if="userRole === 'NGO' || userRole === 'OFFICIAL'">Reports</RouterLink>
+        <RouterLink to="/report" v-if="userRole === 'GIVER'">Reports</RouterLink>
+        
 
 
       </nav>
