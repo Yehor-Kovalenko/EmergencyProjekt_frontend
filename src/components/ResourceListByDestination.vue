@@ -1,32 +1,31 @@
 <template>
   <div>
     <div>
-      <label>Wybierz katastrofę:</label>
+      <label>{{translations[language].choose_catastrophes}}</label>
       <select v-model.number="destinationId" @change="loadResources">
         <option
           v-for="catastrophe in catastrophes"
           :key="catastrophe.id"
           :value="catastrophe.id"
         >
-          {{ catastrophe.type }} - {{ catastrophe.location || 'Pobieranie położenia...' }}
+          {{ catastrophe.type }} - {{ catastrophe.location || translations[language].loading_location }}
         </option>
       </select>
     </div>
 
-    <h2>Lista zasobów dla katastrofy</h2>
-    <div v-if="loading">Ładowanie zasobów...</div>
+    <h2>{{translations[language].heading}}</h2>
+    <div v-if="loading">{{translations[language].loading_resources}}</div>
     <div v-else-if="error">{{ error }}</div>
 
     <!-- Tabela wyświetlana tylko po wybraniu katastrofy -->
     <table v-if="resources.length > 0 && destinationId">
       <thead>
         <tr>
-          <th>Data rejestracji</th>
-          <th>Typ</th>
-          <th>Opis</th>
-          <th>Status</th>
-          <th>Ilość</th>
-          <th>Darczyńca</th>
+          <th>{{translations[language].date}}</th>
+          <th>{{translations[language].type}}</th>
+          <th>{{translations[language].description}}</th>
+          <th>{{translations[language].status}}</th>
+          <th>{{translations[language].amount}}</th>
         </tr>
       </thead>
       <tbody>
@@ -36,12 +35,11 @@
           <td>{{ resource.description }}</td>
           <td>{{ resource.status }}</td>
           <td>{{ resource.amount }}</td>
-          <td>{{ resource.holderId }}</td>
         </tr>
       </tbody>
     </table>
 
-    <p v-else>Brak zasobów przypisanych do tej katastrofy.</p>
+    <p v-else>{{translations[language].no_resources}}</p>
   </div>
 </template>
 
@@ -50,8 +48,45 @@ import axios from "axios";
 
 export default {
   name: "ResourceListByDestination",
+  setup() {
+      const translations = {
+        pl: {
+          heading: 'Lista zasobów dla katastrofy',
+          date: 'Data rejestracji',
+          type: 'Typ',
+          description: 'Opis',
+          status: 'Status',
+          amount: 'Ilość',
+          destination: 'Przeznaczenie',
+          giver: 'Darczyńca',
+          unknown_location: 'Nieznane położenie',
+          choose_catastrophes: 'Wybierz katastrofę:',
+          loading_location: 'Pobieranie położenia...',
+          loading_resources: 'Ładowanie zasobów...',
+          no_resources: 'Brak zasobów przypisanych do tej katastrofy.',
+
+        },
+        en: {
+          heading: 'Resource List',
+          date: 'Registration date',
+          type: 'Type',
+          description: 'Description',
+          status: 'Status',
+          amount: 'Amount',
+          destination: 'Destination',
+          giver: 'Giver',
+          unknown_location: 'Unknown location',
+          choose_catastrophes: 'Choose catastrophe:',
+          loading_location: 'Loading location...',
+          loading_resources: 'Loading resources...',
+          no_resources: 'No resources assigned to this catastrophe.',
+        },
+      };
+      return {translations}
+    },
   data() {
     return {
+      language: localStorage.getItem('language') || 'pl',
       resources: [],
       loading: false,
       error: null,
@@ -62,6 +97,7 @@ export default {
   methods: {
     // Funkcja ładująca zasoby po wybraniu katastrofy
     loadResources() {
+      console.log('iddd', this.destinationId);
       if (!this.destinationId) return;
 
       this.loading = true;
@@ -99,7 +135,14 @@ export default {
     // Funkcja wczytująca katastrofy i uzupełniająca geolokację
     async loadCatastrophes() {
       try {
-        const response = await axios.get('/catastrophes'); // Endpoint zwracający katastrofy
+        /*
+        const response = await axios.get('/catastrophes', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        }); // Endpoint zwracający katastrofy
+        */
+        const response = await axios.get(`/catastrophes`);
         const catastrophes = response.data;
         console.log('Katastrofy z load:', catastrophes);
 
@@ -118,6 +161,14 @@ export default {
 
   mounted() {
     this.loadCatastrophes(); // Załaduj katastrofy po załadowaniu komponentu
+    localStorage.setItem('language', 'pl');
+    localStorage.setItem('role', 'OFFICIAL');
+    /*
+    localStorage.setItem('accessToken', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYWEiLCJpYXQiOjE3MzczMTAxNDUsImV4cCI6MTczNzMxMDQ0NX0.ib_kwXRgxFvOKSAfSh4PO4utBy66RrPXEByhKPP1rxk');
+    */
+  },
+  updated() {
+    //this.loadCatastrophes(); // Załaduj zasoby po wybraniu katastrofy
   },
 };
 </script>

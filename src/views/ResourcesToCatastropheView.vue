@@ -9,6 +9,7 @@
   import ResourceListByDestination from '@/components/ResourceListByDestination.vue';
   
   export default {
+    name: 'ResourcesToCatastropheView',
     components: {
       ResourceListByDestination
     }
