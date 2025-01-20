@@ -39,6 +39,8 @@
 
 <script>
 import axios from "axios";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 
 export default {
   setup() {
@@ -64,24 +66,26 @@ export default {
         dont_mark: "can't mark right now",
       },
     };
-    return translations;
-  },
-  data() {
+
+    const language = ref(localStorage.getItem("language") || "pl");
+    const volunteers = ref([]);
+    const route = useRoute(); // Get route parameters
+
+    onMounted(() => {
+      console.log(route.params.id);
+      axios
+        .get(`http://localhost:8080/ngo/${route.params.id}/volunteers`)
+        .then((response) => {
+          volunteers.value = response.data;
+        })
+        .catch((error) => console.error("Error fetching volunteers:", error));
+    });
+
     return {
-      volunteers: [],
-      language: localStorage.getItem("language") || "pl",
+      translations,
+      language,
+      volunteers,
     };
-  },
-  mounted() {
-    console.log(this.$route.params.id);
-    axios
-      .get(
-        "http://localhost:8080/ngo/".concat(
-          this.$route.params.id,
-          "/volunteers"
-        )
-      )
-      .then((response) => (this.volunteers = response.data));
   },
 };
 </script>
