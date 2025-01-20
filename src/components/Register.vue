@@ -86,10 +86,12 @@
   
 <script>
   import axios from '@/axiosConfig'
+  import { ref } from 'vue';
 
   export default {
     name: 'Register',
     setup(){
+      const language = ref(localStorage.getItem('language') || 'pl');
       const translations = {
         pl: {
           pageName: 'Rejestracja',
@@ -99,8 +101,8 @@
           phone: 'Numer telefonu',
           password: 'Hasło',
           confirmPassword: 'Powtórz hasło',
-          name: 'Imię',
-          surname: 'Nazwisko',
+          firstName: 'Imię',
+          lastName: 'Nazwisko',
           birthDate: 'Data urodzin',
           organizationId: 'ID organizacji',
           ngoName: 'Nazwa NGO',
@@ -117,8 +119,8 @@
           phone: 'Phone number',
           password: 'Password',
           confirmPassword: 'Repeat password',
-          name: 'First name',
-          surname: 'Last name',
+          firstName: 'First name',
+          lastName: 'Last name',
           birthDate: 'Birth date',
           organizationId: 'Organization ID',
           ngoName: 'NGO name',
@@ -127,6 +129,14 @@
           regon: 'REGON number',
           button: 'Register'
         }
+      }
+
+      const currentView = ref('Register');
+
+      return {
+        language,
+        translations,
+        currentView,
       }
     },
     data() {

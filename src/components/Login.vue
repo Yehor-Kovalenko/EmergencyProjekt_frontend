@@ -20,6 +20,7 @@
   
 <script>
   import axios from '@/axiosConfig';
+  import { ref } from 'vue';
 
   function setLanguage(lang) {
   language.value = lang;
@@ -31,6 +32,7 @@
   export default {
     name: 'Login',
     setup(){
+      const language = ref(localStorage.getItem('language') || 'pl');
       const translations = {
         pl: {
           pageName: 'Logowanie',
@@ -43,6 +45,13 @@
           password: 'Password'
         }
       }
+      const currentView = ref('Login');
+
+      return {
+        language,
+        translations,
+        currentView,
+      };
     },
     data() {
       return {
