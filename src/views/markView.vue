@@ -32,11 +32,17 @@ export default {
       }
     },
   mounted() {
-    axios.get('http://localhost:8080/volunteers/'.concat(this.$route.params.id,'/actions')).then((response) => this.volunteer_data = response.data)
+    axios.get('http://localhost:8080/volunteers/'.concat(this.$route.params.id,'/actions'), {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          },}).then((response) => this.volunteer_data = response.data)
   },
   methods:{
     mark(){
-        axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.id,'/mark?actionId=',this.action_id,'&rating=',this.rating));
+        axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.id,'/mark?actionId=',this.action_id,'&rating=',this.rating), {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          },});
         router.go(-1);
     }
   }

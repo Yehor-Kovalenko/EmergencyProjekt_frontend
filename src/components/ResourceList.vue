@@ -87,7 +87,10 @@ export default {
     fetchResources() {
       console.log(this.userid);
       axios
-        .get(`resource/getByholder/${localStorage.getItem('userId')}`)
+        .get(`resource/getByholder/${localStorage.getItem('userId')}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          },})
         .then((response) => {
           // Przypisz dane do tablicy resources
           this.resources = response.data;
@@ -121,7 +124,10 @@ export default {
       const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
 
       return axios
-        .get(apiUrl)
+        .get(apiUrl, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          },})
         .then((response) => {
           return response.data.display_name || 'Nieznane położenie';
         })

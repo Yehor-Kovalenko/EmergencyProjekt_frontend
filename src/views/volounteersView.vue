@@ -74,7 +74,10 @@ export default {
     onMounted(() => {
       console.log(route.params.id);
       axios
-        .get(`http://localhost:8080/ngo/${route.params.id}/volunteers`)
+        .get(`http://localhost:8080/ngo/${route.params.id}/volunteers`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          },})
         .then((response) => {
           volunteers.value = response.data;
         })

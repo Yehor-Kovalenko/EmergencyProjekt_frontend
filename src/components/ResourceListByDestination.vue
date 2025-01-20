@@ -104,7 +104,10 @@ export default {
       this.error = null;
 
       axios
-        .get(`http://localhost:8080/api/resource/getBydestination/${this.destinationId}`)
+        .get(`http://localhost:8080/api/resource/getBydestination/${this.destinationId}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          },})
         .then((response) => {
           this.resources = response.data;
         })
@@ -122,7 +125,10 @@ export default {
       const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
 
       return axios
-        .get(apiUrl)
+        .get(apiUrl, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          },})
         .then((response) => {
           return response.data.display_name || 'Nieznane położenie';
         })

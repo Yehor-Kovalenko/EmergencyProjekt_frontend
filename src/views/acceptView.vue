@@ -25,12 +25,18 @@ export default {
 methods:{
     accept(){
         console.log('accept');
-        axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.vid,'/actions/',this.$route.params.aid,'/accept'));
+        axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.vid,'/actions/',this.$route.params.aid,'/accept'), {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          },});
         router.push('/thanks');
     },
     reject(){
         console.log('reject');
-        axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.vid,'/actions/',this.$route.params.aid,'/reject'));
+        axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.vid,'/actions/',this.$route.params.aid,'/reject'), {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          },});
         router.push('/thanks');
 
     },
