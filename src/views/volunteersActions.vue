@@ -46,8 +46,14 @@ export default {
     const fetchActions = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/volunteers/${userId}/actions`
+          `http://localhost:8080/volunteers/${userId}/actions`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          }
         );
+
         actions.value = response.data;
       } catch (error) {
         console.error("Error fetching actions:", error);
