@@ -44,14 +44,16 @@
     </a>
 
     <a id="invitationLink" href="#" target="_blank">
-      <button>{{ translations[language].invitationButton }}</button>
+      <button v-if="role">
+        {{ translations[language].invitationButton }}
+      </button>
     </a>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 
 export default {
@@ -62,6 +64,7 @@ export default {
     const error = ref(false);
 
     const language = ref(localStorage.getItem("language") || "pl");
+    const role = computed(() => localStorage.getItem("role") === "NGO");
 
     const translations = {
       pl: {
@@ -129,6 +132,7 @@ export default {
       error,
       language,
       translations,
+      role,
     };
   },
 };
