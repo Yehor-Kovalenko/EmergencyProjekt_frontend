@@ -45,8 +45,8 @@ export default {
   name: 'ResourceList',
   components: { ResourceForm },
   setup() {
-    const language = ref(localStorage.getItem('language') || 'pl');
-    const userid = localStorage.getItem('userId');
+    //const language = ref(localStorage.getItem('language') || 'pl');
+    //const userid = localStorage.getItem('userId');
       const translations = {
         pl: {
           heading: 'Lista zasobów',
@@ -67,14 +67,15 @@ export default {
           status: 'Status',
           amount: 'Amount',
           destination: 'Destination',
-          unknown_location: 'Unknown location',          
+          unknown_location: 'Unknown location',   
+          resource_management: 'Resource management',       
         },
       };
       return { translations };
     },
   data() {
     return {
-      language : localStorage.getItem('language'),
+      language : localStorage.getItem('language') || 'pl',
       userid: localStorage.getItem('userId'),
       //language: 'pl',
       resources: [], // Tablica zasobów
@@ -153,7 +154,7 @@ export default {
      //localStorage.setItem('userId', 1);
       //localStorage.setItem('role', 'OFFICIAL');
       //localStorage.setItem('language', 'pl');
-    console.log('lan', localStorage.getItem('language'));
+    //console.log('lan', localStorage.getItem('language'));
     // Pobierz dane po załadowaniu komponentu
     this.fetchResources();
     this.loadCatastrophes();

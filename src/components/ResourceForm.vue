@@ -71,7 +71,7 @@
         <select v-model.number="form.holderId" required>
           <optgroup :label= "translations[language].official">
             <option v-for="official in officials" :key="official.id" :value="official.id">
-              {{ official.name }}
+              {{ official.officialName }}
             </option>
           </optgroup>
           <optgroup :label="translations[language].ngo">
@@ -126,27 +126,32 @@
   <div v-if="!showForm && !showDonateForm">
     <button
       @click="openForm"
-      @mouseover="tooltip =  translations[language].add_tooltip "
-      @mouseleave="tooltip = ''"
+      @mouseover="tooltipAdd = translations[language].add_tooltip"
+      @mouseleave="tooltipAdd = ''"
     >
     {{ translations[language].add_resource }}
     </button>
     <button v-if="userRole === 'NGO' || userRole === 'OFFICIAL'"
       @click="openDonateForm"
-      @mouseover="tooltip =  translations[language].add_without_destination_tooltip "
-      @mouseleave="tooltip = ''"
+      @mouseover="tooltipDonate = translations[language].add_without_destination_tooltip"
+      @mouseleave="tooltipDonate = ''"
     >
     {{ translations[language].add_without_destination }}
     </button>
     <button v-if="userRole !== 'NGO'"
       @click="openDonateForOfficialsForm"
-      @mouseover="tooltip =  translations[language].donate_tooltip "
-      @mouseleave="tooltip = ''"
+      @mouseover="tooltipDonateForOfficials = translations[language].donate_tooltip"
+      @mouseleave="tooltipDonateForOfficials = ''"
     >
     {{ translations[language].donate_resource }}
     </button>
     <div v-if="tooltip" class="tooltip">{{ tooltip }}</div>
     <button @click="$emit('close')">{{ translations[language].close }}</button>
+  </div>
+
+    <!-- Tooltip Display -->
+    <div v-if="tooltipAdd || tooltipDonate || tooltipDonateForOfficials" class="tooltip">
+    {{ tooltipAdd || tooltipDonate || tooltipDonateForOfficials }}
   </div>
 
   <!-- Menu zmiany statusu -->
@@ -259,6 +264,7 @@ export default {
         change_status: 'Change resource status',
         save_status: 'Save status',
         add_destination: 'Add destination',
+        add_without_destination: 'Add resource without assigning destination',
         new_destination_heading: 'Enter new resource destination',
         new_destination: 'New destination',
         save_changes: 'Save changes',
@@ -273,14 +279,14 @@ export default {
         status_disabled_tooltip: 'You cannot choose this status for this resource',
         unknown_destination: 'Unknown location',
         donate_for_ngo_tooltip: 'Register resource without assigning destination',
-        add_without_destination: 'Add resource without assigning destination',
+        add_without_destination_tooltip: 'Add resource without assigning destination',
       },
     };
     return { translations };
     },
   data() {
     return {
-      language: localStorage.getItem('language'),
+      language: localStorage.getItem('language') || 'pl',
       resources: [],
       resourceTypes: ['CLOTHES','PUBLICRESOURCE' , 'MEDICALSUPPLIES', 'FOOD', 'TOOLKITS', 'COMMUNICATIONDEVICES', 'TRANSPORT', 'ANOTHER'],
       resourceStatuses: ['REGISTERED', 'ASSIGNED', 'ENROUTE', 'DELIVERED'],
@@ -292,6 +298,9 @@ export default {
         holderId: null,
       },
       tooltip: '',
+      tooltipAdd: '',
+      tooltipDonate: '',
+      tooltipDonateForOfficials: '',
       //showResourceForm: true,
       showForm: false,
       showDonateForm: false,
@@ -313,14 +322,14 @@ export default {
     // Sprawdzamy, czy rola użytkownika jest zgodna z jednym z wymaganych
     isNgoOrOfficial() {
       const userRole = localStorage.getItem('role'); // Pobieramy 'userRole' z localStorage
-      console.log('userrole', userRole);
+      //console.log('userrole', userRole);
       return userRole === 'NGO' || userRole === 'OFFICIAL'; // Przycisk widoczny tylko, gdy rola to 'NGO' lub 'Official'
     }
   },
   methods: {
     fetchResources() {
-      console.log(localStorage.getItem('userId'));
-      console.log('rola', localStorage.getItem('role'));
+      //console.log(localStorage.getItem('userId'));
+      //console.log('rola', localStorage.getItem('role'));
       axios
         .get(`resource/getByholder/${localStorage.getItem('userId')}`, {
           headers: {
@@ -338,7 +347,7 @@ export default {
     submitForm() {
       this.form.holderId = this.userid;
       const params = new URLSearchParams(this.form);
-      console.log(params.toString());
+      //console.log(params.toString());
       axios
         .post(`resource/destination?${params.toString()}`, {
         headers: {
@@ -470,14 +479,14 @@ export default {
       
       const response = await axios.get('/catastrophes'); // Endpoint zwracający katastrofy
       const catastrophes = response.data;
-      console.log('Katastrofy z load:', catastrophes);
+      //console.log('Katastrofy z load:', catastrophes);
 
       // Dodaj nazwę lokalizacji do każdej katastrofy
       for (let catastrophe of catastrophes) {
         const address = await this.reverseGeocode(catastrophe.latitude, catastrophe.longitude);
-        console.log(address);
+        //console.log(address);
         catastrophe.location = address; // Dodaj lokalizację do katastrofy
-        console.log(catastrophe.location);
+        //console.log(catastrophe.location);
       }
 
       this.catastrophes = catastrophes;
@@ -511,38 +520,50 @@ export default {
 
     // Wysyła zapytanie do backendu, aby zaktualizować destinationId
     updateDestinationId() {
-      console.log('Aktualizacja destinationId:', this.newDestinationId);
+      //console.log('Aktualizacja destinationId:', this.newDestinationId);
       if (this.newDestinationId != null) {
         axios
           .put(`http://localhost:8080/api/resource/updateDestination/${this.selectedResourceId}`, null, {
             params: { newDestinationId: this.newDestinationId },
           })
           .then((response) => {
-            console.log("Destination updated:", response.data);
+            //console.log("Destination updated:", response.data);
             this.fetchResources();  // Odświeżenie zasobów po aktualizacji
             this.closeDestinationMenu();  // Zamykanie formularza
           })
           .catch((error) => {
-            console.error("Błąd podczas zmiany destinationId:", error);
+            //console.error("Błąd podczas zmiany destinationId:", error);
           });
       }
     },
     
-    loadOfficialsAndNgos() {
-  axios
-    .get(`http://localhost:8080/ngo`,
-    )  // Endpoint dla NGO i władz
-    .then((response) => {
-      const data = response.data;
-      //this.officials = data.officials || []; // Zakładając, że odpowiedź zawiera 'officials'
-      this.ngos = data|| []; // Zakładając, że odpowiedź zawiera 'ngos'
-      console.log('NGO:', response);
-    })
-    .catch((error) => {
-      console.error('Błąd podczas pobierania NGO i władz:', error);
-    });
+    async loadOfficialsAndNgos() {
+  try {
+    // Pobranie danych NGO
+    const ngosResponse = await axios.get(`http://localhost:8080/ngo`);
+    this.ngos = ngosResponse.data || []; // Zakładając, że odpowiedź zawiera dane NGO
+
+    // Sprawdzenie, czy endpoint officials istnieje
+    try {
+      const officialsHeadResponse = await axios.head(`http://localhost:8080/officials`);
+      if (officialsHeadResponse.status === 200) {
+        // Endpoint istnieje, pobierz dane officials
+        const officialsResponse = await axios.get(`http://localhost:8080/officials`);
+        this.officials = officialsResponse.data || []; // Zakładając, że odpowiedź zawiera dane officials
+      } else {
+        console.warn('Endpoint /officials zwrócił inny status niż 200.');
+      }
+    } catch (error) {
+      console.error('Endpoint /officials nie istnieje lub wystąpił błąd:', error);
+    }
+  } catch (error) {
+    console.error('Błąd podczas pobierania danych NGO lub officials:', error);
+  }
+}
+
+    
   },
-  },
+  
   mounted() {
     
     //roboczo
