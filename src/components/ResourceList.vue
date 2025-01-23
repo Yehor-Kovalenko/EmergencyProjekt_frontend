@@ -37,16 +37,18 @@
 </template>
 
 <script>
-import axios from 'axios';
+import {ref} from 'vue';
+import axios from '../axiosConfig';
 import ResourceForm from './ResourceForm.vue';
 
 export default {
   name: 'ResourceList',
   components: { ResourceForm },
   setup() {
+    const language = ref(localStorage.getItem('language') || 'pl');
     const userid = localStorage.getItem('userId');
       const translations = {
-        'pl': {
+        pl: {
           heading: 'Lista zasobów',
           date: 'Data rejestracji',
           type: 'Typ',
@@ -85,15 +87,16 @@ export default {
       this.showResourceForm = !this.showResourceForm;
     },
     fetchResources() {
+      console.log(localStorage.getItem('language'));
       const token = localStorage.getItem("accessToken"); // Get token from storage
       console.log("User ID:", localStorage.getItem("userId"));
-      console.log("Access Token:", token); // Debugging
       axios
-  .get(`resource/getByholder/${localStorage.getItem('userId')}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-    }
-  })
+      .get(`resource/getByholder/${localStorage.getItem('userId')}`
+      , {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
         .then((response) => {
           // Przypisz dane do tablicy resources
           this.resources = response.data;
@@ -127,10 +130,7 @@ export default {
       const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
 
       return axios
-        .get(apiUrl, {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-          },})
+        .get(apiUrl, { withCredentials: false })  
         .then((response) => {
           return response.data.display_name || 'Nieznane położenie';
         })
@@ -150,10 +150,10 @@ export default {
   */
   mounted() {
      //roboczo
-     localStorage.setItem('userId', 1);
-    localStorage.setItem('role', 'OFFICIAL');
-    localStorage.setItem('language', 'pl');
-    console.log(localStorage.getItem('role'));
+     //localStorage.setItem('userId', 1);
+      //localStorage.setItem('role', 'OFFICIAL');
+      //localStorage.setItem('language', 'pl');
+    console.log('lan', localStorage.getItem('language'));
     // Pobierz dane po załadowaniu komponentu
     this.fetchResources();
     this.loadCatastrophes();

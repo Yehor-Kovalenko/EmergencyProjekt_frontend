@@ -29,6 +29,8 @@ const translations = {
     reports: 'Raporty',
     request: 'Zobacz zgłoszsenie',
     resources: 'Zobacz dary',
+    destinationResources: 'Zobacz dary przekazane do katastrofy',
+    destinationResources: 'Zobacz dary przekazane do katastrofy',
     ngo: 'Wolontariusze',
     username: 'Użytkownik',
     role: 'Rola',
@@ -42,6 +44,8 @@ const translations = {
     reports: "Reports",
     request: 'Lookup request',
     resources: 'View my resources',
+    destinationResources: 'View resources sent to a catastrophe',
+    destinationResources: 'View resources sent to a catastrophe',
     ngo: "Volounteers",
     username: 'User',
     role: 'Role',
@@ -94,6 +98,7 @@ function logout() {
         <RouterLink v-if="userRole === 'GIVER' || userRole === 'NGO' || userRole === 'OFFICIAL'" :to="`/resource/getByholder/${userId}`">
           {{ translations[language].resources }}
         </RouterLink>
+        <RouterLink to="/resource/getBydestination/1">{{ translations[language].destinationResources }}</RouterLink>
         <RouterLink v-if="userRole === 'NGO'" :to="`/volounteers/${userId}`">
           {{ translations[language].ngo }}
         </RouterLink>
