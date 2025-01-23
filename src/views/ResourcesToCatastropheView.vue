@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h2>Wyświetl zasoby przypisane do wybranej katastrofy</h2>
+      <h2> {{ translations[language].heading }} </h2>
       <ResourceListByDestination /> <!-- Komponent wewnętrzny -->
     </div>
   </template>
@@ -12,7 +12,23 @@
     name: 'ResourcesToCatastropheView',
     components: {
       ResourceListByDestination
-    }
+    },
+    setup() {
+      const translations = {
+        pl: {
+          heading: 'Wyświetl zasoby przypisane do wybranej katastrofy',
+        },
+        en: {
+          heading: 'Display resources assigned to the selected catastrophe',
+        },
+      };
+      return { translations };
+  },
+  data() {
+    return {  
+      language: localStorage.getItem('language') || 'pl',
+    };
+  }
   };
   </script>
   

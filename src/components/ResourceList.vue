@@ -14,7 +14,7 @@
       <tbody>
       <tr v-for="resource in resources" :key="resource.id">
         <td>{{ resource.date }}</td>
-        <td>{{ resource.type }}</td>
+        <td>{{ this.getTranslatedResourceType(resource.type) }}</td>
         <td>{{ resource.description }}</td>
         <td>{{ resource.amount }}</td>
         <td>
@@ -57,7 +57,23 @@ export default {
           amount: 'Ilość',
           destination: 'Przeznaczenie',
           unknown_location: 'Nieznane położenie',
-          resource_management: 'Zarządzanie zasobami',          
+          resource_management: 'Zarządzanie zasobami', 
+          resourceTypes: {
+        CLOTHES: 'Ubrania',
+        PUBLICRESOURCE: 'Zasoby publiczne',
+        MEDICALSUPPLIES: 'Zasoby medyczne',
+        FOOD: 'Jedzenie',
+        TOOLKITS: 'Narzędzia',
+        COMMUNICATIONDEVICES: 'Urządzenia komunikacyjne',
+        TRANSPORT: 'Transport',
+        ANOTHER: 'Inne',
+        },
+        resourceStatuses: {
+          REGISTERED: 'Zarejestrowane',
+          ASSIGNED: 'Przypisane',
+          ENROUTE: 'W drodze',
+          DELIVERED: 'Dostarczone',
+        },         
         },
         en: {
           heading: 'Resource list',
@@ -68,7 +84,23 @@ export default {
           amount: 'Amount',
           destination: 'Destination',
           unknown_location: 'Unknown location',   
-          resource_management: 'Resource management',       
+          resource_management: 'Resource management', 
+          resourceTypes: {
+          CLOTHES: 'Clothes',
+          PUBLICRESOURCE: 'Public Resource',
+          MEDICALSUPPLIES: 'Medical Supplies',
+          FOOD: 'Food',
+          TOOLKITS: 'Toolkits',
+          COMMUNICATIONDEVICES: 'Communication Devices',
+          TRANSPORT: 'Transport',
+          ANOTHER: 'Another',
+        },
+        resourceStatuses: {
+          REGISTERED: 'Registered',
+          ASSIGNED: 'Assigned',
+          ENROUTE: 'Enroute',
+          DELIVERED: 'Delivered',
+        },      
         },
       };
       return { translations };
@@ -81,6 +113,8 @@ export default {
       resources: [], // Tablica zasobów
       showResourceForm: false,
       catastrophes: [], // Tablica katastrof
+      resourceTypes: [],
+      resourceStatuses: []
     };
   },
   methods: {
@@ -141,6 +175,38 @@ export default {
         });
     },
 
+     // Funkcja zwracająca przetłumaczone zasoby
+  getTranslatedResourceTypes() {
+      const currentLanguage = this.language; // Odwołanie do ref języka
+      return Object.keys(this.translations[currentLanguage].resourceTypes).map((key) => ({
+        key,
+        label: this.translations[currentLanguage].resourceTypes[key],
+      }));
+    },
+    getTranslatedResourceStatuses() {
+      const currentLanguage = this.language; 
+      return Object.keys(this.translations[currentLanguage].resourceStatuses).map((key) => ({
+        key,
+        label: this.translations[currentLanguage].resourceStatuses[key],
+      }));
+    },
+    getTranslatedResourceType(type) {
+      const currentLanguage = this.language;
+      return this.translations[currentLanguage].resourceTypes[type] || type;
+    },
+    getTranslatedResourceStatus(status) {
+      const currentLanguage = this.language;
+      return this.translations[currentLanguage].resourceStatuses[status] || status;
+    },
+
+  },
+  computed: {
+    translatedResourceTypes() {
+      return this.getTranslatedResourceTypes();
+    },
+    translatedResourceStatuses() {
+      return this.getTranslatedResourceStatuses();
+    },
   },
   /*
   updated() {
