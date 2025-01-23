@@ -20,12 +20,17 @@
           <td>{{ action.ratingFromAction }}</td>
           <td>{{ action.attendance ? "Yes" : "No" }}</td>
           <td>
-            <button
-              v-if="!action.attendance"
-              @click="goToAccept(action.actionId)"
-            >
-            {{translations[language].go_to_accept}}
-            </button>
+            <template v-for="catastrophe in catastrophes">
+              <template v-if="catastrophe.id == action.catastropheId && catastrophe.active">
+                <button v-if="!action.attendance"
+                     @click="goToAccept(action.actionId)"
+                >
+                {{translations[language].go_to_accept}}
+                </button>
+              </template>
+
+            </template>
+            
           </td>
         </tr>
       </tbody>
@@ -64,6 +69,7 @@ export default {
       },
     };
     const actions = ref([]);
+    const catastrophes = ref([]);
     const userId = localStorage.getItem("userId");
     const router = useRouter();
 
@@ -84,17 +90,38 @@ export default {
       }
     };
 
+    const fetchCatastrophes = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/catastrophes`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          }
+        );
+
+        catastrophes.value = response.data;
+      } catch (error) {
+        console.error("Error fetching actions:", error);
+      }
+    };
+
     const goToAccept = (actionId) => {
       router.push(`/volunteers/${userId}/actions/${actionId}`);
     };
 
     onMounted(() => {
       fetchActions();
+      fetchCatastrophes();
     });
+    const language = ref(localStorage.getItem('language') || 'pl');
 
     return {
+      language,
       translations,
       actions,
+      catastrophes,
       goToAccept,
     };
   },
