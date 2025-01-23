@@ -10,7 +10,10 @@
 </template>
 
 <script>
-if (typeof localStorage.getItem("language") === 'undefined' || localStorage.getItem("language") === null) {
+if (
+  typeof localStorage.getItem("language") === "undefined" ||
+  localStorage.getItem("language") === null
+) {
   localStorage.setItem("language", "en");
 }
 import router from "@/router";
@@ -38,37 +41,51 @@ export default {
   methods: {
     accept() {
       console.log("accept");
-      axios.post(
-        "http://localhost:8080/volunteers/".concat(
-          this.$route.params.vid,
-          "/actions/",
-          this.$route.params.aid,
-          "/accept"
-        ),
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        }
-      );
-      router.push("/thanks");
+
+      const url = `http://localhost:8080/volunteers/${this.$route.params.vid}/actions/${this.$route.params.aid}/accept`;
+
+      axios
+        .post(
+          url,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          }
+        )
+        .then(() => {
+          console.log(`Request to ${url} was successful.`);
+          router.push("/thanks");
+        })
+        .catch((error) => {
+          console.error("Error during accept request:", error);
+          alert("Failed to accept attendance. Please try again.");
+        });
     },
     reject() {
       console.log("reject");
-      axios.post(
-        "http://localhost:8080/volunteers/".concat(
-          this.$route.params.vid,
-          "/actions/",
-          this.$route.params.aid,
-          "/reject"
-        ),
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        }
-      );
-      router.push("/thanks");
+
+      const url = `http://localhost:8080/volunteers/${this.$route.params.vid}/actions/${this.$route.params.aid}/reject`;
+
+      axios
+        .post(
+          url,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          }
+        )
+        .then(() => {
+          console.log(`Request to ${url} was successful.`);
+          router.push("/thanks");
+        })
+        .catch((error) => {
+          console.error("Error during reject request:", error);
+          alert("Failed to reject attendance. Please try again.");
+        });
     },
   },
 };

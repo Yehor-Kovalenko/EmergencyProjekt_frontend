@@ -20,7 +20,7 @@ export default {
 
     // Zmienne
     const language = localStorage.getItem("language") || "pl";
-    const ngoId = localStorage.getItem("userId") || 1;
+    const ngoId = localStorage.getItem("userId");
     const eventId = route.params.eventId;
 
     // Funkcja zaproszenia
