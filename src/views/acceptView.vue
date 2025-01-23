@@ -18,9 +18,11 @@ if (
 }
 import router from "@/router";
 import axios from "axios";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 export default {
   setup() {
+    const route = useRoute();
     const translations = {
       pl: {
         accept: "zaakceptuj",
@@ -32,6 +34,35 @@ export default {
       },
     };
     const language = ref(localStorage.getItem("language") || "pl");
+    const action_details = ref(null);
+    const error = ref(false);
+    const fetchActionDetails = async (catastropheId) => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const response = await axios.get(
+          `http://localhost:8080/volunteers/action/${catastropheId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        action_details.value = response.data;
+        console.log("action_details.value:", action_details.value);
+        error.value = false;
+      } catch (err) {
+        console.error("Błąd podczas pobierania akcji:", err);
+        action_details.value = null;
+        error.value = true;
+      }
+    };
+
+    onMounted(() => {
+      const actionID = route.params.aid;
+      if (actionID) {
+        fetchActionDetails(actionID);
+      }
+    });
 
     return {
       translations,
