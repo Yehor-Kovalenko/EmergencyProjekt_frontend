@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h2>Moje zasoby</h2>
+      <h2>{{ translations[language].heading }}</h2>
       <ResourceList />
     </div>
   </template>
@@ -11,7 +11,23 @@
   export default {
     components: {
       ResourceList
-    }
-  };
+    },
+    setup() {
+      const translations = {
+        pl: {
+          heading: 'Moje zasoby',
+        },
+        en: {
+          heading: 'My resources',
+        },
+      }
+      return { translations };
+    },
+    data() {
+      return {
+        language: localStorage.getItem('language') || 'pl',
+      };
+  },
+};
   </script>
   
