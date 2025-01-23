@@ -21,13 +21,23 @@
           <td>{{ action.attendance ? "Yes" : "No" }}</td>
           <td>
             <template v-for="catastrophe in catastrophes">
-              <template v-if="catastrophe.id == action.catastropheId && catastrophe.active">
-                <button v-if="!action.attendance"
+              <template v-if="catastrophe.id == action.catastropheId">
+                <template v-if="catastrophe.active">
+                    <button v-if="!action.attendance"
                      @click="goToAccept(action.actionId)"
-                >
-                {{translations[language].go_to_accept}}
-                </button>
+                    >
+                    {{translations[language].go_to_accept}}
+                    </button>
+                    <template v-if="action.attendance">
+                      {{translations[language].attending}}
+                    </template>
+                </template>
+                <template v-else>
+                  {{translations[language].action_finished}}
+
+                </template>
               </template>
+              
 
             </template>
             
@@ -57,6 +67,8 @@ export default {
         attendance: "obecność",
         actions: "akcje",
         go_to_accept: "przejdź do akceptacji",
+        attending : "zgłoszony",
+        action_finished : "akcja zakończona",
       },
       en: {
         aid: "action ID",
@@ -66,6 +78,8 @@ export default {
         attendance: "attendance",
         actions: "actions",
         go_to_accept: "go to accept",
+        attending : "attending",
+        action_finished : "action finished",
       },
     };
     const actions = ref([]);
