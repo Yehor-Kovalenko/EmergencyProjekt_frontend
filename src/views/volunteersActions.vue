@@ -4,12 +4,12 @@
     <table>
       <thead>
         <tr>
-          <th>Action ID</th>
-          <th>Volunteer ID</th>
-          <th>Catastrophe ID</th>
-          <th>Rating</th>
-          <th>Attendance</th>
-          <th>Actions</th>
+          <th>{{translations[language].aid}}</th>
+          <th>{{translations[language].vid}}</th>
+          <th>{{translations[language].cid}}</th>
+          <th>{{translations[language].rate}}</th>
+          <th>{{translations[language].attendance}}</th>
+          <th>{{translations[language].actions}}</th>
         </tr>
       </thead>
       <tbody>
@@ -24,7 +24,7 @@
               v-if="!action.attendance"
               @click="goToAccept(action.actionId)"
             >
-              Go to accept
+            {{translations[language].go_to_accept}}
             </button>
           </td>
         </tr>
@@ -34,11 +34,35 @@
 </template>
 
 <script>
+if (typeof localStorage.getItem("language") === 'undefined' || localStorage.getItem("language") === null) {
+  localStorage.setItem("language", "en");
+}
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 export default {
+  
   setup() {
+    const translations = {
+      pl: {
+        aid: "ID akcji",
+        vid: "ID wolontariusza",
+        cid: "IDkatastrofy",
+        rate: "ocena",
+        attendance: "obecność",
+        actions: "akcje",
+        go_to_accept: "przejdź do akceptacji",
+      },
+      en: {
+        aid: "action ID",
+        vid: "volunteer ID",
+        cid: "catastrophe ID",
+        rate: "rate",
+        attendance: "attendance",
+        actions: "actions",
+        go_to_accept: "go to accept",
+      },
+    };
     const actions = ref([]);
     const userId = localStorage.getItem("userId");
     const router = useRouter();
@@ -69,6 +93,7 @@ export default {
     });
 
     return {
+      translations,
       actions,
       goToAccept,
     };
