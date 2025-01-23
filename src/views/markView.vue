@@ -1,18 +1,22 @@
 <template>
     <div class="about">
         <template v-for="data in volunteer_data">
-            <template v-if="data.ratingFromAction===0">
+            <template v-if="data.ratingFromAction===0 && data.attendance == true">
                 <div style="width: 0px; height: 0px; font-size: 0px;">{{ this.action_id = data.actionId }}</div>
                 <input type="number" id="rate" min="1" max="10"  v-model="rating" ></input>
                 <button id="accept_rate" @click="mark">{{translations[language].accept_mark}}</button>
             </template>
         </template>
     </div>
-  </template>
+</template>
 
 <script>
 import router from '@/router';
+import {ref} from "vue";
 import axios from 'axios';
+if (typeof localStorage.getItem("language") === 'undefined' || localStorage.getItem("language") === null) {
+  localStorage.setItem("language", "en");
+}
 
 export default {
   setup(){
@@ -25,7 +29,7 @@ export default {
         accept_mark:"accept mark",
       }
     };
-    return translations,language;
+    return {translations,language};
   },
   data() {
       return {
