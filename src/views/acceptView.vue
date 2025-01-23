@@ -36,11 +36,14 @@ export default {
     const language = ref(localStorage.getItem("language") || "pl");
     const action_details = ref(null);
     const error = ref(false);
-    const fetchActionDetails = async (catastropheId) => {
+    const catastropheID = ref(null);
+    const catastrophe = ref(null);
+
+    const fetchActionDetails = async (actionID) => {
       try {
         const token = localStorage.getItem("accessToken");
         const response = await axios.get(
-          `http://localhost:8080/volunteers/action/${catastropheId}`,
+          `http://localhost:8080/volunteers/action/${actionID}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -48,11 +51,28 @@ export default {
           }
         );
         action_details.value = response.data;
-        console.log("action_details.value:", action_details.value);
+        catastropheID.value = response.data.catastropheId;
+        fetchCatastrophe(catastropheID.value);
+        // console.log("catastropheID.value:", catastropheID.value);
+        // console.log("action_details.value:", action_details.value);
         error.value = false;
       } catch (err) {
         console.error("Błąd podczas pobierania akcji:", err);
         action_details.value = null;
+        error.value = true;
+      }
+    };
+    const fetchCatastrophe = async (catastropheId) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/catastrophes/${catastropheId}`
+        );
+        catastrophe.value = response.data;
+        console.log("catastrophe.value:", catastrophe.value);
+        error.value = false;
+      } catch (err) {
+        console.error("Błąd podczas pobierania katastrofy:", err);
+        catastrophe.value = null;
         error.value = true;
       }
     };
