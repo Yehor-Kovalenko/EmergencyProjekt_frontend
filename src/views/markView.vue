@@ -8,11 +8,15 @@
             </template>
         </template>
     </div>
-  </template>
+</template>
 
 <script>
 import router from '@/router';
+import {ref} from "vue";
 import axios from 'axios';
+if (typeof localStorage.getItem("language") === 'undefined' || localStorage.getItem("language") === null) {
+  localStorage.setItem("language", "en");
+}
 
 export default {
   setup(){
@@ -25,7 +29,7 @@ export default {
         accept_mark:"accept mark",
       }
     };
-    return translations,language;
+    return {translations,language};
   },
   data() {
       return {
