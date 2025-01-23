@@ -1,72 +1,148 @@
 <template>
-    <div class="about"> 
-        <button id="accept" @click="accept">accept</button>
-        <button id="reject"@click="reject">reject</button>
-    </div>
-  </template>
+  <div class="about">
+    <button id="accept" @click="accept">
+      {{ translations[language].accept }}
+    </button>
+    <button id="reject" @click="reject">
+      {{ translations[language].reject }}
+    </button>
+  </div>
+</template>
 
 <script>
-import router from '@/router';
-import axios from 'axios';
+if (
+  typeof localStorage.getItem("language") === "undefined" ||
+  localStorage.getItem("language") === null
+) {
+  localStorage.setItem("language", "en");
+}
+import router from "@/router";
+import axios from "axios";
+import { ref } from "vue";
 export default {
-  setup(){
-  const translations = {
+  setup() {
+    const translations = {
       pl: {
-        accept:"zaakceptuj",
-        reject:"odrzuć",
+        accept: "zaakceptuj",
+        reject: "odrzuć",
       },
       en: {
-        accept:"accept",
-        reject:"reject",
-      }
+        accept: "accept",
+        reject: "reject",
+      },
     };
-    return translations;
-  },
-methods:{
-    accept(){
-        console.log('accept');
-        axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.vid,'/actions/',this.$route.params.aid,'/accept'), {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-          },});
-        router.push('/thanks');
-    },
-    reject(){
-        console.log('reject');
-        axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.vid,'/actions/',this.$route.params.aid,'/reject'), {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-          },});
-        router.push('/thanks');
+    const language = ref(localStorage.getItem("language") || "pl");
 
+    return {
+      translations,
+      language,
+    };
+  },
+  methods: {
+    accept() {
+      console.log("accept");
+
+      const url = `http://localhost:8080/volunteers/${this.$route.params.vid}/actions/${this.$route.params.aid}/accept`;
+
+      axios
+        .post(
+          url,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          }
+        )
+        .then(() => {
+          console.log(`Request to ${url} was successful.`);
+          router.push("/thanks");
+        })
+        .catch((error) => {
+          console.error("Error during accept request:", error);
+          alert("Failed to accept attendance. Please try again.");
+        });
     },
-}
-}
+    reject() {
+      console.log("reject");
+
+      const url = `http://localhost:8080/volunteers/${this.$route.params.vid}/actions/${this.$route.params.aid}/reject`;
+
+      axios
+        .post(
+          url,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          }
+        )
+        .then(() => {
+          console.log(`Request to ${url} was successful.`);
+          router.push("/thanks");
+        })
+        .catch((error) => {
+          console.error("Error during reject request:", error);
+          alert("Failed to reject attendance. Please try again.");
+        });
+    },
+  },
+};
 </script>
-  
-  <style>
-  @media (min-width: 1024px) {
-    .about {
-      min-height: 100vh;
-      align-items: center;
-    }
+
+<style>
+.about {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  gap: 20px;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  padding: 15px 30px;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+#accept {
+  background-color: #28a745;
+  color: white;
+}
+
+#accept:hover {
+  background-color: #218838;
+}
+
+#reject {
+  background-color: #dc3545;
+  color: white;
+}
+
+#reject:hover {
+  background-color: #c82333;
+}
+
+@media (min-width: 1024px) {
+  .about {
+    flex-direction: row;
+    gap: 50px;
   }
-  .about{
-    padding-top: 40%;
+
+  button {
+    width: 200px;
   }
-    #accept{
-        background-color: green;
-        color: white;
-        height: 20%;
-        width: 30%;
-        float: left;
-    }
-    #reject{
-        background-color: red;
-        color: white;
-        height: 20%;
-        width: 30%;
-        float: right;
-    }
-  </style>
-  
+}
+</style>
