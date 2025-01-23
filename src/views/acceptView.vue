@@ -1,4 +1,41 @@
 <template>
+  <div class="catastrophe-view">
+    <div v-if="catastrophe">
+      <h3>{{ translations[language].heading }}</h3>
+      <p>
+        <strong>{{ translations[language].id }}:</strong>
+        {{ catastrophe.id }}
+      </p>
+      <p>
+        <strong>{{ translations[language].type }}:</strong>
+        {{ catastrophe.type }}
+      </p>
+      <p>
+        <strong>{{ translations[language].lat }}:</strong>
+        {{ catastrophe.latitude }}
+      </p>
+      <p>
+        <strong>{{ translations[language].lng }}:</strong>
+        {{ catastrophe.longitude }}
+      </p>
+      <p>
+        <strong>{{ translations[language].active }}:</strong>
+        {{
+          catastrophe.active == true
+            ? translations[language].yes
+            : translations[language].no
+        }}
+      </p>
+      <p>
+        <strong>{{ translations[language].date }}:</strong>
+        {{ new Date(catastrophe.reportedDate).toLocaleString() }}
+      </p>
+    </div>
+
+    <div v-if="error" class="error-message">
+      <p>{{ translations[language].errorNotFound }}</p>
+    </div>
+  </div>
   <div class="about">
     <button id="accept" @click="accept">
       {{ translations[language].accept }}
@@ -27,10 +64,36 @@ export default {
       pl: {
         accept: "zaakceptuj",
         reject: "odrzuć",
+        heading: "Szczegóły Katastrofy:",
+        id: "ID",
+        type: "Typ",
+        lat: "Szerokość geograficzna",
+        lng: "Długość geograficzna",
+        active: "Aktywna",
+        yes: "Tak",
+        no: "Nie",
+        date: "Data",
+        errorNotFound: "Nie znaleziono katastrofy o podanym ID.",
+        backButton: "Wróć",
+        invitationButton: "Zaproszenie",
+        closeCatastropheButton: "Zamknij katastrofę",
       },
       en: {
         accept: "accept",
         reject: "reject",
+        heading: "Catastrophe Details:",
+        id: "ID",
+        type: "Type",
+        lat: "Latitude",
+        lng: "Longitude",
+        active: "Active",
+        yes: "Yes",
+        no: "No",
+        date: "Date",
+        errorNotFound: "No catastrophe found with the provided ID.",
+        backButton: "Back",
+        invitationButton: "Invitation",
+        closeCatastropheButton: "Close catastrophe",
       },
     };
     const language = ref(localStorage.getItem("language") || "pl");
@@ -68,7 +131,8 @@ export default {
           `http://localhost:8080/api/catastrophes/${catastropheId}`
         );
         catastrophe.value = response.data;
-        console.log("catastrophe.value:", catastrophe.value);
+        // console.log("catastrophe.value:", catastrophe.value);
+        // console.log("catastrophe.type:", catastrophe.value.type);
         error.value = false;
       } catch (err) {
         console.error("Błąd podczas pobierania katastrofy:", err);
@@ -87,6 +151,8 @@ export default {
     return {
       translations,
       language,
+      catastrophe,
+      error,
     };
   },
   methods: {
@@ -148,7 +214,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 50hv;
   padding: 20px;
   gap: 20px;
 }
