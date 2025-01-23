@@ -27,6 +27,7 @@ const translations = {
     catastrophe: 'Katastrofa',
     message: 'Wiadomości',
     reports: 'Raporty',
+    reports_giver: 'Raporty darczyńcy',
     request: 'Zobacz zgłoszsenie',
     resources: 'Zobacz dary',
     destinationResources: 'Zobacz dary przekazane do katastrofy',
@@ -41,7 +42,8 @@ const translations = {
     login: 'Login',
     catastrophe: 'Catastrophe',
     message: 'Message inbox',
-    reports: "Reports",
+    reports: 'Reports',
+    reports_giver: 'Giver reports',
     request: 'Lookup request',
     resources: 'View my resources',
     destinationResources: 'View resources sent to a catastrophe',
@@ -95,16 +97,16 @@ function logout() {
         <RouterLink to="/map">{{ translations[language].catastrophe }}</RouterLink>
         <RouterLink to="/help-request/lookup">{{ translations[language].request }}</RouterLink>
         
-        <RouterLink v-if="userRole === 'GIVER' || userRole === 'NGO' || userRole === 'OFFICIAL'" :to="`/resource/getByholder/${userId}`">
+        <RouterLink v-if="1===1 || userRole === 'GIVER' || userRole === 'NGO' || userRole === 'OFFICIAL'" :to="`/resource/getByholder/${userId}`">
           {{ translations[language].resources }}
         </RouterLink>
         <RouterLink to="/resource/getBydestination/1">{{ translations[language].destinationResources }}</RouterLink>
-        <RouterLink v-if="userRole === 'NGO'" :to="`/volounteers/${userId}`">
+        <RouterLink v-if="1===1 || userRole === 'NGO'" :to="`/volounteers/${userId}`">
           {{ translations[language].ngo }}
         </RouterLink>
-        <RouterLink to="/messages" v-if="userRole === 'NGO' || userRole === 'OFFICIAL' || userRole === 'VOLUNTEER' || userRole === 'GIVER'">{{ translations[language].message }}</RouterLink>
-        <RouterLink to="/report" v-if="userRole === 'NGO' || userRole === 'OFFICIAL'">{{ translations[language].reports }}</RouterLink>
-        <RouterLink to="/report-giver" v-if="userRole === 'GIVER'">{{ translations[language].reports }}</RouterLink>
+        <RouterLink to="/messages" v-if="1===1 || userRole === 'NGO' || userRole === 'OFFICIAL' || userRole === 'VOLUNTEER' || userRole === 'GIVER'">{{ translations[language].message }}</RouterLink>
+        <RouterLink to="/report" v-if="1===1 || userRole === 'NGO' || userRole === 'OFFICIAL'">{{ translations[language].reports }}</RouterLink>
+        <RouterLink to="/report-giver" v-if="1===1 || userRole === 'GIVER'">{{ translations[language].reports_giver }}</RouterLink>
 
       </nav>
     </div>
