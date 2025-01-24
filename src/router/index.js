@@ -13,6 +13,7 @@ import EditHelpRequest from "@/components/events/EditHelpRequest.vue";
 import HelpRequestForm from "@/components/events/HelpRequestForm.vue";
 import HelpRequestLookup from "@/components/events/HelpRequestLookup.vue";
 import MapComponent from "@/components/events/MapComponent.vue";
+import Actions from "../views/volunteersActions.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -91,18 +92,18 @@ const router = createRouter({
       path: "/resource/getByholder/:id",
       name: "UserResources",
       component: () => import("../views/UserResourcesView.vue"),
-      meta: { 
+      meta: {
         requiresAuth: true,
-        role: ['GIVER','OFFICIAL', 'NGO'] 
-      }
+        role: ["GIVER", "OFFICIAL", "NGO"],
+      },
     },
     {
       path: "/resource/getBydestination/:id",
       name: "ResourcesToCatastrophe",
       component: () => import("../views/ResourcesToCatastropheView.vue"),
-      meta: { 
-        requiresAuth: false, 
-      }
+      meta: {
+        requiresAuth: false,
+      },
     },
     // RAPORTOWANIE
     {
@@ -174,8 +175,8 @@ const router = createRouter({
       component: CatastropheLookup,
     },
     {
-      path:"/catastrophes/close/:catastropheId",
-      name:"CloseCatastrophe",
+      path: "/catastrophes/close/:catastropheId",
+      name: "CloseCatastrophe",
       component: CloseCatastrophe,
     },
     {
@@ -199,6 +200,11 @@ const router = createRouter({
       path: "/map",
       name: "MapComponent",
       component: MapComponent,
+    },
+    {
+      path: "/actions",
+      name: "VolunteerActions",
+      component: Actions,
     },
   ],
 });

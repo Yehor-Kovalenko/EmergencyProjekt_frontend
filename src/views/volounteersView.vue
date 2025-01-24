@@ -1,38 +1,40 @@
 <template>
   <div class="about">
     <table>
-      <tr>
-        <th>{{ translations[language].first_name }}</th>
-        <th>{{ translations[language].last_name }}</th>
-        <th>e-mail</th>
-        <th>{{ translations[language].availability }}</th>
-        <th>{{ translations[language].mark_volunteer }}</th>
-      </tr>
-      <template v-for="volunteer in volunteers">
+      <thead>
         <tr>
+          <th>{{ translations[language].first_name }}</th>
+          <th>{{ translations[language].last_name }}</th>
+          <th>e-mail</th>
+          <th>{{ translations[language].availability }}</th>
+          <th>{{ translations[language].mark_volunteer }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="volunteer in volunteers" :key="volunteer.id">
           <td>{{ volunteer.firstName }}</td>
           <td>{{ volunteer.lastName }}</td>
           <td>{{ volunteer.email }}</td>
           <td>
-            <template v-if="volunteer.available">
+            <span v-if="volunteer.available">
               {{ translations[language].available }}
-            </template>
-            <template v-else>
+            </span>
+            <span v-else>
               {{ translations[language].unavailable }}
-            </template>
+            </span>
           </td>
           <td>
-            <template v-if="!volunteer.available">
-              <RouterLink :to="'/mark/' + volunteer.id">{{
-                translations[language].mark_volunteer
-              }}</RouterLink>
-            </template>
-            <template v-else>
+            <span v-if="volunteer.readyForMark">
+              <RouterLink :to="'/mark/' + volunteer.id">
+                {{ translations[language].mark_volunteer }}
+              </RouterLink>
+            </span>
+            <span v-else>
               {{ translations[language].dont_mark }}
-            </template>
+            </span>
           </td>
         </tr>
-      </template>
+      </tbody>
     </table>
   </div>
 </template>
@@ -69,17 +71,20 @@ export default {
 
     const language = ref(localStorage.getItem("language") || "pl");
     const volunteers = ref([]);
-    const route = useRoute(); // Get route parameters
+    const route = useRoute();
 
     onMounted(() => {
-      console.log(route.params.id);
       axios
         .get(`http://localhost:8080/ngo/${route.params.id}/volunteers`, {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-          },})
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        })
         .then((response) => {
           volunteers.value = response.data;
+          // volunteers.value.forEach((volunteer) => {
+          //   console.log(volunteer.readyForMark);
+          // });
         })
         .catch((error) => console.error("Error fetching volunteers:", error));
     });
@@ -107,19 +112,14 @@ table {
   border-collapse: collapse;
   border: 1px solid white;
 }
-td {
+td,
+th {
   font-size: 90%;
   text-align: center;
   padding: 0.5%;
-  width: 1%;
   border: 1px solid white;
 }
-
 th {
   font-size: 110%;
-  text-align: center;
-  padding: 0.5%;
-  width: 1%;
-  border: 1px solid white;
 }
 </style>

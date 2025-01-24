@@ -14,7 +14,7 @@
       <tbody>
       <tr v-for="resource in resources" :key="resource.id">
         <td>{{ resource.date }}</td>
-        <td>{{ resource.type }}</td>
+        <td>{{ this.getTranslatedResourceType(resource.type) }}</td>
         <td>{{ resource.description }}</td>
         <td>{{ resource.amount }}</td>
         <td>
@@ -45,8 +45,8 @@ export default {
   name: 'ResourceList',
   components: { ResourceForm },
   setup() {
-    const language = ref(localStorage.getItem('language') || 'pl');
-    const userid = localStorage.getItem('userId');
+    //const language = ref(localStorage.getItem('language') || 'pl');
+    //const userid = localStorage.getItem('userId');
       const translations = {
         pl: {
           heading: 'Lista zasobów',
@@ -57,7 +57,23 @@ export default {
           amount: 'Ilość',
           destination: 'Przeznaczenie',
           unknown_location: 'Nieznane położenie',
-          resource_management: 'Zarządzanie zasobami',          
+          resource_management: 'Zarządzanie zasobami', 
+          resourceTypes: {
+        CLOTHES: 'Ubrania',
+        PUBLICRESOURCE: 'Zasoby publiczne',
+        MEDICALSUPPLIES: 'Zasoby medyczne',
+        FOOD: 'Jedzenie',
+        TOOLKITS: 'Narzędzia',
+        COMMUNICATIONDEVICES: 'Urządzenia komunikacyjne',
+        TRANSPORT: 'Transport',
+        ANOTHER: 'Inne',
+        },
+        resourceStatuses: {
+          REGISTERED: 'Zarejestrowane',
+          ASSIGNED: 'Przypisane',
+          ENROUTE: 'W drodze',
+          DELIVERED: 'Dostarczone',
+        },         
         },
         en: {
           heading: 'Resource list',
@@ -67,19 +83,38 @@ export default {
           status: 'Status',
           amount: 'Amount',
           destination: 'Destination',
-          unknown_location: 'Unknown location',          
+          unknown_location: 'Unknown location',   
+          resource_management: 'Resource management', 
+          resourceTypes: {
+          CLOTHES: 'Clothes',
+          PUBLICRESOURCE: 'Public Resource',
+          MEDICALSUPPLIES: 'Medical Supplies',
+          FOOD: 'Food',
+          TOOLKITS: 'Toolkits',
+          COMMUNICATIONDEVICES: 'Communication Devices',
+          TRANSPORT: 'Transport',
+          ANOTHER: 'Another',
+        },
+        resourceStatuses: {
+          REGISTERED: 'Registered',
+          ASSIGNED: 'Assigned',
+          ENROUTE: 'Enroute',
+          DELIVERED: 'Delivered',
+        },      
         },
       };
       return { translations };
     },
   data() {
     return {
-      language : localStorage.getItem('language'),
+      language : localStorage.getItem('language') || 'pl',
       userid: localStorage.getItem('userId'),
       //language: 'pl',
       resources: [], // Tablica zasobów
       showResourceForm: false,
       catastrophes: [], // Tablica katastrof
+      resourceTypes: [],
+      resourceStatuses: []
     };
   },
   methods: {
@@ -140,6 +175,38 @@ export default {
         });
     },
 
+     // Funkcja zwracająca przetłumaczone zasoby
+  getTranslatedResourceTypes() {
+      const currentLanguage = this.language; // Odwołanie do ref języka
+      return Object.keys(this.translations[currentLanguage].resourceTypes).map((key) => ({
+        key,
+        label: this.translations[currentLanguage].resourceTypes[key],
+      }));
+    },
+    getTranslatedResourceStatuses() {
+      const currentLanguage = this.language; 
+      return Object.keys(this.translations[currentLanguage].resourceStatuses).map((key) => ({
+        key,
+        label: this.translations[currentLanguage].resourceStatuses[key],
+      }));
+    },
+    getTranslatedResourceType(type) {
+      const currentLanguage = this.language;
+      return this.translations[currentLanguage].resourceTypes[type] || type;
+    },
+    getTranslatedResourceStatus(status) {
+      const currentLanguage = this.language;
+      return this.translations[currentLanguage].resourceStatuses[status] || status;
+    },
+
+  },
+  computed: {
+    translatedResourceTypes() {
+      return this.getTranslatedResourceTypes();
+    },
+    translatedResourceStatuses() {
+      return this.getTranslatedResourceStatuses();
+    },
   },
   /*
   updated() {
@@ -153,7 +220,7 @@ export default {
      //localStorage.setItem('userId', 1);
       //localStorage.setItem('role', 'OFFICIAL');
       //localStorage.setItem('language', 'pl');
-    console.log('lan', localStorage.getItem('language'));
+    //console.log('lan', localStorage.getItem('language'));
     // Pobierz dane po załadowaniu komponentu
     this.fetchResources();
     this.loadCatastrophes();

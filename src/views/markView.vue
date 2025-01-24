@@ -1,21 +1,26 @@
 <template>
     <div class="about">
         <template v-for="data in volunteer_data">
-            <template v-if="data.ratingFromAction===0">
+            <template v-if="data.ratingFromAction===0 && data.attendance == true">
                 <div style="width: 0px; height: 0px; font-size: 0px;">{{ this.action_id = data.actionId }}</div>
                 <input type="number" id="rate" min="1" max="10"  v-model="rating" ></input>
-                <button id="accept_rate" @click="mark">accept mark</button>
+                <button id="accept_rate" @click="mark">{{translations[language].accept_mark}}</button>
             </template>
         </template>
     </div>
-  </template>
+</template>
 
 <script>
 import router from '@/router';
+import {ref} from "vue";
 import axios from 'axios';
+if (typeof localStorage.getItem("language") === 'undefined' || localStorage.getItem("language") === null) {
+  localStorage.setItem("language", "en");
+}
 
 export default {
   setup(){
+  const language = ref(localStorage.getItem('language') || 'pl');
   const translations = {
       pl: {
         accept_mark:"zaakceptuj ocenę",
@@ -24,7 +29,7 @@ export default {
         accept_mark:"accept mark",
       }
     };
-    return translations;
+    return {translations,language};
   },
   data() {
       return {
@@ -32,17 +37,11 @@ export default {
       }
     },
   mounted() {
-    axios.get('http://localhost:8080/volunteers/'.concat(this.$route.params.id,'/actions'), {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-          },}).then((response) => this.volunteer_data = response.data)
+    axios.get('http://localhost:8080/volunteers/'.concat(this.$route.params.id,'/actions')).then((response) => this.volunteer_data = response.data)
   },
   methods:{
     mark(){
-        axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.id,'/mark?actionId=',this.action_id,'&rating=',this.rating), {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-          },});
+        axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.id,'/mark?actionId=',this.action_id,'&rating=',this.rating));
         router.go(-1);
     }
   }
