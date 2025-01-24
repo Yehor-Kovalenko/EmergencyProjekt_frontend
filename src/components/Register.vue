@@ -187,8 +187,7 @@ export default {
         return;
       }
 
-      try {
-        let userData = {
+      let userData = {
           username: this.username,
           email: this.email,
           phone: this.phone,
@@ -196,22 +195,30 @@ export default {
           role: this.role,
         };
 
-        if (this.role === "Volunteer" || this.role === "Giver") {
-          userData.firstName = this.firstName;
-          userData.lastName = this.lastName;
-          userData.birthDate = this.birthDate;
-        }
-        if (this.role === "Volunteer") userData.organizationId = this.organizationId;
-        if (this.role === "NGO") Object.assign(userData, { ngoName: this.ngoName, krs: this.krs });
-        if (this.role === "Official") Object.assign(userData, { officialName: this.officialName, regon: this.regon });
-
-        await axios.post("/auth/register", userData);
-        alert("Registration successful");
-        window.location.href = "/";
-      } catch (error) {
-        console.error("Błąd rejestracji:", error);
-        alert("Nie udało się zarejestrować użytkownika");
+      if (this.role === "Volunteer" || this.role === "Giver") {
+        userData.firstName = this.firstName;
+        userData.lastName = this.lastName;
+        userData.birthDate = this.birthDate;
       }
+      if (this.role === "Volunteer") userData.organizationId = this.organizationId;
+      if (this.role === "NGO") Object.assign(userData, { ngoName: this.ngoName, krs: this.krs });
+      if (this.role === "Official") Object.assign(userData, { officialName: this.officialName, regon: this.regon });
+
+      await axios.post("/auth/register", userData)
+      .then(response => {
+        alert("Registration successful");
+        window.location.href = "/"; 
+      })
+      .catch(error => {
+        if (error.response.status === 409) {
+          alert(error.response.data);
+          console.error(error.response.data)
+        } else {
+          alert("Nie udało się zarejestrować użytkownika");
+          console.error("Błąd nie udało się zarejestrować użytkownika")
+        }
+      })        
+
     },
   },
 };

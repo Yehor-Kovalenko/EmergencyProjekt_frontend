@@ -73,16 +73,19 @@ export default {
         const localUsername = response.data.userData.username;
         const localUserId = response.data.userData.userId;
         const localRole = response.data.userData.role;
+        const localEmail = response.data.userData.email;
 
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("username", localUsername);
         localStorage.setItem("userId", localUserId);
         localStorage.setItem("role", localRole);
+        localStorage.setItem("email", localEmail)
 
         console.log("Logowanie powiodło się, token:", accessToken);
 
-        // this.$router.push("/");
-        window.location.reload();
+        this.$router.push("/").then(() => {
+          window.location.reload(); // Przeładowanie strony
+        });
       } catch (error) {
         console.error("Błąd logowania:", error);
         alert("Nie udało się zalogować. Spróbuj ponownie");
