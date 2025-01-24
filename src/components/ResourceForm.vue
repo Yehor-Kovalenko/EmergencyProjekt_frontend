@@ -104,7 +104,7 @@
         <td>{{ resource.date }}</td>
         <td>{{ this.getTranslatedResourceType(resource.type) }}</td>
         <td>{{ resource.description }}</td>
-        <td>{{ resource.status }}</td>
+        <td>{{ this.getTranslatedResourceStatus(resource.status) }}</td>
         <td>{{ resource.amount }}</td>
         <!--<td>{{ resource.destinationId }}</td>-->
         <span v-if="resource.destinationId">
