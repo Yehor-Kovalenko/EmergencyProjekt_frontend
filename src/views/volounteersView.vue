@@ -24,7 +24,7 @@
             </span>
           </td>
           <td>
-            <span v-if="!volunteer.available">
+            <span v-if="volunteer.readyForMark">
               <RouterLink :to="'/mark/' + volunteer.id">
                 {{ translations[language].mark_volunteer }}
               </RouterLink>
@@ -82,6 +82,9 @@ export default {
         })
         .then((response) => {
           volunteers.value = response.data;
+          // volunteers.value.forEach((volunteer) => {
+          //   console.log(volunteer.readyForMark);
+          // });
         })
         .catch((error) => console.error("Error fetching volunteers:", error));
     });
