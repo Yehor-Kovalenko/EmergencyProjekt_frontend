@@ -67,9 +67,9 @@
         <input type="text" :value="username" required disabled />
       </div>
       <div v-else>
-      <!--- WYBÓR ORGANIZACJI LUB WŁADZ Z LISTY -->
+      <!--- WYBÓR ORGANIZACJI Z LISTY -->
         <select v-model.number="form.holderId" required>
-          <optgroup :label= "translations[language].official">
+          <optgroup v-if="userRole!=='OFFICIAL'" :label= "translations[language].official">
             <option v-for="official in officials" :key="official.id" :value="official.id">
               {{ official.officialName }}
             </option>
@@ -82,12 +82,13 @@
         </select>
       </div>
     </div>
-    <button type="submit">{{ translations[language].donate }}</button>
+    <button v-if="userRole==='GIVER' || (userRole==='OFFICIAL' && showDonateForOfficial)"  type="submit">{{ translations[language].donate }}</button>
+    <button v-else type="submit">{{ translations[language].add }}</button>
     <button type="button" @click="cancelForm">{{ translations[language].cancel }}</button>
   </form>
 
   <!-- Tabela zasobów -->
-  <table v-if="!showForm && !showDonateForm">
+  <table v-if="!showForm && !showDonateForm && !showDonateForOfficial">
     <thead>
       <tr>
         <th>{{ translations[language].date }}</th>
@@ -140,7 +141,7 @@
     </button>
     <button v-if="userRole !== 'NGO'"
       @click="openDonateForOfficialsForm"
-      @mouseover="tooltipDonateForOfficials = translations[language].donate_tooltip"
+      @mouseover="tooltipDonateForOfficials = translations[language].donate_tooltip_official"
       @mouseleave="tooltipDonateForOfficials = ''"
     >
     {{ translations[language].donate_resource }}
@@ -238,6 +239,7 @@ export default {
         save_status: 'Zapisz status',
         add_tooltip: 'Przekaż zasób na rzecz wybranej katastrofy',
         donate_tooltip: 'Przekaż zasób wybranej organizacji pomocowej bądź władzom',
+        donate_tooltip_official: 'Przekaż zasób wybranej organizacji pomocowej',
         close: 'Zamknij',
         loading: 'Pobieranie położenia...',
         status_disabled_tooltip: 'Nie możesz wybrać tego statusu dla tego zasobu',
@@ -291,6 +293,7 @@ export default {
         save_status: 'Save status',
         add_tooltip: 'Donate resource to selected catastrophe',
         donate_tooltip: 'Donate resource to selected NGO or officials',
+        donate_tooltip_official: 'Donate resource to selected NGO',
         close: 'Close',
         loading: 'Fetching location...',
         status_disabled_tooltip: 'You cannot choose this status for this resource',
