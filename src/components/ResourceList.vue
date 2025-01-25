@@ -122,9 +122,7 @@ export default {
       this.showResourceForm = !this.showResourceForm;
     },
     fetchResources() {
-      console.log(localStorage.getItem('language'));
       const token = localStorage.getItem("accessToken"); // Get token from storage
-      console.log("User ID:", localStorage.getItem("userId"));
       axios
       .get(`resource/getByholder/${localStorage.getItem('userId')}`
       , {
@@ -135,7 +133,6 @@ export default {
         .then((response) => {
           // Przypisz dane do tablicy resources
           this.resources = response.data;
-          console.log(this.resources);
         })
         .catch((error) => {
           console.error('Błąd podczas pobierania zasobów:', error);
