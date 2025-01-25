@@ -527,7 +527,7 @@ export default {
       console.log(response.data)
       const active_catastrophes = [];
       for (let catastrophe of response.data) {
-        if (catastrophe.active == true && catastrophe.helpRequests.length) {
+        if (catastrophe.active == true) {
             active_catastrophes.push(catastrophe);
         }
       }
