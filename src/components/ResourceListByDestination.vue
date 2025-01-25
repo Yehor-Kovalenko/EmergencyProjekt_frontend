@@ -192,7 +192,6 @@ export default {
         */
         const response = await axios.get(`/catastrophes`);
         const catastrophes = response.data;
-        console.log('Katastrofy z load:', catastrophes);
 
         // Dodaj nazwę lokalizacji do każdej katastrofy
         for (let catastrophe of catastrophes) {

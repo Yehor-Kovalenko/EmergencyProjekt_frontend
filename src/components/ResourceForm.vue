@@ -524,18 +524,24 @@ export default {
     try {
       
       const response = await axios.get('/catastrophes'); // Endpoint zwracający katastrofy
-      const catastrophes = response.data;
+      console.log(response.data)
+      const active_catastrophes = [];
+      for (let catastrophe of response.data) {
+        if (catastrophe.active == true && catastrophe.helpRequests.length) {
+            active_catastrophes.push(catastrophe);
+        }
+      }
       //console.log('Katastrofy z load:', catastrophes);
 
       // Dodaj nazwę lokalizacji do każdej katastrofy
-      for (let catastrophe of catastrophes) {
+      for (let catastrophe of active_catastrophes) {
         const address = await this.reverseGeocode(catastrophe.latitude, catastrophe.longitude);
         //console.log(address);
         catastrophe.location = address; // Dodaj lokalizację do katastrofy
         //console.log(catastrophe.location);
       }
 
-      this.catastrophes = catastrophes;
+      this.catastrophes = active_catastrophes;
     } catch (error) {
       console.error('Błąd podczas ładowania katastrof:', error);
     }
