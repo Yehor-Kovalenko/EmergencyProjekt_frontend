@@ -76,9 +76,7 @@ export default {
       },
     };
     const actions = ref([]);
-    const catastrophes = ref([]);
     const userId = localStorage.getItem("selectedVolunteer");
-    const router = useRouter();
 
     const fetchActions = async () => {
       try {
@@ -97,30 +95,8 @@ export default {
       }
     };
 
-    const fetchCatastrophes = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/catastrophes`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
-          }
-        );
-
-        catastrophes.value = response.data;
-      } catch (error) {
-        console.error("Error fetching actions:", error);
-      }
-    };
-
-    const goToAccept = (actionId) => {
-      router.push(`/volunteers/${userId}/actions/${actionId}`);
-    };
-
     onMounted(() => {
       fetchActions();
-      fetchCatastrophes();
     });
     const language = ref(localStorage.getItem("language") || "pl");
 
@@ -128,8 +104,6 @@ export default {
       language,
       translations,
       actions,
-      catastrophes,
-      goToAccept,
     };
   },
 };
