@@ -1,6 +1,9 @@
 <template>
     <div class="volunteers-report">
       <h1>{{ t.heading }}</h1>
+      <div>
+        <strong> {{ t.total }}: {{ reportData.data.length }} </strong>
+      </div>
   
       <div
         v-for="volunteerAndActions in reportData.data"
@@ -83,7 +86,8 @@
       catastropheId: 'Catastrophe ID',
       ratingFromAction: 'Rating from Action',
       attendance: 'Attendance',
-      noActions: 'No actions found for this volunteer.'
+      noActions: 'No actions found for this volunteer.',
+      total: 'Total Volunteers'
     },
     pl: {
       heading: 'Wolontariusze',
@@ -98,7 +102,8 @@
       catastropheId: 'ID Katastrofy',
       ratingFromAction: 'Ocena z Akcji',
       attendance: 'Obecność',
-      noActions: 'Brak akcji dla tego wolontariusza.'
+      noActions: 'Brak akcji dla tego wolontariusza.',
+      total: 'Liczba Wolontariuszy'
     }
   };
   
