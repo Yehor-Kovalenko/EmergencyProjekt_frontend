@@ -41,6 +41,7 @@ export default {
   mounted() {
    
     this.fetchVolunteerData();
+    
   },
   methods:{
     mark() {
@@ -71,10 +72,19 @@ console.log("volun id: ", this.volunteer_data.volunteerID);
     console.error("Error submitting rating:", error);
   });
 },
+forceReflow() {
+    // Select an element to trigger a reflow
+    const element = document.querySelector(".about");
+    if (element) {
+      element.style.display = "none";
+      void element.offsetHeight; // Trigger reflow
+      element.style.display = "block";
+    }
+  },
 
 
 
-    async fetchVolunteerData() {
+  async fetchVolunteerData() {
   try {
     const token = localStorage.getItem("accessToken");
     const actionID = this.$route.params.id; 
@@ -89,6 +99,9 @@ console.log("volun id: ", this.volunteer_data.volunteerID);
     );
 
     this.volunteer_data = response.data;
+    this.$nextTick(() => {
+      this.forceReflow();
+    });
     console.log("volunteer data: ", this.volunteer_data);
   } catch (error) {
     console.error("Error fetching volunteer data:", error);
