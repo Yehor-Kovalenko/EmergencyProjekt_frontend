@@ -21,7 +21,7 @@
     <div v-show="activeTab === 'received'" class="tab-content">
       <ul v-if="!loading" class="messages-list">
         <li v-for="message in receivedMessages" :key="message.id" class="message-item" @click="openMessage(message)">
-          <h3>{{ message.title }}</h3>
+          <h3 class="h3-class">{{ message.title }}</h3>
           <span class="message-sender">{{ translations[language].from }}: {{ message.sender }}</span>
           <span class="message-date">{{ translations[language].date }}: {{ new Date(message.date).toLocaleString() }}</span>
         </li>
@@ -31,7 +31,7 @@
     <div v-show="activeTab === 'sent'" class="tab-content">
       <ul v-if="!loading" class="messages-list">
         <li v-for="message in sentMessages" :key="message.id" class="message-item" @click="openMessage(message)">
-          <h3>{{ message.title }}</h3>
+          <h3 class="h3-class">{{ message.title }}</h3>
           <span class="message-sender">{{ translations[language].to }}: {{ message.receiver }}</span>
           <span class="message-date">{{ translations[language].date }}: {{ new Date(message.date).toLocaleString() }}</span>
         </li>
@@ -324,6 +324,7 @@ export default {
   color: #ccc;
   border: 1px solid #444;
   border-radius: 4px;
+  padding-left: 10px;
 }
 
 .clear-button {
@@ -332,6 +333,7 @@ export default {
   color: #888;
   cursor: pointer;
   font-size: 18px;
+  margin-left: 10px;
   padding: 0 5px;
 }
 
@@ -367,7 +369,7 @@ export default {
 .message-sender {
   position: absolute;
   right: 10px;
-  top: 10px;
+  top: 5px;
   font-size: 12px;
   color: #888;
 }
@@ -450,6 +452,7 @@ export default {
   font-size: 12px;
   color: #888;
   margin-top: 5px;
+  margin-left: 10px;
 }
 
 .messages-tabs {
@@ -470,6 +473,7 @@ export default {
 
 .tab-button.active {
   color: #fff;
+  background-color: #333;
 }
 
 .tab-button.active::after {
@@ -492,5 +496,11 @@ export default {
   font-size: 14px;
   display: flex;
   justify-content: space-between;
+}
+
+.h3-class {
+  color: #28a745;
+  margin-left: 10px;
+  margin-top: 10px;
 }
 </style>
