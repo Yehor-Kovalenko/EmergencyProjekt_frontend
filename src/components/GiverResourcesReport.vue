@@ -1,6 +1,9 @@
 <template>
     <div class="giver-resources-report">
       <h1>{{ t.heading }}</h1>
+      <div>
+        <strong> {{ t.total }}: {{ reportData.data.length }} </strong>
+      </div>
       <table
         v-if="reportData && reportData.data && reportData.data.length"
         class="giver-table"
@@ -50,7 +53,8 @@
       destinationId: 'Destination ID',
       resourceStatus: 'Resource Status',
       noDestination: 'No Destination',
-      noData: 'No data available for Giver Resources.'
+      noData: 'No data available for Giver Resources.',
+      total: 'Total Resources'
     },
     pl: {
       heading: 'Zasoby Darczyńcy',
@@ -61,7 +65,8 @@
       destinationId: 'ID Miejsca Przeznaczenia',
       resourceStatus: 'Status Zasobu',
       noDestination: 'Brak Miejsca',
-      noData: 'Brak zasobów darczyńcy.'
+      noData: 'Brak zasobów darczyńcy.',
+      total: 'Wszystkie zasoby'
     }
   };
   

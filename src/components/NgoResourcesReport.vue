@@ -1,7 +1,11 @@
 <template>
     <div class="ngo-resources-report">
       <h1>{{ t.heading }}</h1>
-  
+
+      <div>
+        <strong> {{ t.total }}: {{ reportData.data.length }} </strong>
+      </div>
+
       <table v-if="reportData && reportData.data && reportData.data.length" class="resources-table">
         <thead>
           <tr>
@@ -48,7 +52,8 @@
       destinationId: 'Destination ID',
       resourceStatus: 'Resource Status',
       noDestination: 'No Destination',
-      noData: 'No data available for NGO Resources.'
+      noData: 'No data available for NGO Resources.',
+      total: 'Total Resources'
     },
     pl: {
       heading: 'Zasoby NGO',
@@ -59,7 +64,8 @@
       destinationId: 'ID Miejsca Przeznaczenia',
       resourceStatus: 'Status Zasobu',
       noDestination: 'Brak Miejsca',
-      noData: 'Brak dostępnych danych dla zasobów NGO.'
+      noData: 'Brak dostępnych danych dla zasobów NGO.',
+      total: 'Liczba Zasobów'
     }
   };
   

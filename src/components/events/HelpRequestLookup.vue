@@ -1,6 +1,8 @@
 <template>
   <div class="help-request-lookup">
     <h2>{{ translations[language].pageTitle }}</h2>
+
+    <!-- Formularz wyszukiwania (pozwala ręcznie wprowadzić uniqueCode) -->
     <form @submit.prevent="lookupHelpRequest">
       <div>
         <label for="uniqueCode">{{ translations[language].uniqueCodeLabel }}:</label>
@@ -9,6 +11,7 @@
       <button type="submit">{{ translations[language].searchButton }}</button>
     </form>
 
+    <!-- Sekcja z danymi zgłoszenia -->
     <div v-if="helpRequest">
       <h3>{{ translations[language].detailsTitle }}</h3>
       <p><strong>{{ translations[language].firstName }}:</strong> {{ helpRequest.firstName }}</p>
@@ -18,10 +21,7 @@
       <p><strong>{{ translations[language].status }}:</strong> {{ helpRequest.status }}</p>
       <p><strong>{{ translations[language].emailLanguageLabel }}:</strong> {{ helpRequest.emailLanguage }}</p>
       <p><strong>{{ translations[language].uniqueCodeLabel }}:</strong> {{ helpRequest.uniqueCode }}</p>
-      <p>
-        <strong>{{ translations[language].reportedDate }}:</strong>
-        {{ new Date(helpRequest.reportedDate).toLocaleString() }}
-      </p>
+      <p><strong>{{ translations[language].reportedDate }}:</strong> {{ formatDate(helpRequest.reportedDate) }}</p>
 
       <button
         v-if="helpRequest.status !== 'CLOSED'"
@@ -44,6 +44,7 @@
       </div>
     </div>
 
+    <!-- Komunikat błędu, jeśli nie uda się pobrać zgłoszenia -->
     <div v-if="error" class="error-message">
       <p>{{ translations[language].notFound }}</p>
     </div>
@@ -52,11 +53,18 @@
 
 <script>
 import axios from 'axios';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
+// Dzięki props: true w routerze możemy przyjąć uniqueCode z URL
 export default {
   name: 'HelpRequestLookup',
-  setup() {
+  props: {
+    uniqueCode: {
+      type: String,
+      required: false, // ponieważ parametr jest opcjonalny
+    },
+  },
+  setup(props) {
     const uniqueCodeInput = ref('');
     const helpRequest = ref(null);
     const error = ref(false);
@@ -105,6 +113,14 @@ export default {
       }
     };
 
+    const formatDate = (dateString) => {
+      if (!dateString) return '';
+      return new Date(dateString).toLocaleString();
+    };
+
+    /**
+     * Funkcja pobierająca zgłoszenie z API na podstawie wartości uniqueCodeInput
+     */
     const lookupHelpRequest = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/help-requests/${uniqueCodeInput.value}`);
@@ -119,6 +135,9 @@ export default {
       }
     };
 
+    /**
+     * Funkcja zamykająca zgłoszenie (status = CLOSED) w API
+     */
     const closeHelpRequest = async () => {
       if (!helpRequest.value) return;
 
@@ -141,6 +160,18 @@ export default {
       }
     };
 
+    /**
+     * Po załadowaniu komponentu:
+     * - jeśli w URL jest unikalny kod (props.uniqueCode), to automatycznie
+     *   przypisujemy go do uniqueCodeInput i wywołujemy lookupHelpRequest().
+     */
+    onMounted(() => {
+      if (props.uniqueCode) {
+        uniqueCodeInput.value = props.uniqueCode;
+        lookupHelpRequest();
+      }
+    });
+
     return {
       uniqueCodeInput,
       helpRequest,
@@ -151,13 +182,14 @@ export default {
       closeSuccess,
       closeError,
       language,
-      translations
+      translations,
+      formatDate
     };
   },
 };
 </script>
 
-<style>
+<style scoped>
 .help-request-lookup {
   max-width: 500px;
   margin: 0 auto;

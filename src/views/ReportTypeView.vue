@@ -5,9 +5,23 @@
     <button class="long-button" @click="goToReport('resources-view')">
       {{ t.physicalResourcesReport }}
     </button>
-    <button class="long-button" @click="goToReport('volunteers-view')">
+
+    <button
+      v-if="!route.query.dateFrom || !route.query.dateTo"
+      class="long-button"
+      @click="goToReport('inactive-volunteers-view')"
+    >
       {{ t.volunteersReport }}
     </button>
+
+    <button
+      v-if ="!route.query.dateFrom || !route.query.dateTo"
+      class="long-button"
+      @click="goToReport('volunteers-view')"
+    >
+      {{ t.activeVolunteersReport }}
+    </button>
+
     <button class="long-button" @click="goToReport('catastrophe-view')">
       {{ t.catastrophesReport }}
     </button>
@@ -33,14 +47,16 @@ const translations = {
   en: {
     chooseReportType: 'Choose a report type',
     physicalResourcesReport: 'Physical Resources Report',
-    volunteersReport: 'Volunteers Report',
+    activeVolunteersReport: 'Active Volunteers Report',
+    volunteersReport: 'Inactive Volunteers Report',
     catastrophesReport: 'Catastrophes Report',
     back: 'Back'
   },
   pl: {
     chooseReportType: 'Wybierz rodzaj raportu',
     physicalResourcesReport: 'Raport zasobów fizycznych',
-    volunteersReport: 'Raport wolontariuszy',
+    activeVolunteersReport: 'Raport Aktywnych Wolontariuszy',
+    volunteersReport: 'Raport Nieaktywnych Wolontariuszy',
     catastrophesReport: 'Raport zdarzeń',
     back: 'Powrót'
   }
@@ -78,6 +94,11 @@ function goToReport(viewType) {
     reportType += 'CATASTROPHES';
   }
 
+  if (viewType === 'inactive-volunteers-view') {
+    reportType = 'ARCHIVE_VOLUNTEERS';
+    viewType = 'volunteers-view';
+  }
+
   console.log('Navigating to report type:', reportType);
   router.push({
     name: viewType,
@@ -111,11 +132,11 @@ function goToReport(viewType) {
   cursor: pointer;
   border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: #fcfcfc;
+  background-color: #007bff;
   transition: background-color 0.2s ease;
 }
 
 .long-button:hover {
-  background-color: #f0f0f0;
+  background-color: #0056b3;
 }
 </style>

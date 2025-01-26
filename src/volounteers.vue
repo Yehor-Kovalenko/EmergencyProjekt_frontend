@@ -27,7 +27,8 @@ const translations = {
     catastrophe: "Katastrofa",
     message: "Wiadomości",
     reports: "Raporty",
-    request: "Zobacz zgłoszsenie",
+    requestList: "Lista zgłoszeń",
+    request: "Zobacz zgłoszenie",
     resources: "Zobacz dary",
     destinationResources: "Zobacz dary przekazane do katastrofy",
     destinationResources: "Zobacz dary przekazane do katastrofy",
@@ -43,6 +44,7 @@ const translations = {
     catastrophe: "Catastrophe",
     message: "Message inbox",
     reports: "Reports",
+    requestList: "Request list",
     request: "Lookup request",
     resources: "View my resources",
     destinationResources: "View resources sent to a catastrophe",
@@ -95,6 +97,9 @@ function logout() {
         <RouterLink to="/auth">{{ translations[language].login }}</RouterLink>
         <RouterLink to="/map">{{
           translations[language].catastrophe
+        }}</RouterLink>
+        <RouterLink to="/help-request/list">{{
+          translations[language].requestList
         }}</RouterLink>
         <RouterLink to="/help-request/lookup">{{
           translations[language].request

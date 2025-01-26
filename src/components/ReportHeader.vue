@@ -92,8 +92,8 @@
   
   /** 5) Decide if we show date range (your logic). */
   const showDateRange = computed(() => {
-    // Example: show date range if "ARCHIVE" or "ACTIVE" is in the string
-    return props.reportType.includes('ARCHIVE') || props.reportType.includes('ACTIVE');
+    // Example: show date range if "ARCHIVE" is in the string and does not contain "VOLUNTEERS"
+    return (props.reportType.includes('ARCHIVE') && !props.reportType.includes('VOLUNTEERS'));
   });
   
   /** 

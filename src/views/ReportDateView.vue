@@ -65,8 +65,8 @@ const translations = {
 const t = computed(() => translations[language.value]);
 
 /** 4) State for the date inputs. */
-const dateFrom = ref('');
-const dateTo = ref('');
+const dateFrom = ref(new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString().substr(0, 10));
+const dateTo = ref(new Date().toISOString().substr(0, 10));
 
 const router = useRouter();
 
@@ -127,11 +127,11 @@ function continueReport() {
   cursor: pointer;
   border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: #fcfcfc;
+  background-color: #007bff;
   transition: background-color 0.2s ease;
 }
 
 .long-button:hover {
-  background-color: #f0f0f0;
+  background-color: #0056b3;
 }
 </style>

@@ -10,6 +10,7 @@ import ReportPage from "@/components/ReportPage.vue";
 import CloseCatastrophe from "@/components/events/CloseCatastrophe.vue";
 import CatastropheLookup from "@/components/events/CatastropheLookup.vue";
 import EditHelpRequest from "@/components/events/EditHelpRequest.vue";
+import HelpRequestsList from "@/components/events/HelpRequestsList.vue";
 import HelpRequestForm from "@/components/events/HelpRequestForm.vue";
 import HelpRequestLookup from "@/components/events/HelpRequestLookup.vue";
 import MapComponent from "@/components/events/MapComponent.vue";
@@ -181,6 +182,11 @@ const router = createRouter({
       component: CloseCatastrophe,
     },
     {
+      path: "/help-request/list",
+      name: "HelpRequestsList",
+      component: HelpRequestsList,
+    },
+    {
       path: "/help-request/edit/:uniqueCode",
       name: "EditHelpRequest",
       component: EditHelpRequest,
@@ -193,10 +199,11 @@ const router = createRouter({
       props: true,
     },
     {
-      path: "/help-request/lookup",
+      path: "/help-request/lookup/:uniqueCode?",
       name: "HelpRequestLookup",
       component: HelpRequestLookup,
-    },
+      props: true
+    },    
     {
       path: "/map",
       name: "MapComponent",
