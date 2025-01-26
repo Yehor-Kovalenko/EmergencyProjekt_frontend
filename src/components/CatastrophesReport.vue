@@ -2,7 +2,11 @@
     <div class="catastrophes-report">
       <!-- Localized heading for the entire list of catastrophes -->
       <h1>{{ t.catastrophesHeading }}</h1>
-  
+
+      <div>
+        <strong> {{ t.total }}: {{ reportData.data.length }} </strong>
+      </div>
+
       <div
         v-for="catastrophe in reportData.data"
         :key="catastrophe.id"
@@ -100,7 +104,8 @@
       description: 'Opis',
       status: 'Status',
       uniqueCode: 'Kod Unikatowy',
-      reportedDate: 'Data Zgłoszenia'
+      reportedDate: 'Data Zgłoszenia',
+      total: "Liczba katastrof"
     },
     en: {
       catastrophesHeading: 'Catastrophes',
@@ -118,7 +123,8 @@
       description: 'Description',
       status: 'Status',
       uniqueCode: 'Unique Code',
-      reportedDate: 'Reported Date'
+      reportedDate: 'Reported Date',
+      total: "Catastrophes count"
     }
   };
   
