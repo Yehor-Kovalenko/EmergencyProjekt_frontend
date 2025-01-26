@@ -20,7 +20,7 @@
           <td>{{ action.ratingFromAction }}</td>
           <td>{{ action.attendance ? "Yes" : "No" }}</td>
           <td>
-            <span v-if="action.attendance">
+            <span v-if="action.attendance && action.ratingFromAction == 0">
               <RouterLink :to="'/mark/' + action.actionId">
                 {{ translations[language].mark }}
               </RouterLink>
@@ -59,7 +59,7 @@ export default {
         attending: "zgłoszony",
         action_finished: "akcja zakończona",
         mark: "oceń",
-        dont_mark: "Nie można teraz ocenić",
+        dont_mark: "Nie można ocenić",
       },
       en: {
         aid: "action ID",
@@ -72,7 +72,7 @@ export default {
         attending: "attending",
         action_finished: "action finished",
         mark: "mark volunteer",
-        dont_mark: "can't mark right now",
+        dont_mark: "can't mark",
       },
     };
     const actions = ref([]);
