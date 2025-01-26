@@ -185,6 +185,10 @@ const router = createRouter({
       path: "/help-request/list",
       name: "HelpRequestsList",
       component: HelpRequestsList,
+      meta: {
+        requiresAuth: true,
+        role: ["OFFICIAL", "NGO"],
+      },
     },
     {
       path: "/help-request/edit/:uniqueCode",
