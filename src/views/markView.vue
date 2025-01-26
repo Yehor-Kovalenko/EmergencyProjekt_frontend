@@ -37,13 +37,34 @@ export default {
       }
     },
   mounted() {
-    axios.get('http://localhost:8080/volunteers/'.concat(this.$route.params.id,'/actions')).then((response) => this.volunteer_data = response.data)
+    // axios.get('http://localhost:8080/volunteers/action/'.concat(this.$route.params.id)).then((response) => this.volunteer_data = response.data)
+    this.fetchVolunteerData();
   },
   methods:{
     mark(){
         axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.id,'/mark?actionId=',this.action_id,'&rating=',this.rating));
         router.go(-1);
-    }
+    },
+    async fetchVolunteerData() {
+  try {
+    const token = localStorage.getItem("accessToken");
+    const actionID = this.$route.params.id; // Pobieramy `id` z parametrów trasy
+
+    const response = await axios.get(
+      `http://localhost:8080/volunteers/action/${actionID}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    // Przypisanie odpowiedzi do this.volunteer_data
+    this.volunteer_data = response.data;
+  } catch (error) {
+    console.error("Error fetching volunteer data:", error);
+  }
+}
   }
 }
 </script>

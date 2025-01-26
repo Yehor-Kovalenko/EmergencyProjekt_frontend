@@ -20,24 +20,14 @@
           <td>{{ action.ratingFromAction }}</td>
           <td>{{ action.attendance ? "Yes" : "No" }}</td>
           <td>
-            <template v-for="catastrophe in catastrophes">
-              <template v-if="catastrophe.id == action.catastropheId">
-                <template v-if="catastrophe.active">
-                  <button
-                    v-if="!action.attendance"
-                    @click="goToAccept(action.actionId)"
-                  >
-                    {{ translations[language].go_to_accept }}
-                  </button>
-                  <template v-if="action.attendance">
-                    {{ translations[language].attending }}
-                  </template>
-                </template>
-                <template v-else>
-                  {{ translations[language].action_finished }}
-                </template>
-              </template>
-            </template>
+            <span v-if="action.attendance">
+              <RouterLink :to="'/mark/' + action.actionId">
+                {{ translations[language].mark }}
+              </RouterLink>
+            </span>
+            <span v-else>
+              {{ translations[language].dont_mark }}
+            </span>
           </td>
         </tr>
       </tbody>
@@ -68,6 +58,8 @@ export default {
         go_to_accept: "przejdź do akceptacji",
         attending: "zgłoszony",
         action_finished: "akcja zakończona",
+        mark: "oceń",
+        dont_mark: "Nie można teraz ocenić",
       },
       en: {
         aid: "action ID",
@@ -79,6 +71,8 @@ export default {
         go_to_accept: "go to accept",
         attending: "attending",
         action_finished: "action finished",
+        mark: "mark volunteer",
+        dont_mark: "can't mark right now",
       },
     };
     const actions = ref([]);
@@ -137,12 +131,6 @@ export default {
       catastrophes,
       goToAccept,
     };
-  },
-  props: {
-    volunteerId: {
-      type: Number,
-      required: true,
-    },
   },
 };
 </script>
