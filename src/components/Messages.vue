@@ -41,7 +41,7 @@
     <div v-if="selectedMessage" class="message-popup">
       <div class="popup-content">
         <h3>{{ selectedMessage.title }}</h3>
-        <p>{{ selectedMessage.body }}</p>
+        <p v-html="formatMessage(selectedMessage.body)"></p>
         <div class="message-details">
           <span v-if="activeTab === 'received'">{{ translations[language].from }}: {{ selectedMessage.sender }}</span>
           <span v-else>{{ translations[language].to }}: {{ selectedMessage.receiver }}</span>
@@ -51,49 +51,50 @@
       </div>
     </div>
 
-    <div class="new-message-form">
-      <div class="user-search-container">
-        <input 
-          v-model="searchQuery" 
-          @input="searchUsers"
-          :placeholder="translations[language].searchPlaceholder" 
-          type="text"
-          class="search-input"
-        />
-        <ul v-if="searchResults.length && searchQuery" class="search-results">
-          <li 
-            v-for="user in searchResults" 
-            :key="user.id"
-            @click="selectUser(user)"
-            class="search-result-item"
-          >
-            {{ getUserDisplayName(user) }}
-          </li>
-        </ul>
-      </div>
-      
-      <div v-if="selectedUser" class="selected-user">
-        {{ translations[language].selectedRecipient }}: {{ getUserDisplayName(selectedUser) }}
-        <button class="clear-button" @click="clearSelectedUser">×</button>
-      </div>
-
-      <input 
-        v-model="newMessage.title" 
-        :placeholder="translations[language].titlePlaceholder" 
-        type="text" 
-      />
-      <textarea 
-        v-model="newMessage.body" 
-        :placeholder="translations[language].messagePlaceholder"
-      ></textarea>
-      <button 
-        @click="sendMessage" 
-        :disabled="sending || !selectedUser || !newMessage.title || !newMessage.body"
+    <div v-if="activeTab === 'sent'" class="new-message-form">
+  <div class="user-search-container">
+    <input 
+      v-model="searchQuery" 
+      @input="searchUsers"
+      :placeholder="translations[language].searchPlaceholder" 
+      type="text"
+      class="search-input"
+    />
+    <ul v-if="searchResults.length && searchQuery" class="search-results">
+      <li 
+        v-for="user in searchResults" 
+        :key="user.id"
+        @click="selectUser(user)"
+        class="search-result-item"
       >
-        {{ translations[language].sendButton }}
-      </button>
-      <div v-if="sendError" class="send-error">{{ sendError }}</div>
-    </div>
+        {{ getUserDisplayName(user) }}
+      </li>
+    </ul>
+  </div>
+  
+  <div v-if="selectedUser" class="selected-user">
+    {{ translations[language].selectedRecipient }}: {{ getUserDisplayName(selectedUser) }}
+    <button class="clear-button" @click="clearSelectedUser">×</button>
+  </div>
+
+  <input 
+    v-model="newMessage.title" 
+    :placeholder="translations[language].titlePlaceholder" 
+    type="text" 
+  />
+  <textarea 
+    v-model="newMessage.body" 
+    :placeholder="translations[language].messagePlaceholder"
+  ></textarea>
+  <button 
+    @click="sendMessage" 
+    :disabled="sending || !selectedUser || !newMessage.title || !newMessage.body"
+  >
+    {{ translations[language].sendButton }}
+  </button>
+  <div v-if="sendError" class="send-error">{{ sendError }}</div>
+</div>
+
   </div>
 </template>
 
@@ -243,7 +244,13 @@ export default {
 
     closePopup() {
       this.selectedMessage = null
-    }
+    },
+    formatMessage(text) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, (url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+    });
+  }
   },
   mounted() {
     this.fetchAllMessages()

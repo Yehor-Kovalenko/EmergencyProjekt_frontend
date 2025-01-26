@@ -31,15 +31,15 @@
       <tbody>
         <tr v-for="resource in resources" :key="resource.id">
           <td>{{ resource.date }}</td>
-          <td>{{ resource.type }}</td>
+          <td>{{ this.getTranslatedResourceType(resource.type) }}</td>
           <td>{{ resource.description }}</td>
-          <td>{{ resource.status }}</td>
+          <td>{{ this.getTranslatedResourceStatus(resource.status) }}</td>
           <td>{{ resource.amount }}</td>
         </tr>
       </tbody>
     </table>
 
-    <p v-else>{{translations[language].no_resources}}</p>
+    <p v-else-if="this.destinationId && !this.failed_to_load">{{translations[language].no_resources}}</p>
   </div>
 </template>
 
@@ -64,7 +64,23 @@ export default {
           loading_location: 'Pobieranie położenia...',
           loading_resources: 'Ładowanie zasobów...',
           no_resources: 'Brak zasobów przypisanych do tej katastrofy.',
-
+          failed_to_load: "Nie udało się pobrać zasobów. Spróbuj ponownie później.",
+          resourceTypes: {
+            CLOTHES: 'Ubrania',
+            PUBLICRESOURCE: 'Zasoby publiczne',
+            MEDICALSUPPLIES: 'Zasoby medyczne',
+            FOOD: 'Jedzenie',
+            TOOLKITS: 'Narzędzia',
+            COMMUNICATIONDEVICES: 'Urządzenia komunikacyjne',
+            TRANSPORT: 'Transport',
+            ANOTHER: 'Inne',
+            },
+            resourceStatuses: {
+              REGISTERED: 'Zarejestrowane',
+              ASSIGNED: 'Przypisane',
+              ENROUTE: 'W drodze',
+              DELIVERED: 'Dostarczone',
+            },
         },
         en: {
           heading: 'Resource List',
@@ -80,6 +96,23 @@ export default {
           loading_location: 'Loading location...',
           loading_resources: 'Loading resources...',
           no_resources: 'No resources assigned to this catastrophe.',
+          failed_to_load: "Failed to load resources. Please try again later.",
+          resourceTypes: {
+            CLOTHES: 'Clothes',
+            PUBLICRESOURCE: 'Public Resource',
+            MEDICALSUPPLIES: 'Medical Supplies',
+            FOOD: 'Food',
+            TOOLKITS: 'Toolkits',
+            COMMUNICATIONDEVICES: 'Communication Devices',
+            TRANSPORT: 'Transport',
+            ANOTHER: 'Another',
+          },
+          resourceStatuses: {
+            REGISTERED: 'Registered',
+            ASSIGNED: 'Assigned',
+            ENROUTE: 'Enroute',
+            DELIVERED: 'Delivered',
+          },
         },
       };
       return {translations}
@@ -92,25 +125,37 @@ export default {
       error: null,
       destinationId: null,
       catastrophes: [],
+      load_failed: false,
     };
+  },
+  computed: {
+    resourceTypes() {
+      return this.getTranslatedResourceTypes();
+    },
+    resourceStatuses() {
+      return this.getTranslatedResourceStatuses();
+    },
   },
   methods: {
     // Funkcja ładująca zasoby po wybraniu katastrofy
     loadResources() {
-      console.log('iddd', this.destinationId);
       if (!this.destinationId) return;
 
       this.loading = true;
       this.error = null;
 
       axios
-        .get(`http://localhost:8080/api/resource/getBydestination/${this.destinationId}`)
+        .get(`http://localhost:8080/api/resource/getBydestination/${this.destinationId}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          },})
         .then((response) => {
           this.resources = response.data;
         })
         .catch((error) => {
           console.error("Błąd podczas pobierania zasobów:", error);
-          this.error = "Nie udało się pobrać zasobów. Spróbuj ponownie później.";
+          this.error = this.translations[this.language].failed_to_load ;
+          this.failed_to_load = true;
         })
         .finally(() => {
           this.loading = false;
@@ -122,7 +167,10 @@ export default {
       const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
 
       return axios
-        .get(apiUrl)
+        .get(apiUrl, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          },})
         .then((response) => {
           return response.data.display_name || 'Nieznane położenie';
         })
@@ -144,7 +192,6 @@ export default {
         */
         const response = await axios.get(`/catastrophes`);
         const catastrophes = response.data;
-        console.log('Katastrofy z load:', catastrophes);
 
         // Dodaj nazwę lokalizacji do każdej katastrofy
         for (let catastrophe of catastrophes) {
@@ -157,18 +204,33 @@ export default {
         console.error('Błąd podczas ładowania katastrof:', error);
       }
     },
+    // Funkcja zwracająca przetłumaczone zasoby
+  getTranslatedResourceTypes() {
+      const currentLanguage = this.language; // Odwołanie do ref języka
+      return Object.keys(this.translations[currentLanguage].resourceTypes).map((key) => ({
+        key,
+        label: this.translations[currentLanguage].resourceTypes[key],
+      }));
+    },
+    getTranslatedResourceStatuses() {
+      const currentLanguage = this.language; // Odwołanie do ref języka
+      return Object.keys(this.translations[currentLanguage].resourceStatuses).map((key) => ({
+        key,
+        label: this.translations[currentLanguage].resourceStatuses[key],
+      }));
+    },
+    getTranslatedResourceType(type) {
+      const currentLanguage = this.language;
+      return this.translations[currentLanguage].resourceTypes[type] || type;
+    },
+    getTranslatedResourceStatus(status) {
+      const currentLanguage = this.language;
+      return this.translations[currentLanguage].resourceStatuses[status] || status;
+    },
   },
 
   mounted() {
     this.loadCatastrophes(); // Załaduj katastrofy po załadowaniu komponentu
-    localStorage.setItem('language', 'pl');
-    localStorage.setItem('role', 'OFFICIAL');
-    /*
-    localStorage.setItem('accessToken', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYWEiLCJpYXQiOjE3MzczMTAxNDUsImV4cCI6MTczNzMxMDQ0NX0.ib_kwXRgxFvOKSAfSh4PO4utBy66RrPXEByhKPP1rxk');
-    */
-  },
-  updated() {
-    //this.loadCatastrophes(); // Załaduj zasoby po wybraniu katastrofy
   },
 };
 </script>

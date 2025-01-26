@@ -20,7 +20,7 @@ export default {
 
     // Zmienne
     const language = localStorage.getItem("language") || "pl";
-    const ngoId = localStorage.getItem("ngoId") || 1;
+    const ngoId = localStorage.getItem("userId");
     const eventId = route.params.eventId;
 
     // Funkcja zaproszenia
@@ -30,6 +30,9 @@ export default {
           `http://localhost:8080/ngo/${ngoId}/invite`,
           null,
           {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
             params: {
               eventId: eventId,
               language: language,
