@@ -1,14 +1,16 @@
 <template>
-    <div class="about">
-        <template v-for="data in volunteer_data">
-            <template v-if="data.ratingFromAction===0 && data.attendance == true">
-                <div style="width: 0px; height: 0px; font-size: 0px;">{{ this.action_id = data.actionId }}</div>
-                <input type="number" id="rate" min="1" max="10"  v-model="rating" ></input>
-                <button id="accept_rate" @click="mark">{{translations[language].accept_mark}}</button>
-            </template>
-        </template>
-    </div>
+  <div class="about" v-if="volunteer_data && volunteer_data.actionId">
+    <div style="width: 0px; height: 0px; font-size: 0px;">{{ this.action_id = volunteer_data.actionId }}</div>
+    <input type="number" id="rate" min="1" max="5" v-model="rating"></input>
+    <button id="accept_rate" @click="mark">{{ translations[language].accept_mark }}</button>
+  </div>
+  <div v-else>
+    <p>Loading data...</p>
+  </div>
 </template>
+
+
+
 
 <script>
 import router from '@/router';
@@ -33,17 +35,65 @@ export default {
   },
   data() {
       return {
-        volunteer_data: [ ]
+        volunteer_data: {},
       }
     },
   mounted() {
-    axios.get('http://localhost:8080/volunteers/'.concat(this.$route.params.id,'/actions')).then((response) => this.volunteer_data = response.data)
+   
+    this.fetchVolunteerData();
   },
   methods:{
-    mark(){
-        axios.post('http://localhost:8080/volunteers/'.concat(this.$route.params.id,'/mark?actionId=',this.action_id,'&rating=',this.rating));
-        router.go(-1);
+    mark() {
+  const token = localStorage.getItem("accessToken"); 
+  if (!token) {
+    console.error("Brak tokenu dostępu. Użytkownik nie jest zalogowany.");
+    return;
+  }
+console.log("action id: ",this.volunteer_data.actionID);
+console.log("volun id: ", this.volunteer_data.volunteerID);
+  axios.post(
+    `http://localhost:8080/volunteers/${this.volunteer_data.volunteerId}/mark`,
+    null, 
+    {
+      params: {
+        actionId: this.action_id,
+        rating: this.rating,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`, 
+      },
     }
+  )
+  .then(() => {
+    router.go(-1); 
+  })
+  .catch((error) => {
+    console.error("Error submitting rating:", error);
+  });
+},
+
+
+
+    async fetchVolunteerData() {
+  try {
+    const token = localStorage.getItem("accessToken");
+    const actionID = this.$route.params.id; 
+
+    const response = await axios.get(
+      `http://localhost:8080/volunteers/action/${actionID}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    this.volunteer_data = response.data;
+    console.log("volunteer data: ", this.volunteer_data);
+  } catch (error) {
+    console.error("Error fetching volunteer data:", error);
+  }
+}
   }
 }
 </script>

@@ -24,14 +24,17 @@
             </span>
           </td>
           <td>
-            <span v-if="volunteer.readyForMark">
-              <RouterLink :to="'/mark/' + volunteer.id">
+            <span>
+              <RouterLink
+                :to="'/markTable'"
+                @click="selectVolunteer(volunteer.id)"
+              >
                 {{ translations[language].mark_volunteer }}
               </RouterLink>
             </span>
-            <span v-else>
+            <!-- <span v-else>
               {{ translations[language].dont_mark }}
-            </span>
+            </span> -->
           </td>
         </tr>
       </tbody>
@@ -72,6 +75,9 @@ export default {
     const language = ref(localStorage.getItem("language") || "pl");
     const volunteers = ref([]);
     const route = useRoute();
+    const selectVolunteer = (id) => {
+      localStorage.setItem("selectedVolunteer", id);
+    };
 
     onMounted(() => {
       axios
@@ -93,6 +99,7 @@ export default {
       translations,
       language,
       volunteers,
+      selectVolunteer,
     };
   },
 };

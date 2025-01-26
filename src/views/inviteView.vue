@@ -40,11 +40,13 @@ export default {
           }
         );
         console.log("Response:", response.data);
+        alert("Invitation sent!");
       } catch (error) {
         console.error(
           "Error during invitation:",
           error.response?.data || error.message
         );
+        alert("Error during invitation!");
       }
     };
 

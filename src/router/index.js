@@ -14,6 +14,7 @@ import HelpRequestForm from "@/components/events/HelpRequestForm.vue";
 import HelpRequestLookup from "@/components/events/HelpRequestLookup.vue";
 import MapComponent from "@/components/events/MapComponent.vue";
 import Actions from "../views/volunteersActions.vue";
+import markTable from "../views/markVolunteerTable.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -205,6 +206,11 @@ const router = createRouter({
       path: "/actions",
       name: "VolunteerActions",
       component: Actions,
+    },
+    {
+      path: "/markTable",
+      name: "markTable",
+      component: markTable,
     },
   ],
 });
